@@ -20,6 +20,8 @@ In Settings > Macros (or the in-game menu) you can pick:
 
 If you click off Roblox, playback pauses and lets go of any keys, so it can't start typing into another window. Everything gets released when it stops too.
 
+Macros are shared between all your Roblox windows. If you record, delete or pick a macro in one window (or in Settings), the others update within a second.
+
 Macros are just JSON files in `%LocalAppData%\PSYstrap\Macros` so you can back them up or share them.
 
 If you want macros that react to what's on screen, see [Smart macros](Smart-macros.md).

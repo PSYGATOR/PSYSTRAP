@@ -267,15 +267,31 @@ namespace Bloxstrap.UI.ViewModels.Overlay
 
         public void RefreshSmartMacros()
         {
-            SmartMacroNames.Clear();
+            var names = Integrations.Macros.SmartMacroStore.ListNames();
 
-            foreach (string name in Integrations.Macros.SmartMacroStore.ListNames())
-                SmartMacroNames.Add(name);
+            if (!names.SequenceEqual(SmartMacroNames))
+            {
+                SmartMacroNames.Clear();
+
+                foreach (string name in names)
+                    SmartMacroNames.Add(name);
+            }
 
             OnPropertyChanged(nameof(SelectedSmartMacro));
             OnPropertyChanged(nameof(SelectedSmartMacroDetails));
         }
         #endregion
+
+        /// <summary>
+        /// Something changed on disk (another Roblox window's overlay, the Settings window, a macro added or deleted):
+        /// reload the macro lists and refresh every binding so this menu shows the same thing everywhere.
+        /// </summary>
+        public void RefreshFromDisk()
+        {
+            RefreshMacros();
+            RefreshSmartMacros();
+            OnPropertyChanged(String.Empty); // empty name = all properties changed
+        }
 
         /// <summary>Called by the overlay after a recording is saved.</summary>
         public void SelectMacro(string name)
@@ -286,10 +302,16 @@ namespace Bloxstrap.UI.ViewModels.Overlay
 
         public void RefreshMacros()
         {
-            MacroNames.Clear();
+            var names = Integrations.Macros.MacroStore.ListNames();
 
-            foreach (string name in Integrations.Macros.MacroStore.ListNames())
-                MacroNames.Add(name);
+            // leave the list alone if nothing changed, so an open dropdown isn't disturbed
+            if (!names.SequenceEqual(MacroNames))
+            {
+                MacroNames.Clear();
+
+                foreach (string name in names)
+                    MacroNames.Add(name);
+            }
 
             OnPropertyChanged(nameof(SelectedMacro));
             OnPropertyChanged(nameof(SelectedMacroDetails));

@@ -90,6 +90,8 @@ namespace Bloxstrap.Integrations
                 _hintUntil = DateTime.Now.AddSeconds(5);
             };
 
+            StartMacroWatcher();
+
             _timer = new DispatcherTimer(TimeSpan.FromMilliseconds(200), DispatcherPriority.Normal, (_, _) => SafeTick(), Application.Current.Dispatcher);
             _timer.Start();
 
@@ -188,10 +190,97 @@ namespace Bloxstrap.Integrations
             }
         }
 
+        #region Sync between Roblox windows
+        // Every Roblox window has its own overlay process with its own copy of the settings and macro list.
+        // These keep them in step: a macro recorded, deleted or selected in one window (or in the Settings app)
+        // shows up in all the others within about a second.
+
+        private FileSystemWatcher? _macroWatcher;
+        private volatile bool _macrosChanged;
+        private DateTime _nextSettingsCheck = DateTime.MinValue;
+
+        private void StartMacroWatcher()
+        {
+            try
+            {
+                Directory.CreateDirectory(Macros.MacroStore.Directory);
+
+                _macroWatcher = new FileSystemWatcher(Macros.MacroStore.Directory)
+                {
+                    IncludeSubdirectories = true,
+                    NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite
+                };
+
+                FileSystemEventHandler changed = (_, _) => _macrosChanged = true;
+                _macroWatcher.Created += changed;
+                _macroWatcher.Changed += changed;
+                _macroWatcher.Deleted += changed;
+                _macroWatcher.Renamed += (_, _) => _macrosChanged = true;
+                _macroWatcher.EnableRaisingEvents = true;
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException(LOG_IDENT, ex);
+            }
+        }
+
+        private void SyncFromDisk()
+        {
+            bool refresh = false;
+
+            if (_macrosChanged)
+            {
+                _macrosChanged = false;
+                refresh = true;
+            }
+
+            if (DateTime.Now >= _nextSettingsCheck)
+            {
+                _nextSettingsCheck = DateTime.Now.AddSeconds(1);
+
+                if (TryReloadSettings())
+                    refresh = true;
+            }
+
+            if (refresh)
+            {
+                App.Logger.WriteLine(LOG_IDENT, $"Synced from disk: {_options.MacroNames.Count} macro(s) -> {Macros.MacroStore.ListNames().Count}, selected '{App.Settings.Prop.Overlay.SelectedMacro}'");
+                _options.RefreshFromDisk();
+                _hud.ApplyVisibility(App.Settings.Prop.Overlay, _frameRate.Running);
+            }
+        }
+
+        /// <summary>
+        /// Reloads Settings.json if another process saved it. Only reloads once the file parses: a half-written file
+        /// would make the settings manager fall back to re-saving this process's older copy over it.
+        /// </summary>
+        private static bool TryReloadSettings()
+        {
+            try
+            {
+                if (!App.Settings.HasFileOnDiskChanged())
+                    return false;
+
+                string json = File.ReadAllText(App.Settings.FileLocation);
+
+                if (JsonSerializer.Deserialize<Models.Persistable.Settings>(json) is null)
+                    return false;
+
+                return App.Settings.Load(false);
+            }
+            catch (Exception ex) when (ex is IOException or JsonException or UnauthorizedAccessException)
+            {
+                return false; // mid-save or locked - try again next second
+            }
+        }
+        #endregion
+
         private void Tick()
         {
             if (_disposed)
                 return;
+
+            SyncFromDisk();
 
             var settings = App.Settings.Prop.Overlay;
             bool robloxFocused = IsRobloxFocused();
@@ -608,6 +697,7 @@ namespace Bloxstrap.Integrations
             void Cleanup()
             {
                 _timer.Stop();
+                _macroWatcher?.Dispose();
                 _hooks.Dispose();
                 _hud.Close();
                 _menu?.ForceClose();
