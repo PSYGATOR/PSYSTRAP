@@ -55,7 +55,7 @@ $app.Text = [regex]::Replace($app.Text, '(#else\s+public const string ProjectNam
 if ($Repo) {
     & $set 'ProjectRepository' $Repo
     & $set 'ProjectDownloadLink' "$repoUrl/releases/latest"
-    & $set 'ProjectHelpLink' "$repoUrl#readme"
+    & $set 'ProjectHelpLink' "$repoUrl/blob/main/docs/wiki/Home.md"
     & $set 'ProjectSupportLink' "$repoUrl/issues/new"
 }
 Write-Text $appPath $app

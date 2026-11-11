@@ -31,7 +31,7 @@ namespace Bloxstrap
 
         public static bool UpdatesEnabled => !String.IsNullOrEmpty(ProjectRepository);
         public const string ProjectDownloadLink = "https://github.com/AGamingotter/PSYSTRAP/releases/latest";
-        public const string ProjectHelpLink = "https://github.com/AGamingotter/PSYSTRAP#readme";
+        public const string ProjectHelpLink = "https://github.com/AGamingotter/PSYSTRAP/blob/main/docs/wiki/Home.md";
         public const string ProjectSupportLink = "https://github.com/AGamingotter/PSYSTRAP/issues/new";
 
         public const string RobloxPlayerAppName = "RobloxPlayerBeta";

@@ -13,7 +13,7 @@ Overlay, multi-instance, saved accounts and smart macros, built on Bloxstrap and
 ![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-1A7F22?style=for-the-badge&logo=windows)
 [![License](https://img.shields.io/badge/license-MIT-E8213F?style=for-the-badge)](LICENSE)
 
-### [⬇ Download the latest PSYstrap.exe](https://github.com/AGamingotter/PSYSTRAP/releases/latest)
+### [⬇ Download the latest PSYstrap.exe](https://github.com/AGamingotter/PSYSTRAP/releases/latest) &nbsp;·&nbsp; [📖 Read the wiki](docs/wiki/Home.md)
 
 <img src="docs/images/overlay.jpg" width="820" alt="PSYstrap's in-game overlay showing FPS, CPS, RAM and session time" />
 
@@ -67,6 +67,8 @@ Overlay, multi-instance, saved accounts and smart macros, built on Bloxstrap and
 3. Open **PSYstrap Settings** from the Start menu to set up the overlay, macros, skybox and instances.
 
 You need Windows 10 or 11 and the [.NET 6 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/6.0); Windows offers to install it if it's missing. PSYstrap updates itself whenever a new release comes out.
+
+📖 **Full guides for every feature are in the [wiki](docs/wiki/Home.md):** [Overlay](docs/wiki/Overlay.md) · [Skybox](docs/wiki/Skybox.md) · [Multi-instance](docs/wiki/Multi-instance.md) · [Accounts](docs/wiki/Accounts.md) · [Macros](docs/wiki/Macros.md) · [Smart macros](docs/wiki/Smart-macros.md) · [Turn-taking](docs/wiki/Turn-taking.md) · [FAQ](docs/wiki/FAQ.md)
 
 ### ⌨️ Hotkeys (in Roblox)
 
