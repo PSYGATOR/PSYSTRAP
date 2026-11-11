@@ -11,8 +11,6 @@ A Roblox launcher based on Bloxstrap, with an overlay, multi instance, saved acc
 
 **[Download](https://github.com/AGamingotter/PSYSTRAP/releases/latest)** | **[Wiki](docs/wiki/Home.md)**
 
-<img src="docs/images/overlay.jpg" width="800" alt="PSYstrap overlay in game" />
-
 </div>
 
 ## What it does
