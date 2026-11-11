@@ -1,13 +1,15 @@
 ﻿using System.Windows;
 using System.Windows.Input;
-using Bloxstrap.UI.Elements.About;
 using CommunityToolkit.Mvvm.Input;
 
 namespace Bloxstrap.UI.ViewModels.Settings
 {
     public class MainWindowViewModel : NotifyPropertyChangedViewModel
     {
-        public ICommand OpenAboutCommand => new RelayCommand(OpenAbout);
+
+        // PSYstrap: separate process, because the manager saves settings straight away and must not
+        // reload over this window's unsaved changes
+        public ICommand OpenInstancesCommand => new RelayCommand(() => Process.Start(Paths.Process, "-instances"));
         
         public ICommand SaveSettingsCommand => new RelayCommand(SaveSettings);
         
@@ -34,7 +36,6 @@ namespace Bloxstrap.UI.ViewModels.Settings
             }
         }
 
-        private void OpenAbout() => new MainWindow().ShowDialog();
 
         private void CloseWindow() => RequestCloseWindowEvent?.Invoke(this, EventArgs.Empty);
 

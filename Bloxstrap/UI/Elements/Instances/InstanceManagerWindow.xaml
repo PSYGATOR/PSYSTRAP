@@ -1,0 +1,183 @@
+<base:WpfUiWindow x:Class="Bloxstrap.UI.Elements.Instances.InstanceManagerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:base="clr-namespace:Bloxstrap.UI.Elements.Base"
+        xmlns:controls="clr-namespace:Bloxstrap.UI.Elements.Controls"
+        Title="PSYstrap Instances"
+        Width="760"
+        Height="640"
+        MinWidth="620"
+        MinHeight="460"
+        Background="{ui:ThemeResource ApplicationBackgroundBrush}"
+        ExtendsContentIntoTitleBar="True"
+        WindowBackdropType="Mica"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0" Padding="8" Title="PSYstrap Instances" Icon="pack://application:,,,/Bloxstrap.ico" />
+
+        <ScrollViewer Grid.Row="1" Padding="16,4,16,16" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <TextBlock FontSize="20" FontWeight="Medium" Text="Instances" />
+                <Border Height="3" Width="44" HorizontalAlignment="Left" CornerRadius="1.5" Margin="1,4,0,8" Background="{DynamicResource PsyCrownStripBrush}" />
+                <TextBlock FontSize="13" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Status, Mode=OneWay}" />
+
+                <controls:OptionControl Header="Multi-instance" Description="Run more than one Roblox client at once. Every launch through PSYstrap opens a new client.">
+                    <ui:ToggleSwitch IsChecked="{Binding MultiInstanceEnabled, Mode=TwoWay}" />
+                </controls:OptionControl>
+
+                <controls:OptionControl Header="Lower priority of clients you aren't using" Description="Background clients get less CPU time, so the one you're playing stays smooth.">
+                    <ui:ToggleSwitch IsChecked="{Binding LowerBackgroundPriority, Mode=TwoWay}" />
+                </controls:OptionControl>
+
+                <controls:OptionControl Header="Trim RAM of clients you aren't using" Description="Every minute, Windows moves their unused memory to the page file. Frees RAM on low-memory PCs; switching back to a trimmed client can hitch for a moment.">
+                    <ui:ToggleSwitch IsChecked="{Binding TrimBackgroundMemory, Mode=TwoWay}" />
+                </controls:OptionControl>
+
+                <!-- saved accounts + launching them into a server -->
+                <Grid Margin="0,18,0,6" DataContext="{Binding Launcher}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <TextBlock FontSize="16" FontWeight="Medium" Text="Accounts" />
+                        <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                   Text="Sign in once on Roblox's page; the sign-in is saved encrypted for your Windows account. Your password is never seen or stored." />
+                    </StackPanel>
+                    <ui:Button Grid.Column="1" Margin="8,0,0,0" Icon="CheckmarkCircle24" Content="Select all" Command="{Binding SelectAllCommand}" />
+                    <ui:Button Grid.Column="2" Margin="8,0,0,0" Icon="PersonAdd24" Content="Add account" Command="{Binding AddAccountCommand}" />
+                </Grid>
+
+                <StackPanel DataContext="{Binding Launcher}">
+                    <TextBlock Margin="0,4,0,0" FontSize="13" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Visibility="{Binding EmptyVisibility, Mode=OneWay}" Text="No saved accounts yet. Use Add account." />
+
+                    <ItemsControl ItemsSource="{Binding Accounts}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ui:Card Margin="0,6,0,0" Padding="12,8">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <CheckBox Grid.Column="0" VerticalAlignment="Center" IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+                                        <StackPanel Grid.Column="1" Margin="4,0,0,0" VerticalAlignment="Center">
+                                            <TextBlock FontSize="14" FontWeight="SemiBold" Text="{Binding Label}" />
+                                            <TextBlock FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding Details}" />
+                                        </StackPanel>
+                                        <ui:Button Grid.Column="2" Icon="Delete24" ToolTip="Remove saved sign-in" Command="{Binding RemoveCommand}" />
+                                    </Grid>
+                                </ui:Card>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <ui:Card Margin="0,8,0,0">
+                        <StackPanel>
+                            <TextBlock FontSize="14" FontWeight="SemiBold" Text="Open the ticked accounts" />
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ComboBox Grid.Column="0" Padding="10,5,10,5" ItemsSource="{Binding Targets}" DisplayMemberPath="Label" SelectedItem="{Binding SelectedTarget, Mode=TwoWay}" />
+                                <ui:TextBox Grid.Column="1" Margin="8,0,0,0" Width="150" PlaceholderText="Place ID" Text="{Binding PlaceIdText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding PlaceIdVisibility, Mode=OneWay}" />
+                                <ui:Button Grid.Column="2" Margin="8,0,0,0" Icon="Play24" Appearance="Primary" Content="Launch" Command="{Binding LaunchCommand}" />
+                            </Grid>
+                            <TextBlock Margin="0,6,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Status, Mode=OneWay}" />
+                            <TextBlock Margin="0,4,0,0" FontSize="11" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                       Text="Each account opens in its own client, about 12 seconds apart. Running clients' servers show up in the list once they've joined a game." />
+                        </StackPanel>
+                    </ui:Card>
+                </StackPanel>
+
+                <Grid Margin="0,18,0,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <TextBlock FontSize="16" FontWeight="Medium" Text="Running clients" />
+                        <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding Summary, Mode=OneWay}" />
+                    </StackPanel>
+                    <ui:Button Grid.Column="1" Margin="8,0,0,0" Icon="Grid24" Content="Arrange windows" Command="{Binding ArrangeCommand}" />
+                    <ui:Button Grid.Column="2" Margin="8,0,0,0" Icon="Add24" Appearance="Primary" Content="Launch new instance" Command="{Binding LaunchCommand}" />
+                </Grid>
+
+                <!-- turn-taking: one smart macro per client, cycled because Roblox only listens to the focused window -->
+                <ui:Card Margin="0,8,0,0">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock FontSize="14" FontWeight="SemiBold" Text="Take turns" />
+                                <TextBlock Margin="0,2,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                           Text="Roblox only listens to the focused window, so PSYstrap switches between the clients below, running each one's smart macro for a moment. Keep the clients visible (Arrange windows helps). Touch the mouse or keyboard to take over; it carries on once you stop." />
+                            </StackPanel>
+                            <ui:Button Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Top" Icon="ArrowSync24" Appearance="Primary"
+                                       Content="{Binding RotationButtonText, Mode=OneWay}" Command="{Binding ToggleRotationCommand}" />
+                        </Grid>
+                        <TextBlock Margin="0,8,0,0" FontSize="12" FontWeight="SemiBold" TextWrapping="Wrap" Foreground="#5FE04C" Text="{Binding RotationStatus, Mode=OneWay}" />
+                        <WrapPanel Margin="0,8,0,0">
+                            <TextBlock VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Time on each client" />
+                            <ui:TextBox Margin="6,0" Width="70" Text="{Binding RotationDwellMs, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                            <TextBlock VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="ms     Resume" />
+                            <ui:TextBox Margin="6,0" Width="50" Text="{Binding RotationResumeSeconds, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                            <TextBlock VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="s after you stop touching the PC" />
+                        </WrapPanel>
+                    </StackPanel>
+                </ui:Card>
+
+                <TextBlock Margin="0,8,0,0" FontSize="13" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Visibility="{Binding EmptyVisibility, Mode=OneWay}" Text="Nothing running yet. Use Launch new instance to open a client." />
+
+                <ItemsControl ItemsSource="{Binding Instances}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ui:Card Margin="0,8,0,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock FontSize="14" FontWeight="SemiBold" Text="{Binding Title}" />
+                                            <Border Margin="8,0,0,0" Padding="6,1" CornerRadius="4" Background="#335FE04C" Visibility="{Binding FocusedBadgeVisibility}">
+                                                <TextBlock FontSize="11" Foreground="#5FE04C" Text="in use" />
+                                            </Border>
+                                        </StackPanel>
+                                        <TextBlock Margin="0,2,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding Details}" />
+                                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                            <TextBlock VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Smart macro" />
+                                            <ComboBox Margin="8,0,0,0" Width="170" Padding="8,3" ItemsSource="{Binding SmartMacroChoices}" SelectedItem="{Binding AssignedSmartMacro, Mode=TwoWay, TargetNullValue=(none)}" />
+                                            <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" FontSize="12" Foreground="#5FE04C" Text="{Binding RotationStatus}" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                        <ui:Button Margin="4,0,0,0" Icon="WindowArrowUp24" Content="Focus" Command="{Binding FocusCommand}" />
+                                        <ui:Button Margin="4,0,0,0" Icon="Subtract24" ToolTip="Minimise" Command="{Binding MinimizeCommand}" />
+                                        <ui:Button Margin="4,0,0,0" Icon="Broom24" ToolTip="Trim RAM now" Command="{Binding TrimCommand}" />
+                                        <ui:Button Margin="4,0,0,0" Icon="Dismiss24" Appearance="Danger" ToolTip="Close this client" Command="{Binding CloseCommand}" />
+                                    </StackPanel>
+                                </Grid>
+                            </ui:Card>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</base:WpfUiWindow>

@@ -6,7 +6,8 @@ namespace Bloxstrap
 {
     public class Watcher : IDisposable
     {
-        private readonly InterProcessLock _lock = new("Watcher");
+        // per Roblox client, so multi-instance clients each get their own watcher and overlay
+        private readonly InterProcessLock _lock = null!;
 
         private readonly WatcherData? _watcherData;
         
@@ -16,15 +17,11 @@ namespace Bloxstrap
 
         public readonly DiscordRichPresence? RichPresence;
 
+        public readonly OverlayController? Overlay;
+
         public Watcher()
         {
             const string LOG_IDENT = "Watcher";
-
-            if (!_lock.IsAcquired)
-            {
-                App.Logger.WriteLine(LOG_IDENT, "Watcher instance already exists");
-                return;
-            }
 
             string? watcherDataArg = App.LaunchSettings.WatcherFlag.Data;
 
@@ -50,6 +47,17 @@ namespace Bloxstrap
             if (_watcherData is null)
                 throw new Exception("Watcher data is invalid");
 
+            _lock = new InterProcessLock($"Watcher-{_watcherData.ProcessId}");
+
+            if (!_lock.IsAcquired)
+            {
+                App.Logger.WriteLine(LOG_IDENT, "Watcher instance already exists for this client");
+                return;
+            }
+
+            // only the first client shows Discord presence; several would fight over the one Discord status
+            bool otherClientsRunning = MultiInstance.GetRobloxProcesses().Any(process => process.Id != _watcherData.ProcessId);
+
             if (App.Settings.Prop.EnableActivityTracking)
             {
                 ActivityWatcher = new(_watcherData.LogFile);
@@ -64,8 +72,27 @@ namespace Bloxstrap
                     };
                 }
 
-                if (App.Settings.Prop.UseDiscordRichPresence)
+                // PSYstrap: let the account launcher see which server this client is in
+                int robloxPid = _watcherData.ProcessId;
+                var activity = ActivityWatcher;
+                activity.OnGameJoin += (_, _) => Accounts.LiveSessions.Publish(robloxPid, activity.Data);
+                activity.OnGameLeave += (_, _) => Accounts.LiveSessions.Clear(robloxPid);
+
+                if (App.Settings.Prop.UseDiscordRichPresence && !otherClientsRunning)
                     RichPresence = new(ActivityWatcher);
+            }
+
+            // PSYstrap in-game overlay. Created on the UI thread (the watcher is constructed there).
+            // Always runs so the menu key works; "Show overlay" only hides the counters.
+            try
+            {
+                Overlay = new OverlayController(_watcherData.ProcessId, () =>
+                    ActivityWatcher is { InGame: true } activity ? activity.Data : null);
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteLine(LOG_IDENT, "Couldn't start the overlay");
+                App.Logger.WriteException(LOG_IDENT, ex);
             }
 
             _notifyIcon = new(this);
@@ -124,6 +151,11 @@ namespace Bloxstrap
         public void Dispose()
         {
             App.Logger.WriteLine("Watcher::Dispose", "Disposing Watcher");
+
+            Overlay?.Dispose();
+
+            if (_watcherData is not null)
+                Accounts.LiveSessions.Clear(_watcherData.ProcessId);
 
             _notifyIcon?.Dispose();
             RichPresence?.Dispose();

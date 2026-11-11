@@ -14,15 +14,25 @@ namespace Bloxstrap
     public partial class App : Application
     {
 #if QA_BUILD
-        public const string ProjectName = "Bloxstrap-QA";
+        public const string ProjectName = "PSYstrap-QA";
 #else
-        public const string ProjectName = "Bloxstrap";
+        public const string ProjectName = "PSYstrap";
 #endif
-        public const string ProjectOwner = "Bloxstrap";
-        public const string ProjectRepository = "bloxstraplabs/bloxstrap";
-        public const string ProjectDownloadLink = "https://bloxstraplabs.com";
-        public const string ProjectHelpLink = "https://bloxstraplabs.com/wiki/help/";
-        public const string ProjectSupportLink = "https://github.com/bloxstraplabs/bloxstrap/issues/new";
+        public const string ProjectOwner = "PSYstrap";
+
+        // FORK: GitHub "owner/repo" this fork publishes releases to. Leave empty until the
+        // repo exists - the auto-updater is disabled while it's empty, so the fork can never
+        // "update" itself into upstream Bloxstrap.
+        public const string ProjectRepository = "AGamingotter/PSYSTRAP";
+
+        // FORK: upstream Bloxstrap's metrics/exception-log endpoints belong to the Bloxstrap
+        // team, so the fork never talks to them.
+        public const bool AnalyticsEnabled = false;
+
+        public static bool UpdatesEnabled => !String.IsNullOrEmpty(ProjectRepository);
+        public const string ProjectDownloadLink = "https://github.com/AGamingotter/PSYSTRAP/releases/latest";
+        public const string ProjectHelpLink = "https://github.com/AGamingotter/PSYSTRAP#readme";
+        public const string ProjectSupportLink = "https://github.com/AGamingotter/PSYSTRAP/issues/new";
 
         public const string RobloxPlayerAppName = "RobloxPlayerBeta";
         public const string RobloxStudioAppName = "RobloxStudioBeta";
@@ -167,6 +177,12 @@ namespace Bloxstrap
         {
             const string LOG_IDENT = "App::GetLatestRelease";
 
+            if (!UpdatesEnabled)
+            {
+                Logger.WriteLine(LOG_IDENT, "No release repository configured, skipping");
+                return null;
+            }
+
             try
             {
                 var releaseInfo = await Http.GetJson<GithubRelease>($"https://api.github.com/repos/{ProjectRepository}/releases/latest");
@@ -189,7 +205,7 @@ namespace Bloxstrap
 
         public static async void SendStat(string key, string value)
         {
-            if (!Settings.Prop.EnableAnalytics)
+            if (!AnalyticsEnabled || !Settings.Prop.EnableAnalytics)
                 return;
 
             try
@@ -204,7 +220,7 @@ namespace Bloxstrap
 
         public static async void SendLog()
         {
-            if (!Settings.Prop.EnableAnalytics || !CanSendLogs())
+            if (!AnalyticsEnabled || !Settings.Prop.EnableAnalytics || !CanSendLogs())
                 return;
 
             try

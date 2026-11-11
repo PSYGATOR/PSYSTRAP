@@ -23,11 +23,6 @@
             <ui:ToggleSwitch IsChecked="{Binding UpdateCheckingEnabled, Mode=TwoWay}" />
         </controls:OptionControl>
 
-        <controls:OptionControl 
-            Header="{x:Static resources:Strings.Menu_Bloxstrap_Analytics_Title}"
-            Description="{Binding Source={x:Static resources:Strings.Menu_Bloxstrap_Analytics_Description}, Converter={StaticResource StringFormatConverter}, ConverterParameter='https://bloxstraplabs.com/wiki/info/privacy-policy/'}">
-            <ui:ToggleSwitch IsChecked="{Binding AnalyticsEnabled, Mode=TwoWay}" />
-        </controls:OptionControl>
 
         <!-- This does not need i18n as this is locked behind "Developer Mode" -->
         <controls:OptionControl
@@ -75,5 +70,21 @@
                 <CheckBox Grid.Column="1" Name="ShouldExportLogs" Content="{x:Static resources:Strings.Menu_Bloxstrap_ExportData_ExportLogs}" IsChecked="{Binding ShouldExportLogs}" />
             </Grid>
         </ui:CardExpander>
+
+        <!-- PSYstrap credit: Bloxstrap's MIT license requires its copyright notice to stay with the app -->
+        <ui:Card Margin="0,16,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock FontSize="14" Text="Credits" />
+                    <TextBlock Margin="0,2,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                               Text="PSYstrap is based on Bloxstrap by pizzaboxer and contributors, used under the MIT License. Not affiliated with Roblox or Bloxstrap." />
+                </StackPanel>
+                <ui:Button Grid.Column="1" Margin="12,0,0,0" Icon="Document24" Content="View license" Command="{Binding ViewLicenseCommand}" />
+            </Grid>
+        </ui:Card>
     </StackPanel>
 </ui:UiPage>

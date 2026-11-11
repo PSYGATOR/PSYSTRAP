@@ -9,7 +9,15 @@ namespace Bloxstrap.Models.Persistable
         public BootstrapperIcon BootstrapperIcon { get; set; } = BootstrapperIcon.IconBloxstrap;
         public string BootstrapperTitle { get; set; } = App.ProjectName;
         public string BootstrapperIconCustomLocation { get; set; } = "";
-        public Theme Theme { get; set; } = Theme.Default;
+        public Theme Theme { get; set; } = Theme.PSY;
+        public SkyboxPreset Skybox { get; set; } = SkyboxPreset.Default;
+        public OverlaySettings Overlay { get; set; } = new();
+        public bool MultiInstance { get; set; } = false;
+        public bool PotatoMode { get; set; } = false;
+        public MultiInstanceSettings MultiInstanceOptions { get; set; } = new();
+
+        // PSYstrap: written to Roblox's GlobalBasicSettings before each launch. 0 = leave Roblox's own setting alone.
+        public int FramerateCap { get; set; } = 0;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public bool DeveloperMode { get; set; } = false;
         public bool CheckForUpdates { get; set; } = true;

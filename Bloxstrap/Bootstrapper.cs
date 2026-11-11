@@ -74,9 +74,9 @@ namespace Bloxstrap
         public bool IsStudioLaunch => _launchMode != LaunchMode.Player;
 
         public string MutexName => $"{MutexNamePrefix}-{_launchMode}";
-        public string BackgroundUpdaterMutexName => $"Bloxstrap-BackgroundUpdater-{_launchMode}";
+        public string BackgroundUpdaterMutexName => $"{App.ProjectName}-BackgroundUpdater-{_launchMode}";
 
-        public string MutexNamePrefix { get; set; } = "Bloxstrap-Bootstrapper";
+        public string MutexNamePrefix { get; set; } = $"{App.ProjectName}-Bootstrapper";
         public bool QuitIfMutexExists { get; set; } = false;
         #endregion
 
@@ -560,11 +560,32 @@ namespace Bloxstrap
 
             SetStatus(Strings.Bootstrapper_Status_Starting);
 
+            // PSYstrap: Roblox only reads its frame rate cap at startup
+            RobloxUserSettings.ApplyFramerateCap();
+            PotatoMode.ApplyGraphicsQuality();
+
+            // PSYstrap multi-instance: claim Roblox's singleton names first, then start from a free instance path
+            string launchDirectory = AppData.Directory;
+
+            if (App.Settings.Prop.MultiInstance && _launchMode == LaunchMode.Player)
+            {
+                try
+                {
+                    MultiInstance.EnsureHost();
+                    launchDirectory = MultiInstance.GetLaunchDirectory(AppData.Directory);
+                }
+                catch (Exception ex)
+                {
+                    App.Logger.WriteException(LOG_IDENT, ex);
+                    Frontend.ShowMessageBox($"Couldn't set up another Roblox instance:\n\n{ex.Message}", MessageBoxImage.Warning);
+                }
+            }
+
             var startInfo = new ProcessStartInfo()
             {
-                FileName = AppData.ExecutablePath,
+                FileName = Path.Combine(launchDirectory, Path.GetFileName(AppData.ExecutablePath)),
                 Arguments = _launchCommandLine,
-                WorkingDirectory = AppData.Directory
+                WorkingDirectory = launchDirectory
             };
 
             if (_launchMode == LaunchMode.Player && ShouldRunAsAdmin())
@@ -609,6 +630,9 @@ namespace Bloxstrap
             {
                 using var process = Process.Start(startInfo)!;
                 _appPid = process.Id;
+
+                if (App.Settings.Prop.MultiInstance && _launchMode == LaunchMode.Player)
+                    MultiInstance.RecordSlot(_appPid, launchDirectory);
             }
             catch (Win32Exception ex) when (ex.NativeErrorCode == 1223)
             {
@@ -673,9 +697,10 @@ namespace Bloxstrap
                     autoclosePids.Add(pid);
             }
 
-            if (App.Settings.Prop.EnableActivityTracking || App.LaunchSettings.TestModeFlag.Active || autoclosePids.Any())
+            // PSYstrap: the watcher also hosts the in-game overlay/menu, so it always runs alongside Roblox
             {
-                using var ipl = new InterProcessLock("Watcher", TimeSpan.FromSeconds(5));
+                // one watcher per Roblox client (multi-instance runs several side by side)
+                using var ipl = new InterProcessLock($"Watcher-{_appPid}", TimeSpan.FromSeconds(5));
 
                 var watcherData = new WatcherData 
                 { 
@@ -810,7 +835,8 @@ namespace Bloxstrap
 
                 File.Copy(Paths.Process, downloadLocation, true);
 #else
-                var asset = releaseInfo.Assets![0];
+                // PSYstrap releases also carry the license file, so pick the exe rather than whichever asset is first
+                var asset = releaseInfo.Assets!.FirstOrDefault(x => x.Name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)) ?? releaseInfo.Assets![0];
 
                 string downloadLocation = Path.Combine(Paths.TempUpdates, asset.Name);
 

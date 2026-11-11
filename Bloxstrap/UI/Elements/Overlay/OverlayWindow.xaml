@@ -1,0 +1,83 @@
+<Window x:Class="Bloxstrap.UI.Elements.Overlay.OverlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="PSYstrap Overlay"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ShowActivated="False"
+        Focusable="False"
+        IsHitTestVisible="False"
+        ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight"
+        UseLayoutRounding="True"
+        TextOptions.TextFormattingMode="Display">
+    <!-- PSYstrap HUD: click-through stat pills drawn over the Roblox window (nothing is injected into Roblox) -->
+    <Window.Resources>
+        <Style x:Key="Pill" TargetType="Border">
+            <Setter Property="Background" Value="#D90A170E" />
+            <Setter Property="BorderBrush" Value="#705FE04C" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="9,3,10,4" />
+            <Setter Property="Margin" Value="0,0,0,4" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+        </Style>
+        <Style x:Key="Label" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#9FCBA6" />
+            <Setter Property="FontFamily" Value="Segoe UI" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,0,6,0" />
+        </Style>
+        <Style x:Key="Value" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontFamily" Value="Segoe UI" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+    </Window.Resources>
+
+    <StackPanel x:Name="WidgetPanel" Margin="2">
+        <Border x:Name="FramerateWidget" Style="{StaticResource Pill}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Style="{StaticResource Label}" Text="FPS" />
+                <TextBlock x:Name="FramerateText" Style="{StaticResource Value}" Text="--" />
+            </StackPanel>
+        </Border>
+        <Border x:Name="ClicksWidget" Style="{StaticResource Pill}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Style="{StaticResource Label}" Text="CPS" />
+                <TextBlock x:Name="ClicksText" Style="{StaticResource Value}" Text="0 | 0" />
+            </StackPanel>
+        </Border>
+        <Border x:Name="MemoryWidget" Style="{StaticResource Pill}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Style="{StaticResource Label}" Text="RAM" />
+                <TextBlock x:Name="MemoryText" Style="{StaticResource Value}" Text="--" />
+            </StackPanel>
+        </Border>
+        <Border x:Name="SessionWidget" Style="{StaticResource Pill}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Style="{StaticResource Label}" Text="SESSION" />
+                <TextBlock x:Name="SessionText" Style="{StaticResource Value}" Text="0:00" />
+            </StackPanel>
+        </Border>
+        <Border x:Name="ClockWidget" Style="{StaticResource Pill}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Style="{StaticResource Label}" Text="TIME" />
+                <TextBlock x:Name="ClockText" Style="{StaticResource Value}" Text="--" />
+            </StackPanel>
+        </Border>
+        <Border x:Name="MacroWidget" Style="{StaticResource Pill}" Visibility="Collapsed">
+            <TextBlock x:Name="MacroText" Style="{StaticResource Value}" FontSize="12" Text="" />
+        </Border>
+        <Border x:Name="MenuHint" Style="{StaticResource Pill}" Background="#B30A170E" BorderBrush="#66F2C14E">
+            <TextBlock x:Name="MenuHintText" Style="{StaticResource Label}" Margin="0" Foreground="#F2C14E" Text="Insert: PSYstrap menu" />
+        </Border>
+    </StackPanel>
+</Window>

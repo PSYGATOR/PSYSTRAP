@@ -59,6 +59,25 @@ namespace Bloxstrap
                 App.Logger.WriteLine(LOG_IDENT, "Opening watcher");
                 LaunchWatcher();
             }
+            else if (App.LaunchSettings.MultiInstanceHostFlag.Active)
+            {
+                App.Logger.WriteLine(LOG_IDENT, "Opening multi-instance host");
+                Task.Run(MultiInstance.RunHost).ContinueWith(_ => App.Terminate());
+            }
+            else if (App.LaunchSettings.SmartMacroEditorFlag.Active)
+            {
+                // optional data: name of the smart macro to edit
+                string? name = App.LaunchSettings.SmartMacroEditorFlag.Data;
+                App.Logger.WriteLine(LOG_IDENT, "Opening smart macro editor");
+                new UI.Elements.Macros.SmartMacroEditorWindow(String.IsNullOrEmpty(name) ? null : name).ShowDialog();
+                App.Terminate();
+            }
+            else if (App.LaunchSettings.InstanceManagerFlag.Active)
+            {
+                App.Logger.WriteLine(LOG_IDENT, "Opening instance manager");
+                new UI.Elements.Instances.InstanceManagerWindow().ShowDialog();
+                App.Terminate();
+            }
             else if (App.LaunchSettings.BackgroundUpdaterFlag.Active)
             {
                 App.Logger.WriteLine(LOG_IDENT, "Opening background updater");
@@ -319,7 +338,7 @@ namespace Bloxstrap
             App.Logger.WriteLine(LOG_IDENT, "Initializing bootstrapper");
             App.Bootstrapper = new Bootstrapper(launchMode)
             {
-                MutexNamePrefix = "Bloxstrap-BackgroundUpdater",
+                MutexNamePrefix = $"{App.ProjectName}-BackgroundUpdater",
                 QuitIfMutexExists = true
             };
 
@@ -328,7 +347,7 @@ namespace Bloxstrap
             Task.Run(() =>
             {
                 App.Logger.WriteLine(LOG_IDENT, "Started event waiter");
-                using (EventWaitHandle handle = new EventWaitHandle(false, EventResetMode.AutoReset, "Bloxstrap-BackgroundUpdaterKillEvent"))
+                using (EventWaitHandle handle = new EventWaitHandle(false, EventResetMode.AutoReset, $"{App.ProjectName}-BackgroundUpdaterKillEvent"))
                     handle.WaitOne();
 
                 App.Logger.WriteLine(LOG_IDENT, "Received close event, killing it all!");

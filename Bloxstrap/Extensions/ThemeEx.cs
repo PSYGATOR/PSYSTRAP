@@ -4,8 +4,14 @@ namespace Bloxstrap.Extensions
 {
     public static class ThemeEx
     {
+        /// <summary>
+        /// Resolves to Light or Dark. PSY counts as Dark, so every existing light/dark check keeps working.
+        /// </summary>
         public static Theme GetFinal(this Theme dialogTheme)
         {
+            if (dialogTheme == Theme.PSY)
+                return Theme.Dark;
+
             if (dialogTheme != Theme.Default)
                 return dialogTheme;
 

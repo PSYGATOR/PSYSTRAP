@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Bootstrapper.AutoUpdateFailed" xml:space="preserve">
-    <value>Bloxstrap {0}への自動更新に失敗しました。公式ウェブサイトから手動でインストールしてください。</value>
+    <value>PSYstrap {0}への自動更新に失敗しました。公式ウェブサイトから手動でインストールしてください。</value>
   </data>
   <data name="Bootstrapper.ConfirmLaunch" xml:space="preserve">
     <value>Robloxは現在実行中です。新しくゲームを起動する場合、もとのゲームは終了します。本当に起動しますか？</value>
@@ -289,7 +289,7 @@
     <value>例外が発生しました</value>
   </data>
   <data name="Dialog.Exception.Info.2" xml:space="preserve">
-    <value>このエラーは[Bloxstrap Wiki]({0})でよくある問題として解決策が見つかる可能性があります。
+    <value>このエラーは[PSYstrap Wiki]({0})でよくある問題として解決策が見つかる可能性があります。
 
 解決策が見つからない場合は、作成されたログファイルとともに[GitHub issue]({1})またはDiscordで報告してください。</value>
   </data>
@@ -309,10 +309,10 @@
     <value>ﾆｾByfron (2023)</value>
   </data>
   <data name="Enums.BootstrapperStyle.ClassicFluentDialog" xml:space="preserve">
-    <value>Bloxstrap (クラシック)</value>
+    <value>PSYstrap (クラシック)</value>
   </data>
   <data name="Enums.BootstrapperStyle.FluentAeroDialog" xml:space="preserve">
-    <value>Bloxstrap (透明)</value>
+    <value>PSYstrap (透明)</value>
   </data>
   <data name="Enums.BootstrapperStyle.LegacyDialog2008" xml:space="preserve">
     <value>レガシー (2008 ~ 2011)</value>
@@ -953,7 +953,7 @@ Bloxstrapのインストール場所: {1}</value>
     <value>デスクトップまたはスタートメニューにショートカットを作ることができませんでした。しばらくしてから再度お試しください。</value>
   </data>
   <data name="Dialog.Exception.Info.2.Alt" xml:space="preserve">
-    <value>最初に[Bloxstrap Wiki]({0})で解決策がないか確認してください。
+    <value>最初に[PSYstrap Wiki]({0})で解決策がないか確認してください。
 
 解決策が見つからない場合は、エラーをこのフォークのメンテナーに報告してください。絶対に公式版BloxstrapのGitHub issuesに投稿しないでください。
 このBloxstrapは非公式版です。</value>
@@ -1407,7 +1407,7 @@ Robloxのアプリファイルを使用している可能性のあるアプリ�
     <value>{product}を終了中</value>
   </data>
   <data name="LaunchMenu.BloxstrapWiki" xml:space="preserve">
-    <value>Bloxstrap Wiki</value>
+    <value>PSYstrap Wiki</value>
   </data>
   <data name="LaunchMenu.RobloxCommunity" xml:space="preserve">
     <value>Robloxコミュニティ</value>

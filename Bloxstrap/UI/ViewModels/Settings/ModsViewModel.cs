@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 using Microsoft.Win32;
 
@@ -101,6 +102,134 @@ namespace Bloxstrap.UI.ViewModels.Settings
         });
 
         public FontModPresetTask TextFontTask { get; } = new();
+
+        #region Skybox (PSYstrap)
+        public SkyboxTask SkyboxTask { get; } = new();
+
+        public IEnumerable<SkyboxPreset> SkyboxPresets { get; } = Enum.GetValues<SkyboxPreset>();
+
+        private Dictionary<string, BitmapSource>? _skyboxPreview;
+
+        public ModsViewModel()
+        {
+            RefreshSkyboxPreview();
+            SkyboxTask.Applied += (_, _) => OnPropertyChanged(nameof(SkyboxStatusText));
+        }
+
+        public SkyboxPreset SelectedSkybox
+        {
+            get => SkyboxTask.NewState;
+            set
+            {
+                if (value == SkyboxTask.NewState)
+                    return;
+
+                if (value == SkyboxPreset.Custom)
+                {
+                    if (!ChooseSkyboxImages())
+                    {
+                        // dialog cancelled or images rejected: put the combo box back on the old choice.
+                        // deferred because the ComboBox ignores change notifications raised mid-selection.
+                        Application.Current.Dispatcher.BeginInvoke(() => OnPropertyChanged(nameof(SelectedSkybox)));
+                        return;
+                    }
+                }
+                else
+                {
+                    SkyboxTask.SetPreset(value);
+                }
+
+                RefreshSkyboxPreview();
+            }
+        }
+
+        public ICommand ChooseSkyboxImagesCommand => new RelayCommand(() =>
+        {
+            if (ChooseSkyboxImages())
+                RefreshSkyboxPreview();
+        });
+
+        private bool ChooseSkyboxImages()
+        {
+            var dialog = new OpenFileDialog
+            {
+                Title = "Pick 6 skybox images (bk, dn, ft, lf, rt, up) or 1 image for every side",
+                Filter = "Images and Roblox sky textures|*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff;*.tex;*.dds|All files|*.*",
+                Multiselect = true
+            };
+
+            if (dialog.ShowDialog() != true)
+                return false;
+
+            try
+            {
+                SkyboxTask.SetCustom(Skybox.LoadImages(dialog.FileNames));
+                return true;
+            }
+            catch (InvalidOperationException ex)
+            {
+                Frontend.ShowMessageBox(ex.Message, MessageBoxImage.Warning);
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException("ModsViewModel::ChooseSkyboxImages", ex);
+                Frontend.ShowMessageBox($"Those images couldn't be loaded:\n\n{ex.Message}", MessageBoxImage.Error);
+            }
+
+            return false;
+        }
+
+        private void RefreshSkyboxPreview()
+        {
+            IReadOnlyDictionary<string, byte[]>? faces = null;
+
+            try
+            {
+                if (SkyboxTask.NewState == SkyboxPreset.Custom)
+                    faces = SkyboxTask.PendingCustomFaces ?? Skybox.LoadInstalled();
+                else if (Skybox.IsGenerated(SkyboxTask.NewState))
+                    faces = Skybox.Generate(SkyboxTask.NewState, 128);
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException("ModsViewModel::RefreshSkyboxPreview", ex);
+            }
+
+            _skyboxPreview = faces?.ToDictionary(pair => pair.Key, pair => Skybox.MakePreview(pair.Value));
+
+            OnPropertyChanged(nameof(SelectedSkybox));
+            OnPropertyChanged(nameof(SkyboxPreviewVisibility));
+            OnPropertyChanged(nameof(SkyboxStatusText));
+
+            foreach (string name in new[] { nameof(SkyboxPreviewBk), nameof(SkyboxPreviewDn), nameof(SkyboxPreviewFt), nameof(SkyboxPreviewLf), nameof(SkyboxPreviewRt), nameof(SkyboxPreviewUp) })
+                OnPropertyChanged(name);
+        }
+
+        private BitmapSource? GetSkyboxPreview(string face) => _skyboxPreview is not null && _skyboxPreview.TryGetValue(face, out var preview) ? preview : null;
+
+        public BitmapSource? SkyboxPreviewBk => GetSkyboxPreview("bk");
+        public BitmapSource? SkyboxPreviewDn => GetSkyboxPreview("dn");
+        public BitmapSource? SkyboxPreviewFt => GetSkyboxPreview("ft");
+        public BitmapSource? SkyboxPreviewLf => GetSkyboxPreview("lf");
+        public BitmapSource? SkyboxPreviewRt => GetSkyboxPreview("rt");
+        public BitmapSource? SkyboxPreviewUp => GetSkyboxPreview("up");
+
+        public Visibility SkyboxPreviewVisibility => _skyboxPreview is null ? Visibility.Collapsed : Visibility.Visible;
+
+        public string SkyboxStatusText
+        {
+            get
+            {
+                if (SkyboxTask.Changed)
+                    return "Not applied yet: click Save, then restart Roblox.";
+
+                if (SkyboxTask.NewState == SkyboxPreset.Default)
+                    return "Using Roblox's own sky.";
+
+                return "Applied. Shows in games that don't load their own sky, starting next time Roblox launches.";
+            }
+        }
+        #endregion
 
         private void OpenCompatSettings()
         {

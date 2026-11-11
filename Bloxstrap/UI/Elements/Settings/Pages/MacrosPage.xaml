@@ -1,0 +1,15 @@
+<ui:UiPage x:Class="Bloxstrap.UI.Elements.Settings.Pages.MacrosPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:overlay="clr-namespace:Bloxstrap.UI.Elements.Overlay"
+      Title="MacrosPage"
+      Scrollable="True">
+    <!-- PSYstrap: macros get their own page so they're easy to find -->
+    <StackPanel Margin="0,0,14,14">
+        <TextBlock FontSize="14" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                   Text="Record what you do in Roblox and play it back. Recording and playback happen in game with F6 and F7; pick which macro plays here." />
+        <Border Height="3" Width="44" HorizontalAlignment="Left" CornerRadius="1.5" Margin="1,10,0,4" Background="{DynamicResource PsyCrownStripBrush}" />
+        <overlay:MacroOptionsControl />
+    </StackPanel>
+</ui:UiPage>

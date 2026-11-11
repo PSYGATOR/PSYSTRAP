@@ -1,0 +1,106 @@
+<!--
+    PSYstrap theme: layered on top of WPF UI's Dark dictionary.
+    Palette sampled from the logo: green star (#2FB52A / #5FE04C / #8CF07B), crown red (#E8213F) and gold (#F2C14E).
+    WPF UI builds its brushes from colours with StaticResource, so each overridden colour also gets its brush.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- logo palette, for PSYstrap-specific UI -->
+    <Color x:Key="PsyGreenColor">#5FE04C</Color>
+    <Color x:Key="PsyDeepGreenColor">#1A7F22</Color>
+    <Color x:Key="PsyCrownRedColor">#E8213F</Color>
+    <Color x:Key="PsyCrownGoldColor">#F2C14E</Color>
+    <SolidColorBrush x:Key="PsyGreenBrush" Color="{StaticResource PsyGreenColor}" />
+    <SolidColorBrush x:Key="PsyCrownRedBrush" Color="{StaticResource PsyCrownRedColor}" />
+    <SolidColorBrush x:Key="PsyCrownGoldBrush" Color="{StaticResource PsyCrownGoldColor}" />
+
+    <!-- crown-coloured strip used as a section accent -->
+    <LinearGradientBrush x:Key="PsyCrownStripBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Offset="0" Color="#F2C14E" />
+        <GradientStop Offset="0.5" Color="#E8213F" />
+        <GradientStop Offset="1" Color="#F2C14E" />
+    </LinearGradientBrush>
+
+    <!-- window background: dark green with a soft green glow top-left and a faint crown-red glow bottom-right -->
+    <DrawingBrush x:Key="PsyWindowBackgroundBrush" Stretch="Fill">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Geometry="M0,0 H1 V1 H0 Z">
+                    <GeometryDrawing.Brush>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Offset="0" Color="#FF10251A" />
+                            <GradientStop Offset="0.55" Color="#FF0A170E" />
+                            <GradientStop Offset="1" Color="#FF070F09" />
+                        </LinearGradientBrush>
+                    </GeometryDrawing.Brush>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="M0,0 H1 V1 H0 Z">
+                    <GeometryDrawing.Brush>
+                        <RadialGradientBrush Center="0.05,0" GradientOrigin="0.05,0" RadiusX="0.75" RadiusY="1.1">
+                            <GradientStop Offset="0" Color="#3036C42E" />
+                            <GradientStop Offset="1" Color="#0036C42E" />
+                        </RadialGradientBrush>
+                    </GeometryDrawing.Brush>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="M0,0 H1 V1 H0 Z">
+                    <GeometryDrawing.Brush>
+                        <RadialGradientBrush Center="1,1" GradientOrigin="1,1" RadiusX="0.55" RadiusY="0.8">
+                            <GradientStop Offset="0" Color="#1CE8213F" />
+                            <GradientStop Offset="1" Color="#00E8213F" />
+                        </RadialGradientBrush>
+                    </GeometryDrawing.Brush>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <!-- WPF UI overrides -->
+    <Color x:Key="ApplicationBackgroundColor">#FF0A170E</Color>
+    <SolidColorBrush x:Key="ApplicationBackgroundBrush" Color="#FF0A170E" />
+
+    <Color x:Key="SolidBackgroundFillColorBase">#0A170E</Color>
+    <Color x:Key="SolidBackgroundFillColorSecondary">#08120B</Color>
+    <Color x:Key="SolidBackgroundFillColorTertiary">#102217</Color>
+    <Color x:Key="SolidBackgroundFillColorQuarternary">#14291C</Color>
+    <SolidColorBrush x:Key="SolidBackgroundFillColorBaseBrush" Color="#0A170E" />
+    <SolidColorBrush x:Key="SolidBackgroundFillColorSecondaryBrush" Color="#08120B" />
+    <SolidColorBrush x:Key="SolidBackgroundFillColorTertiaryBrush" Color="#102217" />
+    <SolidColorBrush x:Key="SolidBackgroundFillColorQuarternaryBrush" Color="#14291C" />
+
+    <Color x:Key="CardBackgroundFillColorDefault">#1283E07A</Color>
+    <Color x:Key="CardBackgroundFillColorSecondary">#0A83E07A</Color>
+    <SolidColorBrush x:Key="CardBackgroundFillColorDefaultBrush" Color="#1283E07A" />
+    <SolidColorBrush x:Key="CardBackgroundFillColorSecondaryBrush" Color="#0A83E07A" />
+
+    <Color x:Key="ControlFillColorDefault">#1483E07A</Color>
+    <Color x:Key="ControlFillColorSecondary">#1E83E07A</Color>
+    <Color x:Key="ControlFillColorTertiary">#0A83E07A</Color>
+    <Color x:Key="ControlFillColorInputActive">#E00C1A10</Color>
+    <SolidColorBrush x:Key="ControlFillColorDefaultBrush" Color="#1483E07A" />
+    <SolidColorBrush x:Key="ControlFillColorSecondaryBrush" Color="#1E83E07A" />
+    <SolidColorBrush x:Key="ControlFillColorTertiaryBrush" Color="#0A83E07A" />
+    <SolidColorBrush x:Key="ControlFillColorInputActiveBrush" Color="#E00C1A10" />
+
+    <Color x:Key="SubtleFillColorSecondary">#1483E07A</Color>
+    <Color x:Key="SubtleFillColorTertiary">#0C83E07A</Color>
+    <SolidColorBrush x:Key="SubtleFillColorSecondaryBrush" Color="#1483E07A" />
+    <SolidColorBrush x:Key="SubtleFillColorTertiaryBrush" Color="#0C83E07A" />
+
+    <Color x:Key="ControlStrokeColorDefault">#2263D457</Color>
+    <Color x:Key="DividerStrokeColorDefault">#2449C23A</Color>
+    <SolidColorBrush x:Key="ControlStrokeColorDefaultBrush" Color="#2263D457" />
+    <SolidColorBrush x:Key="DividerStrokeColorDefaultBrush" Color="#2449C23A" />
+
+    <Color x:Key="LayerFillColorDefault">#5010261A</Color>
+    <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="#5010261A" />
+
+    <!-- warnings/errors take the crown colours -->
+    <Color x:Key="SystemFillColorCaution">#F2C14E</Color>
+    <Color x:Key="SystemFillColorCritical">#FF5A6E</Color>
+    <SolidColorBrush x:Key="SystemFillColorCautionBrush" Color="#F2C14E" />
+    <SolidColorBrush x:Key="SystemFillColorCriticalBrush" Color="#FF5A6E" />
+
+    <!-- keys the bootstrapper theme editor expects (same as Dark.xaml, green links) -->
+    <SolidColorBrush x:Key="NewTextEditorBackground" Color="#0E1D12" />
+    <SolidColorBrush x:Key="NewTextEditorForeground" Color="White" />
+    <SolidColorBrush x:Key="NewTextEditorLink" Color="#5FE04C" />
+</ResourceDictionary>

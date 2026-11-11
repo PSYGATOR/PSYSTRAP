@@ -40,6 +40,13 @@ namespace Bloxstrap
 
         public LaunchFlag ForceFlag                 { get; } = new("force");
 
+        // PSYstrap
+        public LaunchFlag MultiInstanceHostFlag     { get; } = new("multiinstancehost");
+
+        public LaunchFlag InstanceManagerFlag       { get; } = new("instances");
+
+        public LaunchFlag SmartMacroEditorFlag      { get; } = new("smartmacroeditor");
+
 #if DEBUG
         public bool BypassUpdateCheck => true;
 #else

@@ -2,7 +2,6 @@
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 
-using Bloxstrap.UI.Elements.About;
 
 namespace Bloxstrap.UI.ViewModels.Installer
 {
@@ -16,7 +15,6 @@ namespace Bloxstrap.UI.ViewModels.Installer
 
         public ICommand LaunchRobloxStudioCommand => new RelayCommand(LaunchRobloxStudio);
 
-        public ICommand LaunchAboutCommand => new RelayCommand(LaunchAbout);
 
         public event EventHandler<NextAction>? CloseWindowRequest;
 
@@ -26,6 +24,5 @@ namespace Bloxstrap.UI.ViewModels.Installer
 
         private void LaunchRobloxStudio() => CloseWindowRequest?.Invoke(this, NextAction.LaunchRobloxStudio);
 
-        private void LaunchAbout() => new MainWindow().ShowDialog();
     }
 }

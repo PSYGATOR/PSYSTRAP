@@ -36,13 +36,21 @@ namespace Bloxstrap.UI.ViewModels.Settings
 
         public ICommand ExportDataCommand => new RelayCommand(ExportData);
 
+        /// <summary>PSYstrap: shows Bloxstrap's MIT license (embedded from the repo's LICENSE file).</summary>
+        public ICommand ViewLicenseCommand => new RelayCommand(() =>
+        {
+            using var stream = typeof(BloxstrapViewModel).Assembly.GetManifestResourceStream("PSYstrap.BloxstrapLicense.txt");
+            string text = stream is null ? "License text not found." : new StreamReader(stream).ReadToEnd();
+            Frontend.ShowMessageBox(text, System.Windows.MessageBoxImage.Information);
+        });
+
         private void ExportData()
         {
             string timestamp = DateTime.UtcNow.ToString("yyyyMMdd'T'HHmmss'Z'");
 
             var dialog = new SaveFileDialog 
             { 
-                FileName = $"Bloxstrap-export-{timestamp}.zip",
+                FileName = $"{App.ProjectName}-export-{timestamp}.zip",
                 Filter = $"{Strings.FileTypes_ZipArchive}|*.zip" 
             };
 

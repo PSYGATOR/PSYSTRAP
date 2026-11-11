@@ -86,6 +86,61 @@
             </ComboBox>
         </controls:OptionControl>
 
+        <!-- PSYstrap: custom skybox -->
+        <TextBlock Text="Skybox" FontSize="20" FontWeight="Medium" Margin="0,16,0,0" />
+        <Border Height="3" Width="44" HorizontalAlignment="Left" CornerRadius="1.5" Margin="1,4,0,0" Background="{DynamicResource PsyCrownStripBrush}" />
+
+        <controls:OptionControl
+            Header="Custom skybox"
+            Description="Replaces Roblox's default sky. Many games (Rivals, most shooters and showcases) load their own sky after joining, which covers this one, so you'll only see it while loading there.">
+            <StackPanel Orientation="Horizontal">
+                <ComboBox Margin="5,0,0,0" Padding="10,5,10,5" Width="200" ItemsSource="{Binding SkyboxPresets, Mode=OneTime}" SelectedItem="{Binding SelectedSkybox, Mode=TwoWay}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=., Converter={StaticResource EnumNameConverter}}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <ui:Button Margin="8,0,0,0" Icon="ImageAdd24" Content="Choose images" Command="{Binding ChooseSkyboxImagesCommand}" />
+            </StackPanel>
+        </controls:OptionControl>
+
+        <ui:Card Margin="0,8,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- unfolded cube: up on top, then left/front/right/back, down underneath -->
+                <Grid Grid.Column="0" Width="256" Height="192" Margin="0,0,16,0" Visibility="{Binding SkyboxPreviewVisibility, Mode=OneWay}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Image Grid.Row="0" Grid.Column="1" Stretch="Fill" Source="{Binding SkyboxPreviewUp, Mode=OneWay}" ToolTip="Up" />
+                    <Image Grid.Row="1" Grid.Column="0" Stretch="Fill" Source="{Binding SkyboxPreviewLf, Mode=OneWay}" ToolTip="Left" />
+                    <Image Grid.Row="1" Grid.Column="1" Stretch="Fill" Source="{Binding SkyboxPreviewFt, Mode=OneWay}" ToolTip="Front" />
+                    <Image Grid.Row="1" Grid.Column="2" Stretch="Fill" Source="{Binding SkyboxPreviewRt, Mode=OneWay}" ToolTip="Right" />
+                    <Image Grid.Row="1" Grid.Column="3" Stretch="Fill" Source="{Binding SkyboxPreviewBk, Mode=OneWay}" ToolTip="Back" />
+                    <Image Grid.Row="2" Grid.Column="1" Stretch="Fill" Source="{Binding SkyboxPreviewDn, Mode=OneWay}" ToolTip="Down" />
+                </Grid>
+
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock FontSize="14" Text="{Binding SkyboxStatusText, Mode=OneWay}" TextWrapping="Wrap" />
+                    <TextBlock Margin="0,6,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                               Text="For your own sky, pick 6 images with bk, dn, ft, lf, rt and up in their names (like sky_bk.png or SkyboxUp.png), or a single image to use on every side. PNG, JPG and BMP work, as do Roblox .tex/.dds sky files." />
+                </StackPanel>
+            </Grid>
+        </ui:Card>
+
         <TextBlock Text="{x:Static resources:Strings.Common_Miscellaneous}" FontSize="20" FontWeight="Medium" Margin="0,16,0,0" />
 
         <controls:OptionControl 

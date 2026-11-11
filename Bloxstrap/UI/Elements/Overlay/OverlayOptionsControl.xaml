@@ -1,0 +1,85 @@
+<UserControl x:Class="Bloxstrap.UI.Elements.Overlay.OverlayOptionsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:controls="clr-namespace:Bloxstrap.UI.Elements.Controls"
+             xmlns:vm="clr-namespace:Bloxstrap.UI.ViewModels.Overlay"
+             xmlns:overlay="clr-namespace:Bloxstrap.UI.Elements.Overlay"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance vm:OverlayOptionsViewModel}"
+             d:DesignWidth="600">
+    <!-- PSYstrap: overlay options, shown both on the Settings "Overlay" page and in the in-game menu -->
+    <StackPanel>
+        <controls:OptionControl Header="Show counters" Description="The stat counters drawn over Roblox. The menu key keeps working while they're hidden.">
+            <ui:ToggleSwitch IsChecked="{Binding Enabled, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <TextBlock Text="Counters" FontSize="16" FontWeight="Medium" Margin="0,14,0,0" />
+
+        <controls:OptionControl Header="FPS counter" Description="Frames Roblox draws each second. Green 55+, gold 30+, red below.">
+            <ui:ToggleSwitch IsChecked="{Binding ShowFramerate, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="CPS counter" Description="Left | right clicks in the last second, counted while Roblox is focused.">
+            <ui:ToggleSwitch IsChecked="{Binding ShowClicksPerSecond, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="Memory" Description="RAM the Roblox window is using.">
+            <ui:ToggleSwitch IsChecked="{Binding ShowMemory, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="Session time" Description="How long Roblox has been open.">
+            <ui:ToggleSwitch IsChecked="{Binding ShowSessionTime, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="Clock" Description="Your PC's time.">
+            <ui:ToggleSwitch IsChecked="{Binding ShowClock, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="Position" Description="Which corner of the Roblox window the counters sit in.">
+            <ComboBox Width="160" Padding="10,5,10,5" ItemsSource="{Binding Corners, Mode=OneTime}" SelectedItem="{Binding Corner, Mode=TwoWay}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Path=., Converter={StaticResource EnumNameConverter}}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="Menu key" Description="Opens this menu while you're in Roblox.">
+            <ComboBox Width="160" Padding="10,5,10,5" ItemsSource="{Binding MenuKeys, Mode=OneTime}" SelectedItem="{Binding MenuKey, Mode=TwoWay}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Path=., Converter={StaticResource EnumNameConverter}}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </controls:OptionControl>
+
+        <TextBlock Text="Macros" FontSize="16" FontWeight="Medium" Margin="0,14,0,0" />
+        <overlay:MacroOptionsControl />
+
+        <TextBlock Text="Roblox" FontSize="16" FontWeight="Medium" Margin="0,14,0,0" />
+
+        <StackPanel Visibility="{Binding ApplyNowVisibility, Mode=OneTime}">
+            <ui:Button Margin="0,8,0,0" Icon="Server24" HorizontalAlignment="Left" Content="Hop to the smallest server of this game" Command="{Binding SmallestServerCommand}" />
+            <TextBlock Margin="2,4,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding ServerHopStatus, Mode=OneWay}" />
+        </StackPanel>
+
+        <controls:OptionControl Header="Potato mode (disable graphics)"
+            Description="Lowest textures, no grass, lowest detail and graphics level 1. Lighter on your PC and on Wi-Fi (far less to download when joining), and good for background clients. Applies to every client from the next launch.">
+            <ui:ToggleSwitch IsChecked="{Binding PotatoMode, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="Frame rate cap"
+            Description="Set each time PSYstrap launches Roblox. Roblox only reads this at startup, so a change takes effect next launch.">
+            <ComboBox Width="160" Padding="10,5,10,5" ItemsSource="{Binding FramerateCaps, Mode=OneTime}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding FramerateCap, Mode=TwoWay}" />
+        </controls:OptionControl>
+        <TextBlock Margin="2,6,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding RobloxFramerateCapText, Mode=OneWay}" />
+        <ui:Button Margin="0,8,0,0" Icon="ArrowClockwise24" Appearance="Primary" HorizontalAlignment="Left"
+                   Content="Restart Roblox to apply (rejoins this server)"
+                   Command="{Binding ApplyNowCommand}" Visibility="{Binding ApplyNowVisibility, Mode=OneTime}" />
+    </StackPanel>
+</UserControl>
