@@ -1,7 +1,7 @@
 name: Build
 
 # Builds PSYstrap.exe on every push / pull request.
-# Pushing a version tag (e.g. v2.12.0) also creates a draft GitHub release with the exe attached,
+# Pushing a version tag (e.g. v2.12.0) also publishes a GitHub release with the exe attached,
 # which PSYstrap's auto-updater uses once ProjectRepository is set (fork\rebrand.ps1 -Repo owner/name).
 # Tags must be newer than the version in Bloxstrap.csproj (2.11.4), or the updater treats them as old.
 
@@ -45,12 +45,18 @@ jobs:
           name: PSYstrap (${{ github.sha }})
           path: dist/*
 
-      - name: Create draft release
+      - name: Publish release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          draft: true
+          draft: false
+          make_latest: true
           name: PSYstrap ${{ github.ref_name }}
+          body: |
+            ## Download
+            Grab **PSYstrap.exe** below and run it. Needs Windows 10/11 and the [.NET 6 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/6.0).
+
+            Already installed? PSYstrap updates itself on its next launch.
           files: |
             dist/PSYstrap.exe
             dist/License - Bloxstrap.txt
