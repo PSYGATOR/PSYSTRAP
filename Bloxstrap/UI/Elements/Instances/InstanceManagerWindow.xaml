@@ -31,7 +31,11 @@
                     <ui:ToggleSwitch IsChecked="{Binding MultiInstanceEnabled, Mode=TwoWay}" />
                 </controls:OptionControl>
 
-                <controls:OptionControl Header="Lower priority of clients you aren't using" Description="Windows you're not playing on get less CPU.">
+                <controls:OptionControl Header="Efficiency mode for windows you aren't using" Description="Same as the leaf icon in Task Manager. Windows you're not playing on get the lowest CPU priority and run in power-saving mode. The one you click on gets full speed back within a second.">
+                    <ui:ToggleSwitch IsChecked="{Binding EfficiencyModeBackground, Mode=TwoWay}" />
+                </controls:OptionControl>
+
+                <controls:OptionControl Header="Lower priority of clients you aren't using" Description="Windows you're not playing on get less CPU. (Efficiency mode already does this and more.)">
                     <ui:ToggleSwitch IsChecked="{Binding LowerBackgroundPriority, Mode=TwoWay}" />
                 </controls:OptionControl>
 

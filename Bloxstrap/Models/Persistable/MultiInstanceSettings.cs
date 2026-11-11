@@ -7,6 +7,12 @@ namespace Bloxstrap.Models.Persistable
         public bool LowerBackgroundPriority { get; set; } = true;
 
         /// <summary>
+        /// Clients you aren't using run in Windows' efficiency mode (idle priority + power throttling), like the leaf
+        /// in Task Manager. Takes priority over LowerBackgroundPriority.
+        /// </summary>
+        public bool EfficiencyModeBackground { get; set; } = true;
+
+        /// <summary>
         /// Every minute, ask Windows to page out memory of clients you aren't using. Frees RAM on low-memory PCs,
         /// at the cost of a short hitch when you switch back to that client.
         /// </summary>

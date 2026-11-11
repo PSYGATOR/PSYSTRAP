@@ -247,7 +247,8 @@ namespace Bloxstrap
 
             while (true)
             {
-                Thread.Sleep(2000);
+                // once a second, so a window you switch to gets full speed back quickly
+                Thread.Sleep(1000);
 
                 var clients = GetRobloxProcesses();
 
@@ -300,7 +301,12 @@ namespace Bloxstrap
             {
                 bool focused = client.Id == foregroundPid;
 
-                if (options.LowerBackgroundPriority)
+                // efficiency mode (Task Manager's leaf icon) = idle priority + Windows' power throttling
+                SetEfficiencyMode(client.Id, options.EfficiencyModeBackground && !focused);
+
+                if (options.EfficiencyModeBackground)
+                    SetPriority(client.Id, focused ? ProcessPriorityClass.Normal : ProcessPriorityClass.Idle);
+                else if (options.LowerBackgroundPriority)
                     SetPriority(client.Id, focused ? ProcessPriorityClass.Normal : ProcessPriorityClass.BelowNormal);
 
                 if (options.TrimBackgroundMemory && trimNow && !focused)
@@ -321,6 +327,34 @@ namespace Bloxstrap
             try
             {
                 return GetPriorityClass(handle) == (uint)priority || SetPriorityClass(handle, (uint)priority);
+            }
+            finally
+            {
+                CloseHandle(handle);
+            }
+        }
+
+        /// <summary>
+        /// Turns Windows' power throttling (EcoQoS) on or off for a process: Windows then runs it on slower,
+        /// power-efficient scheduling. Same as Task Manager's "Efficiency mode" together with idle priority.
+        /// </summary>
+        public static bool SetEfficiencyMode(int processId, bool enabled)
+        {
+            IntPtr handle = OpenProcess(PROCESS_SET_INFORMATION, false, processId);
+
+            if (handle == IntPtr.Zero)
+                return false;
+
+            try
+            {
+                var state = new PROCESS_POWER_THROTTLING_STATE
+                {
+                    Version = PROCESS_POWER_THROTTLING_CURRENT_VERSION,
+                    ControlMask = PROCESS_POWER_THROTTLING_EXECUTION_SPEED,
+                    StateMask = enabled ? PROCESS_POWER_THROTTLING_EXECUTION_SPEED : 0
+                };
+
+                return SetProcessInformation(handle, ProcessPowerThrottling, ref state, (uint)Marshal.SizeOf<PROCESS_POWER_THROTTLING_STATE>());
             }
             finally
             {
@@ -387,6 +421,21 @@ namespace Bloxstrap
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
         private static extern IntPtr OpenFileMappingW(uint access, bool inherit, string name);
+
+        private const int ProcessPowerThrottling = 4; // PROCESS_INFORMATION_CLASS
+        private const uint PROCESS_POWER_THROTTLING_CURRENT_VERSION = 1;
+        private const uint PROCESS_POWER_THROTTLING_EXECUTION_SPEED = 0x1;
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct PROCESS_POWER_THROTTLING_STATE
+        {
+            public uint Version;
+            public uint ControlMask;
+            public uint StateMask;
+        }
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool SetProcessInformation(IntPtr process, int informationClass, ref PROCESS_POWER_THROTTLING_STATE information, uint size);
 
         [DllImport("kernel32.dll")]
         private static extern bool GetProcessTimes(IntPtr process, out long creation, out long exit, out long kernel, out long user);

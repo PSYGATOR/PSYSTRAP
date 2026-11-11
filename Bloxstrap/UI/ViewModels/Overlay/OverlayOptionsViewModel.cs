@@ -91,6 +91,12 @@ namespace Bloxstrap.UI.ViewModels.Overlay
             }
         }
 
+        public bool PotatoCapFramerate
+        {
+            get => App.Settings.Prop.PotatoCapFramerate;
+            set { App.Settings.Prop.PotatoCapFramerate = value; Commit(nameof(PotatoCapFramerate)); }
+        }
+
         public IReadOnlyList<KeyValuePair<int, string>> FramerateCaps => RobloxUserSettings.FramerateCapChoices;
 
         public int FramerateCap
@@ -336,11 +342,13 @@ namespace Bloxstrap.UI.ViewModels.Overlay
             var overlay = App.Settings.Prop.Overlay;
             int framerateCap = App.Settings.Prop.FramerateCap;
             bool potato = App.Settings.Prop.PotatoMode;
+            bool potatoCap = App.Settings.Prop.PotatoCapFramerate;
 
             App.Settings.Load(false);
             App.Settings.Prop.Overlay = overlay;
             App.Settings.Prop.FramerateCap = framerateCap;
             App.Settings.Prop.PotatoMode = potato;
+            App.Settings.Prop.PotatoCapFramerate = potatoCap;
             App.Settings.Save();
         }
     }

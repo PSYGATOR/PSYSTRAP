@@ -280,6 +280,8 @@ namespace Bloxstrap
 
                 // we require deployment details for applying modifications for a worst case scenario,
                 // where we'd need to restore files from a package that isn't present on disk and needs to be redownloaded
+                PotatoMode.EnsureFlags();
+
                 allModificationsApplied = await ApplyModifications();
             }
 

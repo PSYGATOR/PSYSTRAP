@@ -14,6 +14,9 @@ namespace Bloxstrap.Models.Persistable
         public OverlaySettings Overlay { get; set; } = new();
         public bool MultiInstance { get; set; } = false;
         public bool PotatoMode { get; set; } = false;
+
+        // PSYstrap: potato mode also caps Roblox at 60 FPS
+        public bool PotatoCapFramerate { get; set; } = true;
         public MultiInstanceSettings MultiInstanceOptions { get; set; } = new();
 
         // PSYstrap: written to Roblox's GlobalBasicSettings before each launch. 0 = leave Roblox's own setting alone.

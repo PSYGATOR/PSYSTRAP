@@ -26,7 +26,11 @@ Press Insert while you're in Roblox. Press it again (or click back into Roblox) 
 
 **FPS cap** - PSYstrap writes this into Roblox's settings file right before Roblox starts. The options are the same ones Roblox has (default 60, 60, 120, 144, 240), because Roblox ignores other values. Roblox only reads it on startup, so if you change it while playing, hit "Restart Roblox to apply". That closes Roblox and puts you back in the same server.
 
-**Potato mode** - turns everything down: lowest textures, no grass, lowest detail, graphics level 1. Good for slow PCs, bad wifi (less to download when you join a game) and alt windows. It only uses flags that Roblox still allows, and it kicks in next time Roblox opens.
+**Potato mode** - turns everything down: lowest textures, no grass, no anti-aliasing, lowest detail, graphics level 1. Good for slow PCs, bad wifi (less to download when you join a game) and running lots of windows. It only uses flags that Roblox still allows, and it kicks in next time Roblox opens.
+
+By default potato mode also caps Roblox at 60 FPS (the lowest Roblox allows), so your alt windows aren't drawing hundreds of frames nobody's watching. You can turn that part off with "Cap at 60 FPS in potato mode". While it's on it overrides your normal FPS cap.
+
+If you're running a bunch of windows, also turn on efficiency mode in the [Instances window](Multi-instance.md).
 
 **Hop to the smallest server** - moves you to the emptiest public server of the game you're in.
 

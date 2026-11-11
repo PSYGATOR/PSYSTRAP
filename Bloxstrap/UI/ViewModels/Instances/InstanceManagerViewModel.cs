@@ -170,6 +170,12 @@ namespace Bloxstrap.UI.ViewModels.Instances
             set => SaveSettings(settings => settings.MultiInstanceOptions.LowerBackgroundPriority = value, nameof(LowerBackgroundPriority));
         }
 
+        public bool EfficiencyModeBackground
+        {
+            get => App.Settings.Prop.MultiInstanceOptions.EfficiencyModeBackground;
+            set => SaveSettings(settings => settings.MultiInstanceOptions.EfficiencyModeBackground = value, nameof(EfficiencyModeBackground));
+        }
+
         public bool TrimBackgroundMemory
         {
             get => App.Settings.Prop.MultiInstanceOptions.TrimBackgroundMemory;

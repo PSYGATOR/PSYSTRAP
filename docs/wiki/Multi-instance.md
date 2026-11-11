@@ -15,10 +15,19 @@ If Roblox was already open when you turned it on, close all your Roblox windows 
 - **Launch new instance** - opens another Roblox
 - **Arrange windows** - puts all the Roblox windows in a grid
 - each window has buttons to focus it, minimize it, trim its RAM or close it
-- **Lower priority of clients you aren't using** (on by default) - the windows you're not playing on get less CPU
+- **Efficiency mode for windows you aren't using** (on by default) - same as the leaf icon in Task Manager. Windows you're not playing on get the lowest CPU priority and run in power saving mode, so they get out of the way of the one you're using. Whichever window you click on gets full speed back within a second.
+- **Lower priority of clients you aren't using** - a lighter version of the above, only used if efficiency mode is off
 - **Trim RAM of clients you aren't using** (off by default) - every minute it pushes the unused memory of background windows to the page file. Saves a lot of RAM but there can be a small freeze when you switch back to one.
 
-It also shows how much RAM and CPU each one is using. Potato mode (see [Overlay](Overlay.md)) helps a lot if you're running a bunch.
+It also shows how much RAM and CPU each one is using.
+
+## Making lots of windows run faster
+
+1. Turn on potato mode with the 60 FPS cap (see [Overlay](Overlay.md)). This is the biggest one.
+2. Leave efficiency mode on.
+3. Turn on Trim RAM if you're low on memory.
+4. Click Arrange windows. Smaller windows have fewer pixels to draw.
+5. Minimize windows you don't need to watch. A minimized Roblox barely draws anything (but turn taking skips minimized windows).
 
 ## Different accounts
 

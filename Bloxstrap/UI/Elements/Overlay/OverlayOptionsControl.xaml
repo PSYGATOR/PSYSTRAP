@@ -69,8 +69,13 @@
         </StackPanel>
 
         <controls:OptionControl Header="Potato mode (disable graphics)"
-            Description="Lowest textures, no grass, lowest detail, graphics level 1. Helps slow PCs, bad wifi and alt windows. Works from the next time Roblox opens.">
+            Description="Lowest textures, no grass, no anti-aliasing, lowest detail, graphics level 1. Helps slow PCs, bad wifi and running lots of windows. Works from the next time Roblox opens.">
             <ui:ToggleSwitch IsChecked="{Binding PotatoMode, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="Cap at 60 FPS in potato mode"
+            Description="Stops every window drawing hundreds of frames nobody's looking at. Overrides the frame rate cap below while potato mode is on.">
+            <ui:ToggleSwitch IsChecked="{Binding PotatoCapFramerate, Mode=TwoWay}" IsEnabled="{Binding PotatoMode, Mode=OneWay}" />
         </controls:OptionControl>
 
         <controls:OptionControl Header="Frame rate cap"
