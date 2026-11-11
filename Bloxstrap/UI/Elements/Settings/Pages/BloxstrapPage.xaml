@@ -81,7 +81,7 @@
                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
                     <TextBlock FontSize="14" Text="Credits" />
                     <TextBlock Margin="0,2,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
-                               Text="PSYstrap is based on Bloxstrap by pizzaboxer and contributors, used under the MIT License. Not affiliated with Roblox or Bloxstrap." />
+                               Text="Based on Bloxstrap by pizzaboxer and contributors (MIT license). Not affiliated with Roblox or Bloxstrap." />
                 </StackPanel>
                 <ui:Button Grid.Column="1" Margin="12,0,0,0" Icon="Document24" Content="View license" Command="{Binding ViewLicenseCommand}" />
             </Grid>

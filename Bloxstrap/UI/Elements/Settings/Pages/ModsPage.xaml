@@ -92,7 +92,7 @@
 
         <controls:OptionControl
             Header="Custom skybox"
-            Description="Replaces Roblox's default sky. Many games (Rivals, most shooters and showcases) load their own sky after joining, which covers this one, so you'll only see it while loading there.">
+            Description="Changes Roblox's default sky. Games with their own sky (Rivals, most shooters etc.) cover it once you join.">
             <StackPanel Orientation="Horizontal">
                 <ComboBox Margin="5,0,0,0" Padding="10,5,10,5" Width="200" ItemsSource="{Binding SkyboxPresets, Mode=OneTime}" SelectedItem="{Binding SelectedSkybox, Mode=TwoWay}">
                     <ComboBox.ItemTemplate>
@@ -136,7 +136,7 @@
                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
                     <TextBlock FontSize="14" Text="{Binding SkyboxStatusText, Mode=OneWay}" TextWrapping="Wrap" />
                     <TextBlock Margin="0,6,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
-                               Text="For your own sky, pick 6 images with bk, dn, ft, lf, rt and up in their names (like sky_bk.png or SkyboxUp.png), or a single image to use on every side. PNG, JPG and BMP work, as do Roblox .tex/.dds sky files." />
+                               Text="For your own sky, pick 6 images with bk, dn, ft, lf, rt and up in the names (like sky_bk.png), or just 1 image for every side. PNG, JPG, BMP or Roblox .tex/.dds files." />
                 </StackPanel>
             </Grid>
         </ui:Card>

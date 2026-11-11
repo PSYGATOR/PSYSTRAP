@@ -21,7 +21,7 @@
                     <Run FontWeight="Bold" Foreground="#5FE04C">F7</Run><Run Text=" plays the macro selected below, " />
                     <Run FontWeight="Bold" Foreground="#5FE04C">F7</Run><Run Text=" again stops it." />
                     <LineBreak />
-                    <Run Text="Playback pauses whenever Roblox isn't the focused window, so it never types into other apps." />
+                    <Run Text="If you click off Roblox, playback pauses so it can't type into other windows." />
                 </TextBlock>
             </StackPanel>
         </ui:Card>
@@ -44,7 +44,7 @@
 
         <TextBlock Text="Smart macros" FontSize="16" FontWeight="Medium" Margin="0,16,0,0" />
         <TextBlock Margin="2,2,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
-                   Text="Watch the Roblox window and react: &quot;when the Disconnected message is seen → rejoin&quot;, &quot;when the bag-full icon is seen → play my Sell macro&quot;. F8 in Roblox starts and stops the one selected here." />
+                   Text="Watch the screen and do stuff when something shows up, like rejoining when you get disconnected. F8 in game starts/stops the one picked here." />
 
         <controls:OptionControl Header="Smart macro" Description="{Binding SelectedSmartMacroDetails, Mode=OneWay}">
             <StackPanel Orientation="Horizontal">

@@ -8,7 +8,7 @@
     <!-- PSYstrap: macros get their own page so they're easy to find -->
     <StackPanel Margin="0,0,14,14">
         <TextBlock FontSize="14" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                   Text="Record what you do in Roblox and play it back. Recording and playback happen in game with F6 and F7; pick which macro plays here." />
+                   Text="Record stuff you do in Roblox and play it back. F6 records and F7 plays in game, pick which macro F7 plays below." />
         <Border Height="3" Width="44" HorizontalAlignment="Left" CornerRadius="1.5" Margin="1,10,0,4" Background="{DynamicResource PsyCrownStripBrush}" />
         <overlay:MacroOptionsControl />
     </StackPanel>

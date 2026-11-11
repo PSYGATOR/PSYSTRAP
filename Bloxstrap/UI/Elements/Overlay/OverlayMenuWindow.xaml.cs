@@ -26,7 +26,7 @@ namespace Bloxstrap.UI.Elements.Overlay
 
         private void RefreshFooter()
         {
-            FooterText.Text = $"Changes save straight away. Press {App.Settings.Prop.Overlay.MenuKey.ToEnumName()} or click back into Roblox to close.";
+            FooterText.Text = $"Changes save right away. Press {App.Settings.Prop.Overlay.MenuKey.ToEnumName()} or click Roblox to close.";
         }
 
         private void OpenInstances_Click(object sender, System.Windows.RoutedEventArgs e)

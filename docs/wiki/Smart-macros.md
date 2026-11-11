@@ -1,66 +1,55 @@
-# 🧠 Smart macros
+# Smart macros
 
-<img src="../images/smart-macro-editor.jpg" width="640" alt="Smart macro editor" />
+<img src="../images/smart-macro-editor.jpg" width="600" alt="Smart macro editor" />
 
-A smart macro watches the Roblox window and reacts to it:
+A smart macro looks at the Roblox window and does stuff when something shows up. Like "if the disconnected message is there for 2 seconds, rejoin" or "if the bag full icon shows up, play my Sell macro".
 
-> *When **Disconnected** is seen for 2 s → **Rejoin server***
-> *When **Bag full** is seen → **Play macro** Sell*
+Make one in Settings > Macros > Smart macros > New. Select it on that page, then press F8 in Roblox to start/stop it.
 
-Create one in **Settings → Macros → Smart macros → New**, select it there, and press **F8** in Roblox to start or stop it.
+## 1. Screenshot
 
-## 1. Take a screenshot
+Get Roblox on the screen you want to react to (the error, the full bag icon, whatever) and click "Screenshot Roblox". The editor moves out of the way while it takes it. You can also open a screenshot you saved before.
 
-Get Roblox to the screen you want to react to (the error popup, the full-bag icon…), then press **Screenshot Roblox**. The editor gets out of the way while it captures. **Open image** loads a screenshot you saved earlier.
+Make the smart macro at the same window size you're going to run it at. Positions are saved relative to the window, but the Roblox top bar and some game UI stay the same size in pixels no matter how big the window is. If you're going to run a few windows side by side, click Arrange windows first and take the screenshot then.
 
-> 💡 **Make smart macros at the window size they'll run at.** Detector positions are stored relative to the window, but Roblox's top bar and some game UI stay the same pixel size at any window size. If you'll run several clients side by side, press **Arrange windows** first and screenshot a client at that size.
+## 2. Detectors
 
-## 2. Add detectors
+Pick a mode and click or drag on the screenshot:
 
-Choose a mode, then click or drag on the screenshot:
+- **Pixel check** (click) - checks if that spot is a certain colour. You can change how close the colour has to be.
+- **Picture check** (drag a box) - checks if that picture shows up near the same spot. It can move a little bit. You can change how close the match has to be (90% by default).
+- **Text check** (drag a box) - reads the text there using the OCR built into Windows. It fills in the text for you, and you can shorten it to just the word that matters. Caps, spaces and punctuation don't matter.
 
-| Mode | You… | It checks for… | Tune it with |
-|---|---|---|---|
-| **Pixel check** | click a spot | that spot being (close to) that colour | **Colour tolerance** (0–255, default 30) |
-| **Picture check** | drag a box | that picture appearing near where it was (it can shift about 8% of the window) | **Match %** (default 90) |
-| **Text check** | drag a box | that area containing some text, read with Windows' built-in OCR | the **text to look for** (filled in for you) |
+Give them names so your rules make sense ("Reconnect button", "Bag full"). Click Test to see if each one finds its thing on the current screenshot.
 
-Text checks ignore capital letters, spaces and punctuation, so `Dis-connected!` still matches `disconnected`. Shorten the text to the important word if the area holds more than you need.
+## 3. Rules
 
-Rename detectors so your rules read nicely (*Reconnect button*, *Bag full*…). **Test** checks every detector against the current screenshot and shows ✔/✘, plus what the text check read. Take another screenshot in a different situation to check the opposite.
+Each rule is: when (detector) is seen / is gone for (X seconds), do (action).
 
-## 3. Add rules
+Actions:
+- **Play macro** - plays one of your normal [macros](Macros.md)
+- **Press key** - E, Space, F, 1, LeftShift, Enter etc.
+- **Click it** - clicks where the detector found its thing
+- **Wait** - waits some seconds
+- **Rejoin server** - closes Roblox and opens it back in the same server
+- **Stop smart macro**
 
-Each rule reads: **When** *detector* **is seen / is gone** **for** *N* seconds **→** *action*.
-
-| Action | Does |
-|---|---|
-| **Play macro** | Plays one of your [macros](Macros.md) once |
-| **Press key** | Taps a key: `E`, `Space`, `F`, `1`, `LeftShift`, `Enter`… |
-| **Click it** | Clicks where the detector found its target (the picture or text box, or the pixel) |
-| **Wait (seconds)** | Waits |
-| **Rejoin server** | Closes Roblox and opens it back in the same server |
-| **Stop smart macro** | Stops |
-
-- Rules are checked **top to bottom**, and the **first** one that's ready fires. Use ↑ to reorder.
-- **Wait at least N s before firing again** is a cooldown, so a rule doesn't spam.
-- **Check every … ms** (default 400) sets how often the screen is read.
+It goes through the rules top to bottom and runs the first one that's ready. Use the up arrow to move them around. The "wait at least X s before firing again" box stops a rule from spamming. "Check every" at the top is how often it looks at the screen (400ms by default).
 
 ## Running it
 
-Press **F8** in Roblox. The overlay shows ◆ *name*: what fired last. Press **F8** again to stop.
+Press F8 in Roblox. The overlay shows what it did last. F8 again to stop.
 
-- It **pauses whenever Roblox isn't focused**, and the Roblox window must be **visible** (not minimised or covered), because it reads the screen.
-- While it runs, PSYstrap's own overlay is hidden from the screenshots so it can't confuse detectors (this also hides it from OBS and screenshots meanwhile).
+It pauses if Roblox isn't the focused window, and the window has to actually be visible (not minimized or covered) because it's reading the screen. While it's running the PSYstrap overlay is hidden from screenshots so it doesn't mess up the detectors.
 
-To run smart macros on several clients, see [Turn-taking](Turn-taking.md).
+To run smart macros on more than one window, see [Turn taking](Turn-taking.md).
 
-## Example: auto-reconnect
+## Example: auto reconnect
 
-1. Get the *Disconnected* popup on screen and take a screenshot.
-2. Choose **Text check** and drag over the popup's title. It reads *Disconnected*.
-3. Choose **Picture check** and drag over the **Reconnect** button. Name it *Reconnect*.
-4. Add two rules:
-   - When *Reconnect* is seen → **Click it** (cooldown 5 s)
-   - When *Disconnected* is seen for 15 s → **Rejoin server**
-5. **Save**, select it on the Macros page, and press **F8** in game.
+1. Get the disconnected popup on screen and take a screenshot.
+2. Text check, drag over the popup title. It should read "Disconnected".
+3. Picture check, drag over the Reconnect button. Call it "Reconnect".
+4. Rules:
+   - when Reconnect is seen, Click it (wait 5s before firing again)
+   - when Disconnected is seen for 15s, Rejoin server
+5. Save, select it on the Macros page and press F8 in game.

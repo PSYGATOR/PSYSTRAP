@@ -1,44 +1,36 @@
-# 👥 Accounts
+# Accounts
 
-Save your Roblox accounts once, then open any of them, each in its own client, without going through your browser.
+Save your accounts once and open any of them later without logging in through your browser.
 
-## Adding an account
+## Adding one
 
-1. Open the **Instances** window and click **Add account**.
-2. Roblox's own login page opens inside PSYstrap. Sign in as usual (2-step verification and captchas work normally).
-3. Done. The account appears in the list.
+In the Instances window, click "Add account". The normal Roblox login page opens. Log in like you usually would (2-step verification works). That's it, the account shows up in the list.
 
-## Is it safe?
+## Is this safe?
 
-- **Your password is never seen or stored.** You type it into Roblox's own page; PSYstrap only keeps the sign-in (session) Roblox gives back afterwards.
-- **The session is encrypted** with Windows DPAPI for *your Windows user on this PC*. Copied to another PC or user, `Accounts.json` is useless.
-- **It's only ever sent to roblox.com**, and never written to PSYstrap's logs.
-- **The login page runs in a temporary browser profile** that's deleted when the window closes, and only roblox.com pages can load in it.
+- PSYstrap never sees your password. You type it into Roblox's page, and PSYstrap only keeps the login Roblox gives back after.
+- That login is encrypted with Windows (DPAPI) so it only works for your Windows user on this PC. If someone copies `Accounts.json` to another PC it's useless.
+- It's only ever sent to roblox.com and never goes in the log files.
+- The login page uses a temporary browser profile that gets deleted after, and it can only load roblox.com.
 
 ## Opening accounts
 
-Tick the accounts you want, pick a target, and click **Launch**:
+Tick the accounts you want, choose where to send them and click Launch:
 
-| Target | Opens the accounts into… |
-|---|---|
-| **Join *name*'s server** | The exact server another running client is in. It appears once that client has joined a game. Great for bringing alts into your main's server without friending them first. |
-| **Smallest server of a game** | The emptiest public server of the place ID you enter |
-| **Any server of a game** | Any public server of that place |
+- **Join (name)'s server** - puts them in the same server another one of your windows is in. Shows up once that window is in a game. Good for getting alts into your main's server without friending them.
+- **Smallest server of a game** - the emptiest public server of a game
+- **Any server of a game** - any public server
 
-Accounts open one at a time, about 12 seconds apart, each in its own client. Multi-instance is switched on automatically. The **place ID** is the number in a game's link: `roblox.com/games/`**`1234567890`**`/…`.
+For the last two, type the place ID. It's the number in the game link: roblox.com/games/**1234567890**/...
 
-## How long do saved accounts last?
+They open one at a time, about 12 seconds apart, each in its own window. Multi instance gets turned on automatically.
 
-They stay saved until you remove them. Roblox can end a session, though, for example when you:
+## How long do they last?
 
-- change that account's password,
-- use **Log out of all other sessions**, or
-- leave it unused for a long time.
+They stay until you remove them. But Roblox can log the session out if you change that account's password, use "log out of all other sessions", or don't use it for a long time. Logging out on your phone or browser doesn't affect it.
 
-Logging out on your phone or browser doesn't affect it.
+If one stops working you'll see "Roblox refused ... saved sign-in". Just click Add account and log into the same account again, it replaces the old one.
 
-When a session has ended, launching shows *"Roblox refused … saved sign-in"*. Just click **Add account** and sign in to the same account again; it replaces the old one.
+## Removing one
 
-## Removing an account
-
-Click the 🗑 next to it. This only deletes PSYstrap's saved sign-in; the Roblox account itself isn't touched.
+Click the bin icon next to it. That only removes it from PSYstrap, your actual account isn't touched.

@@ -1,66 +1,54 @@
-# 🛠️ Building
+# Building
 
-## Requirements
+You need Windows, Git and the .NET SDK (6 or newer works).
 
-- Windows 10/11
-- A .NET SDK, 6 or newer (`global.json` rolls forward to newer SDKs)
-- Git, to clone with submodules
-
-## Build
-
-```powershell
+```
 git clone --recursive https://github.com/AGamingotter/PSYSTRAP.git
 cd PSYSTRAP
 powershell -ExecutionPolicy Bypass -File fork\build.ps1
 ```
 
-The result is a single **`fork\dist\PSYstrap.exe`**, with the license files next to it.
+You get `fork\dist\PSYstrap.exe` plus the license files. Don't use the exe that a normal `dotnet build` puts in `bin`, it's only a small launcher and won't work once it's installed.
 
-> ⚠️ Don't distribute the `bin\…\PSYstrap.exe` from a plain `dotnet build`. That's only a small launcher, and the program lives in a separate DLL. The installer copies only the exe, so the installed copy wouldn't start.
+## Releases
 
-## Releasing
+Every push gets built by the Build workflow. To make a release:
 
-The **Build** workflow (`.github/workflows/build.yml`) builds every push. To publish a release:
-
-```powershell
+```
 git tag v2.12.1
 git push origin v2.12.1
 ```
 
-GitHub builds the exe and publishes **PSYstrap v2.12.1** with `PSYstrap.exe` attached. Installed copies update themselves on their next launch.
+GitHub builds it and puts out a release with the exe, and installed copies update themselves next time they launch. Two things:
 
-- Tags must be **newer than the version in `Bloxstrap/Bloxstrap.csproj`** (currently 2.11.4), or the updater treats them as old.
-- The repo must be **public**, because the updater checks GitHub without signing in.
+- the tag has to be higher than the version in `Bloxstrap/Bloxstrap.csproj` (2.11.4 right now), otherwise the updater thinks it's older
+- the repo has to be public, because the updater checks GitHub without logging in
 
-## Renaming / pointing at another repo
+## rebrand.ps1
 
-`fork\rebrand.ps1` renames the app and points updates and links at a repo:
+Changes the app name and which repo it updates from:
 
-```powershell
+```
 powershell -ExecutionPolicy Bypass -File fork\rebrand.ps1 -Name PSYstrap -Repo AGamingotter/PSYSTRAP -Icon path\to\icon.ico
 ```
 
-It updates the exe name, install folder, window titles, all 36 translations and the repo links. It's safe to run again. It deliberately keeps the internal `Bloxstrap` namespace (so upstream fixes merge easily) and the Bloxstrap license credit.
+It updates the exe name, install folder, window titles, translations and links. You can run it again whenever. It leaves the code namespace as `Bloxstrap` on purpose so Bloxstrap updates are easy to merge.
 
-## Pulling Bloxstrap updates
+## Getting Bloxstrap updates
 
-Bloxstrap is set up as the `upstream` remote:
-
-```powershell
+```
 git fetch upstream
 git merge upstream/main
 ```
 
-## Project layout (PSYstrap additions)
+## Where the PSYstrap stuff is
 
-| Path | What |
-|---|---|
-| `Bloxstrap/Integrations/OverlayController.cs` | In-game overlay, hotkeys, menu |
-| `Bloxstrap/Integrations/FrameRateMonitor.cs` | FPS counter (Windows ETW) |
-| `Bloxstrap/Integrations/Macros/` | Recorder, player, smart macros, detectors, OCR, turn-taking |
-| `Bloxstrap/MultiInstance.cs` | Multi-instance host, instance folders, priority/RAM |
-| `Bloxstrap/Accounts/` | Saved accounts, Roblox sign-in, rejoin |
-| `Bloxstrap/Skybox.cs`, `Utility/DdsBc1.cs` | Skybox presets and the DXT1 encoder |
-| `Bloxstrap/PotatoMode.cs`, `RobloxUserSettings.cs`, `RobloxServers.cs` | Potato mode, frame-rate cap, smallest server |
-| `Bloxstrap/UI/Style/PSY.xaml` | The PSY theme |
-| `fork/` | Build/rebrand scripts and branding |
+- `Bloxstrap/Integrations/OverlayController.cs` - overlay, hotkeys, menu
+- `Bloxstrap/Integrations/FrameRateMonitor.cs` - FPS counter
+- `Bloxstrap/Integrations/Macros/` - macros, smart macros, detectors, OCR, turn taking
+- `Bloxstrap/MultiInstance.cs` - multi instance
+- `Bloxstrap/Accounts/` - saved accounts
+- `Bloxstrap/Skybox.cs` and `Utility/DdsBc1.cs` - skybox
+- `Bloxstrap/PotatoMode.cs`, `RobloxUserSettings.cs`, `RobloxServers.cs` - potato mode, FPS cap, smallest server
+- `Bloxstrap/UI/Style/PSY.xaml` - the theme
+- `fork/` - build and rebrand scripts, logo

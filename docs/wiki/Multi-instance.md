@@ -1,36 +1,29 @@
-# 🪟 Multi-instance
+# Multi instance
 
-<img src="../images/instances.jpg" width="560" alt="Instances window with three clients" />
+<img src="../images/instances.jpg" width="520" alt="Instances window" />
 
-Run more than one Roblox client at a time.
+Lets you have more than one Roblox open.
 
 ## Turning it on
 
-Open the **Instances** window: **Settings → Instances**, or **Instances and macros** in the in-game menu. Switch on **Multi-instance**. From then on, every launch through PSYstrap opens a new client instead of switching to the one that's already open.
+Open the Instances window (Settings > Instances, or the button in the in-game menu) and switch on Multi-instance. After that, every time you launch Roblox through PSYstrap you get a new window instead of it jumping to the one that's already open.
 
-> ⚠️ If Roblox was already open when you turned it on, close every Roblox window once. Multi-instance starts working from the next launch.
+If Roblox was already open when you turned it on, close all your Roblox windows once and then it'll work.
 
-## The Instances window
+## Instances window
 
-| Control | What it does |
-|---|---|
-| **Launch new instance** | Opens another client |
-| **Arrange windows** | Tiles every client in a grid (handy for [turn-taking](Turn-taking.md)) |
-| Per client: **Focus / Minimise / Trim RAM / Close** | Manage one client |
-| **Lower priority of clients you aren't using** | Background clients get less CPU, so the one you play stays smooth (on by default) |
-| **Trim RAM of clients you aren't using** | Every minute, Windows moves background clients' unused memory to the page file. It frees a lot of RAM, but switching back can hitch briefly (off by default) |
+- **Launch new instance** - opens another Roblox
+- **Arrange windows** - puts all the Roblox windows in a grid
+- each window has buttons to focus it, minimize it, trim its RAM or close it
+- **Lower priority of clients you aren't using** (on by default) - the windows you're not playing on get less CPU
+- **Trim RAM of clients you aren't using** (off by default) - every minute it pushes the unused memory of background windows to the page file. Saves a lot of RAM but there can be a small freeze when you switch back to one.
 
-Each client shows its RAM, CPU and uptime. Combined with [potato mode](Overlay.md#potato-mode-disable-graphics), background clients can be very light.
+It also shows how much RAM and CPU each one is using. Potato mode (see [Overlay](Overlay.md)) helps a lot if you're running a bunch.
 
 ## Different accounts
 
-Every client can be signed in to a different account. Either use Roblox's own account switcher in each client, or let PSYstrap open saved accounts for you (see [Accounts](Accounts.md)).
+Each window can be on a different account. You can use Roblox's own account switcher, or save your accounts in PSYstrap and open them from here (see [Accounts](Accounts.md)).
 
-## How it works (for the curious)
+## How it works
 
-Roblox blocks a second client in two ways:
-
-1. **Session-wide lock names.** A small background PSYstrap process claims these before the first client starts.
-2. **A guard tied to the folder the client runs from.** Each extra client starts from its own folder link (`Instances\2`, `Instances\3`, …) that points at the same Roblox files.
-
-Nothing is copied, nothing is injected, and no Roblox files are changed. Up to 16 clients are supported.
+Roblox normally stops you opening a second one in two ways. PSYstrap gets around the first by taking the lock names Roblox checks before the first window opens. For the second, each extra window starts from its own folder link (`Instances\2`, `Instances\3`...) that points at the same Roblox files. Nothing gets copied or injected and Roblox's files aren't changed. Max is 16 windows.

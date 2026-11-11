@@ -53,10 +53,9 @@ jobs:
           make_latest: true
           name: PSYstrap ${{ github.ref_name }}
           body: |
-            ## Download
-            Grab **PSYstrap.exe** below and run it. Needs Windows 10/11 and the [.NET 6 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/6.0).
+            Download PSYstrap.exe below and run it. You need Windows 10/11 and the [.NET 6 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/6.0).
 
-            Already installed? PSYstrap updates itself on its next launch.
+            If you already have PSYstrap installed it'll update itself next time you open Roblox.
           files: |
             dist/PSYstrap.exe
             dist/License - Bloxstrap.txt

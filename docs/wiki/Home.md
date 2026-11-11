@@ -1,40 +1,29 @@
-<div align="center">
-<img src="../../fork/branding/logo-256.png" width="100" alt="PSYstrap logo" />
+# PSYstrap wiki
 
-# PSYstrap Wiki
+Guides for everything PSYstrap adds on top of Bloxstrap. If you haven't installed it yet, start with [Installing](Installing.md).
 
-</div>
+- [Installing](Installing.md) - install, updates, uninstall, where files are
+- [Overlay](Overlay.md) - the counters and the Insert menu
+- [Skybox](Skybox.md) - custom skies
+- [Multi instance](Multi-instance.md) - running more than one Roblox
+- [Accounts](Accounts.md) - saving accounts and opening them
+- [Macros](Macros.md) - record and play
+- [Smart macros](Smart-macros.md) - macros that react to the screen
+- [Turn taking](Turn-taking.md) - smart macros on several windows
+- [FAQ](FAQ.md) - common problems
+- [Building](Building.md) - building it yourself
 
-Everything PSYstrap can do and how to use it. New here? Start with **[Installing](Installing.md)**.
+## Hotkeys
 
-## 📚 Pages
+These work while Roblox is the focused window.
 
-| Page | What's in it |
+| Key | What it does |
 |---|---|
-| 🚀 [Installing](Installing.md) | Download, install, updates, uninstalling, where files live |
-| 🎮 [Overlay](Overlay.md) | In-game counters, the Insert menu, frame-rate cap, potato mode, server hop |
-| 🌌 [Skybox](Skybox.md) | Presets, your own sky images, and why some games keep theirs |
-| 🪟 [Multi-instance](Multi-instance.md) | Running several Roblox clients and the Instances window |
-| 👥 [Accounts](Accounts.md) | Saving accounts and opening them into a server |
-| ⌨️ [Macros](Macros.md) | Recording (F6) and playing (F7) your inputs |
-| 🧠 [Smart macros](Smart-macros.md) | Detectors (pixel, picture, text) and rules, run with F8 |
-| 🔁 [Turn-taking](Turn-taking.md) | Running smart macros across several clients |
-| ❓ [FAQ & troubleshooting](FAQ.md) | Bans, common problems, logs, reporting issues |
-| 🛠️ [Building](Building.md) | Building PSYstrap yourself and publishing releases |
+| Insert | open/close the PSYstrap menu (you can change it to Right Shift, Home or F10) |
+| F6 | start/stop recording a macro |
+| F7 | play/stop the selected macro |
+| F8 | start/stop the selected smart macro |
 
-## ⌨️ Hotkeys at a glance
+## Is it safe?
 
-| Key (in Roblox) | Does |
-|---|---|
-| `Insert` | Opens or closes the PSYstrap menu (can be changed to Right Shift, Home or F10) |
-| `F6` | Starts or stops recording a macro |
-| `F7` | Plays or stops the selected macro |
-| `F8` | Starts or stops the selected smart macro |
-
-## 🛡️ How PSYstrap stays safe
-
-PSYstrap never injects code into Roblox, never reads or writes its memory, and never bypasses Roblox's anti-cheat. It only uses:
-
-- Roblox's own files and settings (the same things Bloxstrap changes),
-- normal Windows features (windows, screenshots, performance counters),
-- normal keyboard and mouse input, the same as a real keyboard and mouse.
+PSYstrap doesn't inject into Roblox or read/write its memory, so it doesn't mess with the anti-cheat. It changes the same settings files Bloxstrap does and sends normal keyboard and mouse input. See the [FAQ](FAQ.md) for more.

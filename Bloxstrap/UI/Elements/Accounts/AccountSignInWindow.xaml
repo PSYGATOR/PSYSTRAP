@@ -22,7 +22,7 @@
 
         <Border Grid.Row="1" Margin="12,0,12,8" Padding="12,8" CornerRadius="6" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
             <TextBlock x:Name="StatusText" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                       Text="Sign in on Roblox's own page below. PSYstrap never sees your password - it only keeps the sign-in Roblox gives back, encrypted for your Windows account on this PC." />
+                       Text="Log in on the Roblox page below. PSYstrap never sees your password, it only keeps the login Roblox gives back (encrypted, only works on this PC)." />
         </Border>
 
         <wv2:WebView2 x:Name="Browser" Grid.Row="2" Margin="12,0,12,12" />

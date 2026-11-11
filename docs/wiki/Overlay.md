@@ -1,45 +1,33 @@
-# 🎮 Overlay
+# Overlay
 
-<img src="../images/overlay.jpg" width="640" alt="The overlay in the bottom-left corner of Roblox" />
+<img src="../images/overlay.jpg" width="600" alt="Overlay in the bottom left of Roblox" />
 
-The overlay is a set of small counters drawn on top of the Roblox window, plus a menu you open with a key. It's a separate window over Roblox; nothing goes inside the game.
+Small counters in the corner of the Roblox window, plus a menu you open with Insert. It's its own window sitting on top of Roblox, not something inside the game.
 
 ## Counters
 
-| Counter | Shows |
-|---|---|
-| **FPS** | Frames Roblox draws per second. Green at 55 and above, gold at 30 and above, red below 30 |
-| **CPS** | Left \| right clicks in the last second, counted only while Roblox is focused |
-| **RAM** | Memory the Roblox client is using |
-| **Session** | How long Roblox has been open |
-| **Clock** | Your PC's time |
+- **FPS** - green at 55+, yellow at 30+, red below 30
+- **CPS** - left | right clicks in the last second (only counts while Roblox is focused)
+- **RAM** - how much memory that Roblox window is using
+- **Session** - how long Roblox has been open
+- **Clock** - your PC time
 
-Turn each one on or off, and pick the corner, under **Settings → Overlay** or in the in-game menu. The counters hide whenever Roblox isn't the focused window.
+You can turn each one on/off and pick which corner they go in, either in Settings > Overlay or the in-game menu. They hide when Roblox isn't the focused window.
 
-> ⚠️ The overlay shows in **windowed** and **borderless fullscreen** (F11) Roblox. **Exclusive fullscreen** (the Alt+Enter Fast Flag preset) draws over everything, so the overlay can't appear there.
+The overlay works in windowed and F11 fullscreen. It won't show up if you use exclusive fullscreen (the Alt+Enter fast flag), because that draws over everything.
 
-### FPS says "n/a"?
+### FPS says n/a
 
-The FPS counter reads Windows' own frame timing events. That needs either administrator rights or membership of the **Performance Log Users** Windows group, and it only sees Roblox's default **Direct3D** renderer, not Vulkan or OpenGL.
+The FPS counter uses Windows performance events, so it needs admin or for your account to be in the "Performance Log Users" group. It also only works with Roblox's normal Direct3D renderer, not Vulkan or OpenGL.
 
-## The in-game menu
+## In-game menu
 
-Press **Insert** while Roblox is focused (you can change the key to Right Shift, Home or F10). Press it again, or click back into Roblox, to close it. Changes save straight away.
+Press Insert while you're in Roblox. Press it again (or click back into Roblox) to close it. Anything you change here saves straight away.
 
-### Frame-rate cap
+**FPS cap** - PSYstrap writes this into Roblox's settings file right before Roblox starts. The options are the same ones Roblox has (default 60, 60, 120, 144, 240), because Roblox ignores other values. Roblox only reads it on startup, so if you change it while playing, hit "Restart Roblox to apply". That closes Roblox and puts you back in the same server.
 
-PSYstrap writes your cap into Roblox's own settings file just before each launch. It's the same setting as Roblox's *Maximum frame rate*. The choices match Roblox's own (Default 60, 60, 120, 144, 240), because Roblox ignores anything else.
+**Potato mode** - turns everything down: lowest textures, no grass, lowest detail, graphics level 1. Good for slow PCs, bad wifi (less to download when you join a game) and alt windows. It only uses flags that Roblox still allows, and it kicks in next time Roblox opens.
 
-Roblox only reads the cap when it starts. To apply a change mid-game, press **Restart Roblox to apply**: Roblox closes and reopens straight into the same server.
+**Hop to the smallest server** - moves you to the emptiest public server of the game you're in.
 
-### Potato mode (disable graphics)
-
-One switch for the lightest Roblox can run: lowest textures, no grass, lowest level of detail, lighting updates paused, and graphics quality 1. It's good for weak PCs, weak Wi-Fi (far less to download when joining a game) and background clients. It only uses flags on Roblox's official allowlist, and it applies to every client from the next launch.
-
-### Hop to the smallest server
-
-Moves you to the emptiest public server of the game you're in. It reads the same server list as Roblox's **Servers** tab.
-
-### Instances and macros
-
-Opens the [Instances window](Multi-instance.md).
+**Instances and macros** - opens the [Instances window](Multi-instance.md).

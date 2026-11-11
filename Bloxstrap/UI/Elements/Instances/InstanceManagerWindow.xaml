@@ -27,15 +27,15 @@
                 <Border Height="3" Width="44" HorizontalAlignment="Left" CornerRadius="1.5" Margin="1,4,0,8" Background="{DynamicResource PsyCrownStripBrush}" />
                 <TextBlock FontSize="13" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Status, Mode=OneWay}" />
 
-                <controls:OptionControl Header="Multi-instance" Description="Run more than one Roblox client at once. Every launch through PSYstrap opens a new client.">
+                <controls:OptionControl Header="Multi-instance" Description="Have more than one Roblox open. Every launch opens a new window.">
                     <ui:ToggleSwitch IsChecked="{Binding MultiInstanceEnabled, Mode=TwoWay}" />
                 </controls:OptionControl>
 
-                <controls:OptionControl Header="Lower priority of clients you aren't using" Description="Background clients get less CPU time, so the one you're playing stays smooth.">
+                <controls:OptionControl Header="Lower priority of clients you aren't using" Description="Windows you're not playing on get less CPU.">
                     <ui:ToggleSwitch IsChecked="{Binding LowerBackgroundPriority, Mode=TwoWay}" />
                 </controls:OptionControl>
 
-                <controls:OptionControl Header="Trim RAM of clients you aren't using" Description="Every minute, Windows moves their unused memory to the page file. Frees RAM on low-memory PCs; switching back to a trimmed client can hitch for a moment.">
+                <controls:OptionControl Header="Trim RAM of clients you aren't using" Description="Every minute, pushes unused memory of background windows to the page file. Saves RAM, but switching back can freeze for a second.">
                     <ui:ToggleSwitch IsChecked="{Binding TrimBackgroundMemory, Mode=TwoWay}" />
                 </controls:OptionControl>
 
@@ -49,7 +49,7 @@
                     <StackPanel Grid.Column="0" VerticalAlignment="Center">
                         <TextBlock FontSize="16" FontWeight="Medium" Text="Accounts" />
                         <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
-                                   Text="Sign in once on Roblox's page; the sign-in is saved encrypted for your Windows account. Your password is never seen or stored." />
+                                   Text="Log in once on the Roblox page. The login is saved encrypted on this PC, your password never gets saved." />
                     </StackPanel>
                     <ui:Button Grid.Column="1" Margin="8,0,0,0" Icon="CheckmarkCircle24" Content="Select all" Command="{Binding SelectAllCommand}" />
                     <ui:Button Grid.Column="2" Margin="8,0,0,0" Icon="PersonAdd24" Content="Add account" Command="{Binding AddAccountCommand}" />
@@ -95,7 +95,7 @@
                             </Grid>
                             <TextBlock Margin="0,6,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Status, Mode=OneWay}" />
                             <TextBlock Margin="0,4,0,0" FontSize="11" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
-                                       Text="Each account opens in its own client, about 12 seconds apart. Running clients' servers show up in the list once they've joined a game." />
+                                       Text="Each account opens in its own window, about 12 seconds apart. Your other windows' servers show up in the list once they're in a game." />
                         </StackPanel>
                     </ui:Card>
                 </StackPanel>
@@ -125,7 +125,7 @@
                             <StackPanel Grid.Column="0">
                                 <TextBlock FontSize="14" FontWeight="SemiBold" Text="Take turns" />
                                 <TextBlock Margin="0,2,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
-                                           Text="Roblox only listens to the focused window, so PSYstrap switches between the clients below, running each one's smart macro for a moment. Keep the clients visible (Arrange windows helps). Touch the mouse or keyboard to take over; it carries on once you stop." />
+                                           Text="Roblox only listens to the focused window, so this switches between your windows and runs each one's smart macro for a moment. Keep them visible (Arrange windows helps). Move the mouse or press a key to take over, it carries on when you stop." />
                             </StackPanel>
                             <ui:Button Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Top" Icon="ArrowSync24" Appearance="Primary"
                                        Content="{Binding RotationButtonText, Mode=OneWay}" Command="{Binding ToggleRotationCommand}" />

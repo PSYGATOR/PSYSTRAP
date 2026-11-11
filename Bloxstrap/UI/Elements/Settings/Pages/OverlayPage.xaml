@@ -12,12 +12,12 @@
     <!-- PSYstrap: in-game overlay / mod menu -->
     <StackPanel Margin="0,0,14,14">
         <TextBlock FontSize="14" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                   Text="Counters drawn on top of Roblox while you play, plus a quick menu for these settings. Press the menu key in game to open it." />
+                   Text="Counters on top of Roblox while you play, and a menu you open in game with the menu key." />
         <Border Height="3" Width="44" HorizontalAlignment="Left" CornerRadius="1.5" Margin="1,10,0,4" Background="{DynamicResource PsyCrownStripBrush}" />
 
         <overlay:OverlayOptionsControl />
 
         <TextBlock Margin="2,16,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
-                   Text="The overlay is its own window on top of Roblox; nothing is injected into the game. It shows in windowed and borderless fullscreen, but not exclusive fullscreen. The FPS counter needs PSYstrap to be allowed to read Windows performance events (admin, or the Performance Log Users group) and only sees the Direct3D renderer, not Vulkan or OpenGL." />
+                   Text="The overlay is a separate window on top of Roblox, nothing gets injected. It doesn't show in exclusive fullscreen. The FPS counter needs admin or the Performance Log Users group, and only works with the Direct3D renderer." />
     </StackPanel>
 </ui:UiPage>

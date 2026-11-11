@@ -1,41 +1,34 @@
-# 🚀 Installing
+# Installing
 
-## Requirements
+You need Windows 10 (1809 or newer) or Windows 11, and the [.NET 6 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/6.0). If you don't have the runtime, Windows asks to install it the first time you open PSYstrap.
 
-- Windows 10 (version 1809 or newer) or Windows 11
-- The [.NET 6 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/6.0). If it's missing, Windows asks to install it the first time you run PSYstrap.
+1. Download `PSYstrap.exe` from the [latest release](https://github.com/AGamingotter/PSYSTRAP/releases/latest).
+2. Run it and click Install.
 
-## Install
+It installs to `%LocalAppData%\PSYstrap` and adds Start menu and desktop shortcuts. After that, the Play button on the Roblox website opens Roblox through PSYstrap. The first launch downloads Roblox, so it takes a bit longer.
 
-1. Download **`PSYstrap.exe`** from the [latest release](https://github.com/AGamingotter/PSYSTRAP/releases/latest).
-2. Run it. The installer opens.
-3. Click **Install**. PSYstrap copies itself to `%LocalAppData%\PSYstrap`, adds Start-menu and desktop shortcuts, and becomes your Roblox launcher. The website's **Play** button now opens Roblox through PSYstrap.
-4. The first launch downloads Roblox into PSYstrap's own folder.
-
-> 💡 Use the `PSYstrap.exe` from a release (or `fork\dist` if you [build it yourself](Building.md)). Copying the exe out of a `bin` folder doesn't work, because the program lives in a separate DLL there.
+Use the exe from a release (or from `fork\dist` if you build it yourself). The exe in a `bin` folder won't work on its own.
 
 ## Settings
 
-Open **PSYstrap Settings** from the Start menu (or run `PSYstrap.exe -settings`). Most changes apply when you click **Save**. Overlay, macro and instance options are also available in game from the **Insert** menu, and those save straight away.
+Open PSYstrap Settings from the Start menu. Most things apply when you hit Save. The overlay and macro options are also in the in-game menu (Insert), and those save right away.
 
-## Updating
+## Updates
 
-PSYstrap checks for a new release each time it launches Roblox and updates itself. You can turn this off under **Settings → PSYstrap → Automatically update**.
+PSYstrap checks for a new release every time it launches Roblox and updates itself. You can turn that off in Settings > PSYstrap.
 
 ## Uninstalling
 
-Use **Settings → Apps → Installed apps → PSYstrap → Uninstall** in Windows. This removes PSYstrap and restores the normal Roblox launcher.
+Windows Settings > Apps > Installed apps > PSYstrap > Uninstall. This puts the normal Roblox launcher back.
 
-## Where PSYstrap keeps things
+## Where stuff is saved
 
-Everything lives in `%LocalAppData%\PSYstrap`:
+All in `%LocalAppData%\PSYstrap`:
 
-| Path | What it is |
-|---|---|
-| `Settings.json` | Your PSYstrap settings |
-| `Accounts.json` | Saved accounts, encrypted for your Windows user (see [Accounts](Accounts.md)) |
-| `Versions\` | The Roblox client PSYstrap launches |
-| `Modifications\` | Mods applied on top of Roblox (fonts, skybox, Fast Flags…) |
-| `Macros\` | Recorded macros (`*.json`) and smart macros (`Smart\`) |
-| `Instances\` | Links used to run extra clients (see [Multi-instance](Multi-instance.md)) |
-| `Logs\` | Log files, useful when something goes wrong (see [FAQ](FAQ.md)) |
+- `Settings.json` - your settings
+- `Accounts.json` - saved accounts (encrypted, see [Accounts](Accounts.md))
+- `Versions` - the Roblox client
+- `Modifications` - mods (fonts, skybox, fast flags...)
+- `Macros` - your macros, smart macros are in `Macros\Smart`
+- `Instances` - used for [multi instance](Multi-instance.md)
+- `Logs` - log files, useful if something breaks

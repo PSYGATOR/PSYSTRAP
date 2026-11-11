@@ -48,7 +48,7 @@
                     <Grid>
                         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Margin="24"
                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}" Visibility="{Binding NoScreenshotVisibility, Mode=OneWay}"
-                                   Text="Get Roblox to the screen you want to react to (e.g. the disconnected message), then press Screenshot Roblox." />
+                                   Text="Get Roblox on the screen you want to react to, then click Screenshot Roblox." />
                         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                             <Image x:Name="ScreenshotImage" Source="{Binding Screenshot, Mode=OneWay}" Stretch="Uniform" Cursor="Cross"
                                    MouseLeftButtonDown="Screenshot_MouseDown" MouseMove="Screenshot_MouseMove" MouseLeftButtonUp="Screenshot_MouseUp" />
@@ -120,7 +120,7 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel>
                             <TextBlock FontSize="16" FontWeight="Medium" Text="Rules" />
-                            <TextBlock FontSize="11" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="Checked top to bottom; the first one that's ready fires." />
+                            <TextBlock FontSize="11" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="Goes top to bottom, the first one that's ready runs." />
                         </StackPanel>
                         <ui:Button Grid.Column="1" VerticalAlignment="Top" Icon="Add24" Content="Add rule" Command="{Binding AddRuleCommand}" />
                     </Grid>
@@ -169,7 +169,7 @@
         <Border Grid.Row="2" Margin="0,10,0,0" Padding="16,10" Background="{DynamicResource SolidBackgroundFillColorSecondaryBrush}">
             <Grid>
                 <TextBlock VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
-                           Text="In Roblox, F8 starts and stops the smart macro selected on the Macros page. It pauses whenever Roblox isn't focused, and needs the Roblox window visible." />
+                           Text="F8 in Roblox starts/stops the smart macro picked on the Macros page. It pauses when Roblox isn't focused, and the window has to be visible." />
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <ui:Button Appearance="Primary" Content="Save" Click="Save_Click" />
                     <ui:Button Margin="8,0,0,0" Content="Cancel" Click="Cancel_Click" />

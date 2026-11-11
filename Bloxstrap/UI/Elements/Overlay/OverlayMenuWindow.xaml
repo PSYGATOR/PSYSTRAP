@@ -35,7 +35,7 @@
         </ScrollViewer>
 
         <Border Grid.Row="3" Padding="16,10" Background="{DynamicResource SolidBackgroundFillColorSecondaryBrush}">
-            <TextBlock x:Name="FooterText" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Changes save straight away. Press Insert or click back into Roblox to close." TextWrapping="Wrap" />
+            <TextBlock x:Name="FooterText" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Changes save right away. Press Insert or click Roblox to close." TextWrapping="Wrap" />
         </Border>
     </Grid>
 </base:WpfUiWindow>

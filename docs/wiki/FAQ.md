@@ -1,44 +1,40 @@
-# ❓ FAQ & troubleshooting
+# FAQ
 
-## General
+**Will I get banned?**
+PSYstrap doesn't inject into Roblox, touch its memory or bypass the anti-cheat. It changes the same files Bloxstrap does and sends normal keyboard/mouse input. But macros are still automation, and some games have their own rules against AFK macros, so that part's up to you and the game.
 
-<details>
-<summary><b>Will PSYstrap get me banned?</b></summary>
+**Is this made by Roblox or the Bloxstrap people?**
+No. It's based on [Bloxstrap](https://github.com/bloxstraplabs/bloxstrap) (MIT license) but it's a separate project.
 
-PSYstrap doesn't inject into Roblox, touch its memory or bypass its anti-cheat. It works like Bloxstrap (launcher settings, Roblox's own settings file, file mods) plus normal Windows input. Macros are still automation, though, and some games' own rules don't allow AFK macros, so check the rules of the game you play.
-</details>
+**Can it limit how much internet Roblox uses?**
+Not really. If you cap Roblox's connection you just rubber band and disconnect. Potato mode makes each window download a lot less, and minimizing windows you're not using helps too.
 
-<details>
-<summary><b>Is PSYstrap made by Roblox or Bloxstrap?</b></summary>
+## Common problems
 
-No. It's an independent project based on [Bloxstrap](https://github.com/bloxstraplabs/bloxstrap) (MIT License) and isn't affiliated with Roblox Corporation or the Bloxstrap team.
-</details>
+**Settings or the shortcuts won't open after installing**
+You probably installed from an exe in a `bin` folder. Get `PSYstrap.exe` from the [releases](https://github.com/AGamingotter/PSYSTRAP/releases/latest) and run that instead.
 
-<details>
-<summary><b>Can PSYstrap limit Roblox's internet use?</b></summary>
+**My skybox goes away after I join**
+That game has its own sky. See [Skybox](Skybox.md).
 
-Not as a throttle. Capping Roblox's connection makes you rubber-band and disconnect, and doesn't steady weak Wi-Fi. [Potato mode](Overlay.md#potato-mode-disable-graphics) cuts what each client downloads, and keeping extra clients minimised helps too.
-</details>
+**FPS says n/a**
+See [Overlay](Overlay.md#fps-says-na).
 
-## Problems
+**The overlay isn't showing**
+It doesn't work in exclusive fullscreen, use windowed or F11. It also hides when Roblox isn't the focused window.
 
-| Problem | Fix |
-|---|---|
-| **Settings or shortcuts don't open after installing** | You installed from a `bin` build folder. Use `PSYstrap.exe` from a [release](https://github.com/AGamingotter/PSYSTRAP/releases/latest) and run it again. |
-| **Custom skybox disappears after joining** | That game sets its own sky; see [Skybox](Skybox.md). |
-| **FPS counter says n/a** | You need admin or the *Performance Log Users* group, and the Direct3D renderer; see [Overlay](Overlay.md#fps-says-na). |
-| **Overlay doesn't show** | Exclusive fullscreen hides it; use windowed or F11 borderless. The counters also hide when Roblox isn't focused. |
-| **Frame-rate cap didn't change** | Roblox only reads it at startup. Use **Restart Roblox to apply** in the in-game menu. |
-| **Second client just switches to the first** | Turn on **Multi-instance** in the Instances window, then close every Roblox window once. |
-| **"Roblox refused … saved sign-in"** | That session ended (password change, log out everywhere…). Click **Add account** and sign in again. |
-| **Smart macro never fires** | Press **Test** in the editor on a fresh screenshot. Check the window is visible, focused and the same size as when you made it. |
-| **Macro typed into the wrong window** | It can't: playback pauses whenever Roblox isn't focused. If something looks off, check the macro wasn't recorded with another app focused. |
+**The FPS cap didn't change**
+Roblox only reads it when it starts. Use "Restart Roblox to apply" in the in-game menu.
 
-## Logs and reporting issues
+**Opening a second Roblox just switches to the first one**
+Turn on Multi-instance in the Instances window and close all your Roblox windows once.
 
-Logs live in `%LocalAppData%\PSYstrap\Logs`. When reporting a problem, [open an issue](https://github.com/AGamingotter/PSYSTRAP/issues/new) with:
+**"Roblox refused ... saved sign-in"**
+The login expired (password change, logged out everywhere etc). Click Add account and log in again.
 
-- what you did and what happened,
-- the newest log file(s).
+**My smart macro never does anything**
+Take a new screenshot in the editor and click Test. Also check the Roblox window is visible, focused, and the same size as when you made it.
 
-Logs don't contain passwords or saved sign-ins. They do contain your Windows user folder path and Roblox server IDs, so skim them before posting publicly.
+## Logs and reporting bugs
+
+Logs are in `%LocalAppData%\PSYstrap\Logs`. If something's broken, [open an issue](https://github.com/AGamingotter/PSYSTRAP/issues/new) and say what you did and what happened, and attach the newest log. Logs don't have passwords or saved logins in them, but they do have your Windows username in file paths, so have a quick look before you post one.
