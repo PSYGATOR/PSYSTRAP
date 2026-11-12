@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 
 using Bloxstrap.UI.Elements.Bootstrapper;
 using Bloxstrap.UI.Elements.Dialogs;
@@ -91,6 +91,7 @@ namespace Bloxstrap.UI
                 BootstrapperStyle.FluentDialog => new FluentDialog(false),
                 BootstrapperStyle.FluentAeroDialog => new FluentDialog(true),
                 BootstrapperStyle.CustomDialog => GetCustomBootstrapper(),
+                BootstrapperStyle.PsyDialog => new PsyDialog(),
                 _ => new FluentDialog(false)
             };
         }

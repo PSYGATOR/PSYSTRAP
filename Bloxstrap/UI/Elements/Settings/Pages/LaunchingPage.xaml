@@ -32,8 +32,8 @@
         </Style>
         <Style x:Key="Section" TargetType="TextBlock">
             <Setter Property="Margin" Value="0,18,0,0" />
-            <Setter Property="FontSize" Value="20" />
-            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="FontFamily" Value="{DynamicResource PsyMarkerFont}" />
         </Style>
     </ui:UiPage.Resources>
 
@@ -45,7 +45,7 @@
         <!-- favourites -->
         <DockPanel Margin="0,18,0,0">
             <ui:Button DockPanel.Dock="Right" Icon="Globe24" Content="Server browser" Command="{Binding OpenServerBrowserCommand}" />
-            <TextBlock Text="Favourites" FontSize="20" FontWeight="Medium" VerticalAlignment="Center" />
+            <TextBlock Text="Favourites" FontSize="22" FontFamily="{DynamicResource PsyMarkerFont}" VerticalAlignment="Center" />
         </DockPanel>
         <TextBlock Style="{StaticResource Lead}"
                    Text="Games and private servers you open a lot. Each one can open as one of your saved accounts. The shortcut button puts it on your desktop with the game's icon." />
@@ -127,7 +127,7 @@
         <!-- recent -->
         <DockPanel Margin="0,18,0,0">
             <ui:Button DockPanel.Dock="Right" Icon="ArrowClockwise24" Appearance="Transparent" ToolTip="Refresh" AutomationProperties.Name="Refresh" Command="{Binding RefreshRecentCommand}" />
-            <TextBlock Text="Recent servers" FontSize="20" FontWeight="Medium" VerticalAlignment="Center" />
+            <TextBlock Text="Recent servers" FontSize="22" FontFamily="{DynamicResource PsyMarkerFont}" VerticalAlignment="Center" />
         </DockPanel>
         <TextBlock Style="{StaticResource Lead}" Text="The last servers you were in, from any window. Rejoin puts you back in that exact server if it's still running." />
 

@@ -10,6 +10,7 @@
              xmlns:dmodels="clr-namespace:Bloxstrap.UI.ViewModels.Settings"
              xmlns:models="clr-namespace:Bloxstrap.UI.ViewModels"
              xmlns:bloxstrap="clr-namespace:Bloxstrap"
+             xmlns:controls="clr-namespace:Bloxstrap.UI.Elements.Controls"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance dmodels:MainWindowViewModel, IsDesignTimeCreatable=True}"
              Title="{x:Static resources:Strings.Menu_Title}"
@@ -53,7 +54,10 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <ui:NavigationFluent x:Name="RootNavigation" Grid.Row="1" Grid.Column="0" Margin="0,0,12,0" Frame="{Binding ElementName=RootFrame}" SelectedPageIndex="0">
+            <controls:SketchBorder Grid.Row="1" Grid.Column="0" Margin="0,0,14,10" Padding="4,8,4,6" CornerRadius="10" BorderBrush="#17761D"
+                                   BorderThickness="{DynamicResource PsyNavBoxThickness}" Roughness="{DynamicResource PsySketchRoughness}">
+            <ui:NavigationFluent x:Name="RootNavigation" Frame="{Binding ElementName=RootFrame}" SelectedPageIndex="0"
+                                 FontFamily="{DynamicResource PsyHandFont}" FontSize="{DynamicResource PsyNavFontSize}">
                 <ui:NavigationFluent.Items>
                     <ui:NavigationItem Content="{x:Static resources:Strings.Menu_Integrations_Title}" PageType="{x:Type pages:IntegrationsPage}" Icon="Add28" Tag="integrations" />
                     <ui:NavigationItem Content="{x:Static resources:Strings.Menu_Behaviour_Title}" PageType="{x:Type pages:BehaviourPage}" Icon="PlaySettings20" Tag="bootstrapper" />
@@ -74,13 +78,16 @@
                     <ui:NavigationItem Content="PSYstrap" PageType="{x:Type pages:BloxstrapPage}" Icon="Settings24" Tag="psystrap" />
                 </ui:NavigationFluent.Footer>
             </ui:NavigationFluent>
+            </controls:SketchBorder>
 
             <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <ui:Breadcrumb Grid.Row="0" Margin="0,0,0,5" Navigation="{Binding ElementName=RootNavigation}" />
+                <ui:Breadcrumb Grid.Row="0" Margin="0,0,0,8" Navigation="{Binding ElementName=RootNavigation}" FontFamily="{DynamicResource PsyMarkerFont}" FontSize="{DynamicResource PsyPageTitleSize}" Foreground="{DynamicResource PsyPageTitleBrush}" Effect="{DynamicResource PsyTitleEffect}" RenderTransformOrigin="0,1">
+                    <ui:Breadcrumb.RenderTransform><RotateTransform Angle="{DynamicResource PsyPageTitleAngle}" /></ui:Breadcrumb.RenderTransform>
+                </ui:Breadcrumb>
                 <Frame x:Name="RootFrame" Grid.Row="1" />
             </Grid>
         </Grid>
@@ -108,10 +115,10 @@
                 </StackPanel>
             </StatusBarItem>
             <StatusBarItem Grid.Column="2" Padding="0,0,4,0">
-                <ui:Button Content="{x:Static resources:Strings.Menu_Save}" Appearance="Primary" Command="{Binding SaveSettingsCommand, Mode=OneWay}" />
+                <Button Style="{StaticResource PsyPrimaryButton}" Padding="26,7,26,6" FontSize="18" Content="{x:Static resources:Strings.Menu_Save}" Command="{Binding SaveSettingsCommand, Mode=OneWay}" />
             </StatusBarItem>
             <StatusBarItem Grid.Column="3" Padding="4,0,0,0">
-                <ui:Button Content="{x:Static resources:Strings.Common_Close}" Command="{Binding CloseWindowCommand, Mode=OneWay}" />
+                <Button Style="{StaticResource PsyButton}" Margin="6,0,0,0" Content="{x:Static resources:Strings.Common_Close}" Command="{Binding CloseWindowCommand, Mode=OneWay}" />
             </StatusBarItem>
         </StatusBar>
     </Grid>

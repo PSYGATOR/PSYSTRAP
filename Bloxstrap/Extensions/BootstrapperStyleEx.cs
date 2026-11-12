@@ -1,4 +1,4 @@
-﻿namespace Bloxstrap.Extensions
+namespace Bloxstrap.Extensions
 {
     static class BootstrapperStyleEx
     {
@@ -6,6 +6,7 @@
 
         public static IReadOnlyCollection<BootstrapperStyle> Selections => new BootstrapperStyle[]
         {
+            BootstrapperStyle.PsyDialog,
             BootstrapperStyle.FluentDialog,
             BootstrapperStyle.FluentAeroDialog,
             BootstrapperStyle.ClassicFluentDialog,

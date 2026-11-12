@@ -47,6 +47,9 @@ Your PC has to be on and you have to be logged in at that time. Check that it's 
 **Roblox disappeared from the taskbar**
 That's minimize to tray. Left click the PSYstrap icon in the tray by the clock to get it back, or turn it off in Settings > Gameplay.
 
+**I want the old loading window or the plain look back**
+The loading window is picked in Settings > Appearance (the PSYstrap one is where the logo gets drawn in). The hand-drawn look comes with the PSY theme, also in Appearance; the Dark and Light themes look like normal Bloxstrap.
+
 **My smart macro never does anything**
 Take a new screenshot in the editor and click Test. Also check the Roblox window is visible, focused, and the same size as when you made it.
 

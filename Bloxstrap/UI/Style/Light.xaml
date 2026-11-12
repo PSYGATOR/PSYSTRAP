@@ -1,5 +1,22 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
     <SolidColorBrush x:Key="NewTextEditorBackground" Color="White" />
     <SolidColorBrush x:Key="NewTextEditorForeground" Color="Black" />
     <SolidColorBrush x:Key="NewTextEditorLink" Color="Blue" />
+
+    <!-- PSYstrap: plain values for the hand-drawn look's keys (the PSY theme overrides them) -->
+    <sys:Double x:Key="PsySketchRoughness">0</sys:Double>
+    <sys:Double x:Key="PsyCardStrokeThickness">1</sys:Double>
+    <sys:Double x:Key="PsyNavBoxThickness">0</sys:Double>
+    <SolidColorBrush x:Key="PsyCardStrokeBrush" Color="#14000000" />
+    <FontFamily x:Key="PsyMarkerFont">Segoe UI Variable Display, Segoe UI</FontFamily>
+    <FontFamily x:Key="PsyHandFont">Segoe UI Variable Text, Segoe UI</FontFamily>
+    <sys:Double x:Key="PsyCardTitleSize">14</sys:Double>
+    <SolidColorBrush x:Key="PsyCardTitleBrush" Color="#E4000000" />
+    <sys:Double x:Key="PsyPageTitleSize">28</sys:Double>
+    <SolidColorBrush x:Key="PsyPageTitleBrush" Color="#E4000000" />
+    <sys:Double x:Key="PsyPageTitleAngle">0</sys:Double>
+    <sys:Double x:Key="PsyNavFontSize">14</sys:Double>
+    <sys:Boolean x:Key="PsyHatch">False</sys:Boolean>
+    <SolidColorBrush x:Key="PsyPrimaryForeground" Color="#FFFFFFFF" />
+    <x:Null x:Key="PsyTitleEffect" />
 </ResourceDictionary>

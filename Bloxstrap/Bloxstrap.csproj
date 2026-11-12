@@ -22,6 +22,11 @@
     <Resource Include="Bloxstrap.ico" />
     <Resource Include="Resources\Fonts\NotoSansThai-VariableFont_wdth,wght.ttf" />
     <Resource Include="Resources\Fonts\Rubik-VariableFont_wght.ttf" />
+    <Resource Include="Resources\Fonts\PermanentMarker-Regular.ttf" />
+    <Resource Include="Resources\Fonts\PatrickHand-Regular.ttf" />
+    <Resource Include="Resources\BootstrapperStyles\PSY\LogoBody.png" />
+    <Resource Include="Resources\BootstrapperStyles\PSY\LogoCrown.png" />
+    <Resource Include="Resources\BootstrapperStyles\PSY\Logo.png" />
     <Resource Include="Resources\BootstrapperStyles\ByfronDialog\ByfronLogoDark.jpg" />
     <Resource Include="Resources\BootstrapperStyles\ByfronDialog\ByfronLogoLight.jpg" />
     <Resource Include="Resources\BootstrapperStyles\ByfronDialog\Matt.png" />

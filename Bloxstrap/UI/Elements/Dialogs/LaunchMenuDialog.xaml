@@ -1,4 +1,4 @@
-﻿<base:WpfUiWindow x:Class="Bloxstrap.UI.Elements.Dialogs.LaunchMenuDialog"
+<base:WpfUiWindow x:Class="Bloxstrap.UI.Elements.Dialogs.LaunchMenuDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -9,80 +9,134 @@
         xmlns:models="clr-namespace:Bloxstrap.UI.ViewModels"
         xmlns:resources="clr-namespace:Bloxstrap.Resources"
         xmlns:bloxstrap="clr-namespace:Bloxstrap"
+        xmlns:controls="clr-namespace:Bloxstrap.UI.Elements.Controls"
         mc:Ignorable="d"
         Title="PSYstrap"
         MinWidth="0"
         MinHeight="0"
-        Width="580"
+        Width="770"
         SizeToContent="Height"
         ResizeMode="NoResize"
         Background="{ui:ThemeResource ApplicationBackgroundBrush}"
         ExtendsContentIntoTitleBar="True"
+        WindowBackdropType="Mica"
         WindowStartupLocation="CenterScreen">
+    <!-- PSYstrap: launch screen, drawn in the logo's marker style (plain under the other themes) -->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <ui:TitleBar Grid.Row="0" Grid.ColumnSpan="2" Padding="8" ShowMinimize="False" ShowMaximize="False" Title="PSYstrap" Icon="pack://application:,,,/Bloxstrap.ico" CanMaximize="False" KeyboardNavigation.TabNavigation="None" />
+        <ui:TitleBar Grid.Row="0" Padding="8" ShowMinimize="False" ShowMaximize="False" Title="PSYstrap" Icon="pack://application:,,,/Bloxstrap.ico" CanMaximize="False" KeyboardNavigation.TabNavigation="None" />
 
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" Margin="28,4,32,26">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="280" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="5*" />
+                <ColumnDefinition Width="6*" />
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Column="0" VerticalAlignment="Center">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                
-                <Grid Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,32">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+            <!-- left: the logo, floating -->
+            <StackPanel Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left">
+                <Image x:Name="Logo" Width="196" Height="196" Source="pack://application:,,,/Resources/BootstrapperStyles/PSY/Logo.png"
+                       RenderOptions.BitmapScalingMode="HighQuality" RenderTransformOrigin="0.5,0.5">
+                    <Image.RenderTransform>
+                        <TransformGroup>
+                            <RotateTransform x:Name="LogoTilt" Angle="-3" />
+                            <TranslateTransform x:Name="LogoBob" />
+                        </TransformGroup>
+                    </Image.RenderTransform>
+                    <Image.Effect>
+                        <DropShadowEffect Color="#3CF02A" BlurRadius="40" ShadowDepth="0" Opacity="0.35" />
+                    </Image.Effect>
+                    <Image.Triggers>
+                        <EventTrigger RoutedEvent="Loaded">
+                            <BeginStoryboard>
+                                <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                    <DoubleAnimation Storyboard.TargetName="LogoBob" Storyboard.TargetProperty="Y" From="0" To="-8" Duration="0:0:2.5">
+                                        <DoubleAnimation.EasingFunction><SineEase EasingMode="EaseInOut" /></DoubleAnimation.EasingFunction>
+                                    </DoubleAnimation>
+                                    <DoubleAnimation Storyboard.TargetName="LogoTilt" Storyboard.TargetProperty="Angle" From="-3" To="2" Duration="0:0:2.5">
+                                        <DoubleAnimation.EasingFunction><SineEase EasingMode="EaseInOut" /></DoubleAnimation.EasingFunction>
+                                    </DoubleAnimation>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Image.Triggers>
+                </Image>
 
-                    <Image Grid.Column="0" Width="64" Height="64" Source="pack://application:,,,/Bloxstrap.ico" RenderOptions.BitmapScalingMode="HighQuality" />
-                    <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
-                        <TextBlock Text="PSYstrap" FontSize="24" />
-                        <TextBlock Text="{Binding Version, Mode=OneTime}" VerticalAlignment="Bottom" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                <TextBlock Margin="2,4,0,0" Text="PSYstrap" FontFamily="{DynamicResource PsyMarkerFont}" FontSize="46" Foreground="{DynamicResource PsyPageTitleBrush}"
+                           Effect="{DynamicResource PsyTitleEffect}" RenderTransformOrigin="0,1">
+                    <TextBlock.RenderTransform><RotateTransform Angle="-3" /></TextBlock.RenderTransform>
+                </TextBlock>
+
+                <StackPanel Orientation="Horizontal" Margin="2,14,0,0">
+                    <controls:SketchBorder Padding="10,1,10,2" CornerRadius="8" Background="#0B1A0F" BorderBrush="#E9B632" BorderThickness="2"
+                                           Roughness="{DynamicResource PsySketchRoughness}" RenderTransformOrigin="0.5,0.5">
+                        <controls:SketchBorder.RenderTransform><RotateTransform Angle="-2" /></controls:SketchBorder.RenderTransform>
+                        <TextBlock Text="{Binding ShortVersion, Mode=OneTime}" FontFamily="{DynamicResource PsyHandFont}" FontSize="16" Foreground="#F6E7A6" />
+                    </controls:SketchBorder>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- right: what to do -->
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0,0,0">
+                <Button Style="{StaticResource PsyPrimaryButton}" TabIndex="0" IsDefault="True" HorizontalContentAlignment="Left" Padding="20,16,20,14"
+                        Command="{Binding LaunchRobloxCommand, Mode=OneTime}" RenderTransformOrigin="0.5,0.5" AutomationProperties.Name="{x:Static resources:Strings.LaunchMenu_LaunchRoblox}">
+                    <Button.RenderTransform><RotateTransform Angle="-1.5" /></Button.RenderTransform>
+                    <StackPanel Orientation="Horizontal">
+                        <Path Width="30" Height="30" Stretch="Uniform" Fill="{DynamicResource PsyPrimaryForeground}" Data="M9 5 C 10 13, 9.5 21, 9 29 C 16 25, 22 21, 29 17 C 22 13, 15 9, 9 5 Z" VerticalAlignment="Center" />
+                        <StackPanel Margin="14,0,0,0">
+                            <TextBlock Text="{x:Static resources:Strings.LaunchMenu_LaunchRoblox}" FontSize="25" />
+                            <TextBlock Text="opens the Roblox app" FontFamily="{DynamicResource PsyHandFont}" FontSize="16" Opacity="0.8" />
+                        </StackPanel>
                     </StackPanel>
-                </Grid>
+                </Button>
 
-                <!-- PSYstrap: About / wiki / Roblox community links removed; credit kept for Bloxstrap's MIT license -->
-                <TextBlock Grid.Row="1" HorizontalAlignment="Center" FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="Based on Bloxstrap · MIT License" />
-            </Grid>
-
-            <StackPanel Grid.Column="1" Margin="16">
-                <ui:CardAction Icon="ArrowRight12" TabIndex="0" Command="{Binding LaunchRobloxCommand, Mode=OneTime}">
-                    <StackPanel>
-                        <TextBlock FontSize="14" Text="{x:Static resources:Strings.LaunchMenu_LaunchRoblox}" />
+                <Button Style="{StaticResource PsyButton}" TabIndex="1" Margin="0,16,0,0" HorizontalContentAlignment="Left" Padding="18,11,18,10"
+                        Command="{Binding LaunchSettingsCommand, Mode=OneTime}" RenderTransformOrigin="0.5,0.5" AutomationProperties.Name="{x:Static resources:Strings.LaunchMenu_ConfigureSettings}">
+                    <Button.RenderTransform><RotateTransform Angle="1" /></Button.RenderTransform>
+                    <StackPanel Orientation="Horizontal">
+                        <Path Width="24" Height="24" Stretch="Uniform" Stroke="{DynamicResource PsyPageTitleBrush}" StrokeThickness="2.4" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                              Data="M5 22 L 6 15 L 18 4 L 24 10 L 12 21.5 Z M 15.5 6.5 L 21.5 12.5" VerticalAlignment="Center" />
+                        <StackPanel Margin="12,0,0,0">
+                            <TextBlock Text="{x:Static resources:Strings.LaunchMenu_ConfigureSettings}" FontSize="20" />
+                            <TextBlock Text="overlay, macros, AFK stuff, mods" FontFamily="{DynamicResource PsyHandFont}" FontSize="15" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        </StackPanel>
                     </StackPanel>
-                </ui:CardAction>
+                </Button>
 
-                <ui:CardAction Margin="0,8,0,0" Icon="Wrench24" Command="{Binding LaunchRobloxStudioCommand, Mode=OneTime}">
-                    <StackPanel>
-                        <TextBlock FontSize="14" Text="{x:Static resources:Strings.LaunchMenu_LaunchRobloxStudio}" />
-                    </StackPanel>
-                </ui:CardAction>
+                <UniformGrid Columns="3" Margin="0,14,0,0">
+                    <Button Style="{StaticResource PsyButton}" TabIndex="2" Margin="0,0,6,0" Padding="6,9,6,8" RenderTransformOrigin="0.5,0.5"
+                            Command="models:GlobalViewModel.OpenWebpageCommand" CommandParameter="{x:Static bloxstrap:App.ProjectHelpLink}" AutomationProperties.Name="Wiki">
+                        <Button.RenderTransform><RotateTransform Angle="-1" /></Button.RenderTransform>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Width="20" Height="20" Stretch="Uniform" Stroke="#E9B632" StrokeThickness="2" StrokeLineJoin="Round"
+                                  Data="M4 5 C 7 4, 10 4.5, 12 6.5 C 14 4.5, 17 4, 20 5 L 20 19 C 17 18, 14 18.5, 12 20 C 10 18.5, 7 18, 4 19 Z M 12 6.5 L 12 20" VerticalAlignment="Center" />
+                            <TextBlock Margin="6,0,0,0" Text="Wiki" FontSize="15" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource PsyButton}" TabIndex="3" Margin="3,0,3,0" Padding="6,9,6,8" RenderTransformOrigin="0.5,0.5"
+                            Command="{Binding LaunchRobloxStudioCommand, Mode=OneTime}" AutomationProperties.Name="{x:Static resources:Strings.LaunchMenu_LaunchRobloxStudio}" ToolTip="{x:Static resources:Strings.LaunchMenu_LaunchRobloxStudio}">
+                        <Button.RenderTransform><RotateTransform Angle="0.8" /></Button.RenderTransform>
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="Wrench24" Foreground="#B6D3B6" FontSize="18" VerticalAlignment="Center" />
+                            <TextBlock Margin="6,0,0,0" Text="Studio" FontSize="15" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource PsyButton}" TabIndex="4" Margin="6,0,0,0" Padding="6,9,6,8" RenderTransformOrigin="0.5,0.5"
+                            Command="{Binding OpenInstancesCommand, Mode=OneTime}" AutomationProperties.Name="Instances">
+                        <Button.RenderTransform><RotateTransform Angle="1.2" /></Button.RenderTransform>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Width="20" Height="20" Stretch="Uniform" Stroke="#B6D3B6" StrokeThickness="2" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                  Data="M4 6 L 20 5.5 L 19.5 14 L 4.5 14.5 Z M 9 19 L 15 19 M 12 14.5 L 12 19" VerticalAlignment="Center" />
+                            <TextBlock Margin="6,0,0,0" Text="Instances" FontSize="15" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </UniformGrid>
 
-                <ui:CardAction Margin="0,8,0,0" TabIndex="1" Icon="Settings28" Command="{Binding LaunchSettingsCommand, Mode=OneTime}">
-                    <StackPanel>
-                        <TextBlock FontSize="14" Text="{x:Static resources:Strings.LaunchMenu_ConfigureSettings}" />
-                    </StackPanel>
-                </ui:CardAction>
-
-                <Border Margin="16" />
-
-                <ui:CardAction Margin="0,8,0,0" TabIndex="2" Icon="BookQuestionMark24" Command="models:GlobalViewModel.OpenWebpageCommand" CommandParameter="{x:Static bloxstrap:App.ProjectHelpLink}">
-                    <StackPanel>
-                        <TextBlock FontSize="14" Text="{x:Static resources:Strings.LaunchMenu_Wiki_Title}" />
-                        <TextBlock Margin="0,2,0,0" FontSize="12" Text="{x:Static resources:Strings.LaunchMenu_Wiki_Description}" Padding="0,0,16,0"  Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
-                    </StackPanel>
-                </ui:CardAction>
+                <!-- credit kept for Bloxstrap's MIT license -->
+                <TextBlock Margin="0,14,2,0" HorizontalAlignment="Right" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="Based on Bloxstrap · MIT License" />
             </StackPanel>
         </Grid>
     </Grid>

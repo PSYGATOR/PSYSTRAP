@@ -1,0 +1,89 @@
+<base:WpfUiWindow
+    x:Class="Bloxstrap.UI.Elements.Bootstrapper.PsyDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:base="clr-namespace:Bloxstrap.UI.Elements.Base"
+    xmlns:controls="clr-namespace:Bloxstrap.UI.Elements.Controls"
+    xmlns:resources="clr-namespace:Bloxstrap.Resources"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Width="560"
+    SizeToContent="Height"
+    MinHeight="0"
+    Closing="Window_Closing"
+    ExtendsContentIntoTitleBar="True"
+    ResizeMode="NoResize"
+    WindowBackdropType="None"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None">
+    <!-- PSYstrap: the loading window. The real logo gets coloured in by marker sweeps and the real crown drops on. -->
+
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo x:Name="TaskbarInfo" />
+    </Window.TaskbarItemInfo>
+
+    <Grid>
+        <!-- painted here: the window's own Background gets replaced by the theme -->
+        <Grid.Background>
+            <RadialGradientBrush Center="0.5,0.32" GradientOrigin="0.5,0.32" RadiusX="0.7" RadiusY="0.75">
+                <GradientStop Offset="0" Color="#FF14301A" />
+                <GradientStop Offset="1" Color="#FF07120A" />
+            </RadialGradientBrush>
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0" Padding="8" ShowMaximize="False" ShowClose="False" CanMaximize="False" KeyboardNavigation.TabNavigation="None" />
+
+        <StackPanel Grid.Row="1" Margin="34,0,34,26" HorizontalAlignment="Stretch">
+            <!-- the logo, 500x500 artwork scaled down -->
+            <Viewbox Width="210" Height="210" HorizontalAlignment="Center">
+                <Grid x:Name="Layer" Width="500" Height="500" ClipToBounds="False">
+                    <Image x:Name="BodyMasked" Source="pack://application:,,,/Resources/BootstrapperStyles/PSY/LogoBody.png" Width="500" Height="500" RenderOptions.BitmapScalingMode="HighQuality" />
+                    <Image x:Name="BodySolid" Source="pack://application:,,,/Resources/BootstrapperStyles/PSY/LogoBody.png" Width="500" Height="500" Opacity="0" RenderOptions.BitmapScalingMode="HighQuality" />
+                    <Image x:Name="Crown" Source="pack://application:,,,/Resources/BootstrapperStyles/PSY/LogoCrown.png" Width="500" Height="500" Opacity="0" RenderOptions.BitmapScalingMode="HighQuality">
+                        <Image.RenderTransform>
+                            <TransformGroup>
+                                <RotateTransform x:Name="CrownTilt" CenterX="216" CenterY="157" />
+                                <TranslateTransform x:Name="CrownDrop" />
+                            </TransformGroup>
+                        </Image.RenderTransform>
+                    </Image>
+                    <Canvas Width="500" Height="500">
+                        <Path x:Name="Spark1" Fill="#F6E7A6" Data="M452 92 L 461 120 L 489 129 L 461 138 L 452 166 L 443 138 L 415 129 L 443 120 Z" Opacity="0" RenderTransformOrigin="0.5,0.5"><Path.RenderTransform><ScaleTransform /></Path.RenderTransform></Path>
+                        <Path x:Name="Spark2" Fill="#E9B632" Data="M36 286 L 43 305 L 62 312 L 43 319 L 36 338 L 29 319 L 10 312 L 29 305 Z" Opacity="0" RenderTransformOrigin="0.5,0.5"><Path.RenderTransform><ScaleTransform /></Path.RenderTransform></Path>
+                        <Path x:Name="Spark3" Fill="#3CF02A" Data="M468 392 L 474 408 L 490 414 L 474 420 L 468 436 L 462 420 L 446 414 L 462 408 Z" Opacity="0" RenderTransformOrigin="0.5,0.5"><Path.RenderTransform><ScaleTransform /></Path.RenderTransform></Path>
+                    </Canvas>
+                </Grid>
+            </Viewbox>
+
+            <TextBlock Margin="0,2,0,0" HorizontalAlignment="Center" Text="PSYstrap" FontFamily="pack://application:,,,/Resources/Fonts/#Permanent Marker" FontSize="30" Foreground="#3CF02A" RenderTransformOrigin="0.5,0.5">
+                <TextBlock.Effect><DropShadowEffect Color="#17761D" BlurRadius="0" ShadowDepth="2.5" Direction="315" Opacity="1" /></TextBlock.Effect>
+                <TextBlock.RenderTransform><RotateTransform Angle="-2" /></TextBlock.RenderTransform>
+            </TextBlock>
+
+            <TextBlock x:Name="MessageText" Margin="0,12,0,0" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"
+                       FontFamily="pack://application:,,,/Resources/Fonts/#Patrick Hand" FontSize="20" Foreground="#EEF8EC" Text="{x:Static resources:Strings.Bootstrapper_Status_Connecting}" />
+
+            <Grid Margin="0,12,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- scribbled progress bar -->
+                <controls:SketchBorder Grid.Column="0" Height="28" Padding="3" Roughness="1.4" CornerRadius="10" BorderThickness="2.5" Background="#0B1A0F" BorderBrush="#27B52B">
+                    <Grid x:Name="Track" ClipToBounds="True">
+                        <Border x:Name="Fill" Background="{x:Static controls:SketchBorder.HatchBrush}" CornerRadius="6,9,5,8" HorizontalAlignment="Left" Width="0" />
+                    </Grid>
+                </controls:SketchBorder>
+
+                <Button x:Name="CancelButton" Grid.Column="1" Margin="14,0,0,0" Style="{StaticResource PsyButton}" Padding="16,4,16,3" FontSize="16"
+                        FontFamily="pack://application:,,,/Resources/Fonts/#Permanent Marker" Content="{x:Static resources:Strings.Common_Cancel}" Click="CancelButton_Click" RenderTransformOrigin="0.5,0.5">
+                    <Button.RenderTransform><RotateTransform Angle="1.5" /></Button.RenderTransform>
+                </Button>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</base:WpfUiWindow>

@@ -399,6 +399,20 @@ namespace Bloxstrap
                     Settings.Save();
                 }
 
+                // PSYstrap: people still on the old default loading window get the PSYstrap one, once
+                if (!State.Prop.PsyDialogIntroduced && !LaunchSettings.WatcherFlag.Active && !LaunchSettings.MultiInstanceHostFlag.Active)
+                {
+                    State.Prop.PsyDialogIntroduced = true;
+
+                    if (Settings.Prop.BootstrapperStyle == BootstrapperStyle.FluentDialog)
+                    {
+                        Settings.Prop.BootstrapperStyle = BootstrapperStyle.PsyDialog;
+                        Settings.Save();
+                    }
+
+                    State.Save();
+                }
+
                 Logger.WriteLine(LOG_IDENT, $"Developer mode: {Settings.Prop.DeveloperMode}");
                 Logger.WriteLine(LOG_IDENT, $"Web environment: {Settings.Prop.WebEnvironment}");
 

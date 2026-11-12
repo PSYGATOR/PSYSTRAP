@@ -30,7 +30,7 @@ Everything Bloxstrap does (mods, fast flags, Discord status, etc.), plus:
 - **Server browser** - every public server of a game with player counts, join any of them as any saved account.
 - **Settings tools** - remove fast flags Roblox ignores, fast flag and mod profiles, import from Bloxstrap or Fishstrap, and backups.
 - **Better Discord status** - player count and region of your server, hide games you don't want to show, use your own Discord app, and with several windows it shows the one you're using.
-- A green theme to match the logo.
+- A hand-drawn look to match the logo, and a loading screen where the logo gets drawn in.
 
 It doesn't inject anything into Roblox or touch its memory. It only changes Roblox's own settings files and sends normal keyboard and mouse input.
 
@@ -71,4 +71,4 @@ The exe ends up in `fork\dist`. More info on the [building page](https://psygato
 
 ## Credits
 
-Based on [Bloxstrap](https://github.com/bloxstraplabs/bloxstrap) by pizzaboxer and contributors (MIT license, see [LICENSE](LICENSE)). Not affiliated with Roblox or the Bloxstrap team.
+Based on [Bloxstrap](https://github.com/bloxstraplabs/bloxstrap) by pizzaboxer and contributors (MIT license, see [LICENSE](LICENSE)). Uses the Permanent Marker font (Apache 2.0) and the Patrick Hand font (SIL Open Font License); their licenses are in Bloxstrap/Resources/Fonts. Not affiliated with Roblox or the Bloxstrap team.

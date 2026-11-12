@@ -28,8 +28,8 @@
         </Style>
         <Style x:Key="Section" TargetType="TextBlock">
             <Setter Property="Margin" Value="0,18,0,0" />
-            <Setter Property="FontSize" Value="20" />
-            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="FontFamily" Value="{DynamicResource PsyMarkerFont}" />
         </Style>
     </ui:UiPage.Resources>
 
@@ -186,7 +186,7 @@
         <!-- playtime -->
         <DockPanel Margin="0,18,0,0">
             <ui:Button DockPanel.Dock="Right" Icon="ArrowClockwise24" Appearance="Transparent" ToolTip="Refresh" AutomationProperties.Name="Refresh" Command="{Binding RefreshPlaytimeCommand}" />
-            <TextBlock Text="Playtime" FontSize="20" FontWeight="Medium" VerticalAlignment="Center" />
+            <TextBlock Text="Playtime" FontSize="22" FontFamily="{DynamicResource PsyMarkerFont}" VerticalAlignment="Center" />
         </DockPanel>
         <TextBlock Style="{StaticResource Note}" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding PlaytimeSummary, Mode=OneWay}" />
 

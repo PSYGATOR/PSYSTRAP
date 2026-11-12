@@ -5,7 +5,7 @@ namespace Bloxstrap.Models.Persistable
     public class Settings
     {
         // bloxstrap configuration
-        public BootstrapperStyle BootstrapperStyle { get; set; } = BootstrapperStyle.FluentDialog;
+        public BootstrapperStyle BootstrapperStyle { get; set; } = BootstrapperStyle.PsyDialog;
         public BootstrapperIcon BootstrapperIcon { get; set; } = BootstrapperIcon.IconBloxstrap;
         public string BootstrapperTitle { get; set; } = App.ProjectName;
         public string BootstrapperIconCustomLocation { get; set; } = "";

@@ -1,4 +1,4 @@
-﻿namespace Bloxstrap.Enums
+namespace Bloxstrap.Enums
 {
     public enum BootstrapperStyle
     {
@@ -11,6 +11,8 @@
         [EnumName(StaticName = "Bloxstrap")]
         FluentDialog,
         FluentAeroDialog,
-        CustomDialog
+        CustomDialog,
+        [EnumName(StaticName = "PSYstrap")]
+        PsyDialog
     }
 }
