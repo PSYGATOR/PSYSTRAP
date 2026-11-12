@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 
 namespace Bloxstrap.Models.Persistable
 {
@@ -19,6 +19,8 @@ namespace Bloxstrap.Models.Persistable
         public bool PotatoCapFramerate { get; set; } = true;
         public MultiInstanceSettings MultiInstanceOptions { get; set; } = new();
         public GameplaySettings Gameplay { get; set; } = new();
+
+        public LaunchingSettings Launching { get; set; } = new();
 
         // PSYstrap: written to Roblox's GlobalBasicSettings before each launch. 0 = leave Roblox's own setting alone.
         public int FramerateCap { get; set; } = 0;

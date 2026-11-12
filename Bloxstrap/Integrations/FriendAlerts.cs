@@ -144,6 +144,9 @@ namespace Bloxstrap.Integrations
             EventHandler? onClick = first.PlaceId == 0 ? null : (_, _) => JoinFriend(account, first);
 
             _showAlert(caption, message, onClick);
+
+            if (App.Settings.Prop.Gameplay.Webhook.OnFriendJoin)
+                Webhook.Send(caption, joined.Count == 1 ? $"{name} just started playing {where}." : $"{joined.Count} friends just started playing.", Webhook.Green);
         }
 
         private static void JoinFriend(SavedAccount account, RobloxAuth.FriendPresence friend)

@@ -34,6 +34,8 @@ If you're running a bunch of windows, also turn on efficiency mode in the [Insta
 
 **Hop to the smallest server** - moves you to the emptiest public server of the game you're in.
 
+**Server browser** - every public server of the game you're in, so you can pick one. See [Server browser](AFK-and-launching.md#server-browser).
+
 **Hide this game from Discord** - your Discord status just says "Playing Roblox" for this game from now on. Press it again to undo. See [Discord](Gameplay.md#discord).
 
 **Instances and macros** - opens the [Instances window](Multi-instance.md).

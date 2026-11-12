@@ -25,6 +25,14 @@ namespace Bloxstrap
 
         private readonly FriendAlerts? _friendAlerts;
 
+        public readonly ClientCare? Care;
+
+        private readonly GameBooster? _booster;
+
+        private readonly ScreenshotOrganiser? _screenshots;
+
+        private readonly ClipboardJoin? _clipboard;
+
         public Watcher()
         {
             const string LOG_IDENT = "Watcher";
@@ -112,7 +120,16 @@ namespace Bloxstrap
                 // every window gets presence, but only one shows it at a time (see DiscordOwner)
                 if (App.Settings.Prop.UseDiscordRichPresence)
                     RichPresence = new(ActivityWatcher, _watcherData.ProcessId);
+
+                // PSYstrap: remember servers, and a little recap when you leave a game
+                RecentServers.Track(activity);
+                activity.OnGameLeave += (_, _) => _ = ShowSessionRecapAsync(activity);
             }
+
+            // PSYstrap: crash handler, tray, watchdog, scheduled close
+            Care = new ClientCare(_watcherData.ProcessId, () => ActivityWatcher, Notify);
+            _booster = new GameBooster(_watcherData.ProcessId);
+            _screenshots = new ScreenshotOrganiser();
 
             // PSYstrap in-game overlay. Created on the UI thread (the watcher is constructed there).
             // Always runs so the menu key works; "Show overlay" only hides the counters.
@@ -133,9 +150,53 @@ namespace Bloxstrap
             _notifyIcon = new(this);
 
             // PSYstrap: friend alerts (only one watcher actually checks; see FriendAlerts)
-            _friendAlerts = new FriendAlerts((caption, message, onClick) =>
-                System.Windows.Application.Current.Dispatcher.BeginInvoke(() => _notifyIcon?.ShowAlert(caption, message, 10, onClick)));
+            _friendAlerts = new FriendAlerts(Notify);
+
+            _clipboard = new ClipboardJoin(Notify);
         }
+
+        /// <summary>A popup from this window's tray icon. Safe from any thread.</summary>
+        public void Notify(string caption, string message, EventHandler? onClick) =>
+            System.Windows.Application.Current.Dispatcher.BeginInvoke(() => _notifyIcon?.ShowAlert(caption, message, 10, onClick));
+
+        private async Task ShowSessionRecapAsync(ActivityWatcher activity)
+        {
+            try
+            {
+                if (!App.Settings.Prop.Gameplay.SessionRecap || activity.History.FirstOrDefault() is not ActivityData game)
+                    return;
+
+                // a teleport is a leave and a join straight away; only recap real leaves
+                await Task.Delay(TimeSpan.FromSeconds(8));
+
+                if (activity.InGame && activity.Data.UniverseId == game.UniverseId)
+                    return;
+
+                var played = (game.TimeLeft ?? DateTime.Now) - (game.RootActivity?.TimeJoined ?? game.TimeJoined);
+
+                if (played < TimeSpan.FromMinutes(1))
+                    return;
+
+                string name = game.UniverseDetails?.Data.Name
+                    ?? (await GameProfiles.GetUniverseNamesAsync(new[] { game.UniverseId })).GetValueOrDefault(game.UniverseId)
+                    ?? "that game";
+
+                long todaySeconds = PlaytimeTracker.Load().GetValueOrDefault(game.UniverseId.ToString())?.Days.GetValueOrDefault(DateTime.Today.ToString("yyyy-MM-dd")) ?? 0;
+
+                string message = $"You played for {FormatSpan(played)}.";
+                if (todaySeconds > played.TotalSeconds + 60)
+                    message += $" {FormatSpan(TimeSpan.FromSeconds(todaySeconds))} today in total.";
+
+                Notify($"Left {name}", message, null);
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException("Watcher::SessionRecap", ex);
+            }
+        }
+
+        private static string FormatSpan(TimeSpan time) =>
+            time.TotalHours >= 1 ? $"{(int)time.TotalHours}h {time.Minutes}m" : $"{Math.Max(1, time.Minutes)}m";
 
         public void KillRobloxProcess() => CloseProcess(_watcherData!.ProcessId, true);
 
@@ -177,6 +238,9 @@ namespace Bloxstrap
             while (Utilities.GetProcessesSafe().Any(x => x.Id == _watcherData.ProcessId))
                 await Task.Delay(1000);
 
+            // PSYstrap: reopen it if it crashed
+            Care?.OnRobloxExited();
+
             if (_watcherData.AutoclosePids is not null)
             {
                 foreach (int pid in _watcherData.AutoclosePids)
@@ -194,6 +258,10 @@ namespace Bloxstrap
             Overlay?.Dispose();
             Playtime?.Dispose();
             _friendAlerts?.Dispose();
+            Care?.Dispose();
+            _booster?.Dispose();
+            _screenshots?.Dispose();
+            _clipboard?.Dispose();
 
             if (_watcherData is not null)
                 Accounts.LiveSessions.Clear(_watcherData.ProcessId);

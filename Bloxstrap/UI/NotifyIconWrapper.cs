@@ -44,6 +44,13 @@ namespace Bloxstrap.UI
         #region Context menu
         public void MouseClickEventHandler(object? sender, System.Windows.Forms.MouseEventArgs e)
         {
+            // PSYstrap: left click brings Roblox back (for minimize to tray)
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                _watcher.Care?.ShowWindow();
+                return;
+            }
+
             if (e.Button != System.Windows.Forms.MouseButtons.Right)
                 return;
 

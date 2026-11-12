@@ -193,6 +193,22 @@ namespace Bloxstrap.Accounts
             return names;
         }
 
+        /// <summary>
+        /// Turns a roblox.com/share?code=...&amp;type=Server link into the place and private server link code it points at.
+        /// </summary>
+        public static async Task<(long PlaceId, string LinkCode)?> ResolveShareLinkAsync(string session, string code)
+        {
+            using var doc = await PostJsonAsync("https://apis.roblox.com/sharelinks/v1/resolve-link", session, new { linkId = code, linkType = "Server" });
+
+            if (doc is null || !doc.RootElement.TryGetProperty("privateServerInviteData", out var invite) || invite.ValueKind != JsonValueKind.Object)
+                return null;
+
+            long placeId = invite.TryGetProperty("placeId", out var p) && p.ValueKind == JsonValueKind.Number ? p.GetInt64() : 0;
+            string linkCode = invite.TryGetProperty("linkCode", out var l) ? l.GetString() ?? "" : "";
+
+            return placeId == 0 || linkCode.Length == 0 ? null : (placeId, linkCode);
+        }
+
         /// <summary>The roblox-player: link for joining whatever server a friend is in (the website's "Join" button).</summary>
         public static string BuildFollowLink(string ticket, long friendUserId)
         {
@@ -210,11 +226,13 @@ namespace Bloxstrap.Accounts
         /// The roblox-player: link a browser launch uses. serverId joins that exact server; accessCode a private server;
         /// neither joins any public server of the place.
         /// </summary>
-        public static string BuildLaunchLink(string ticket, long placeId, string? serverId = null, string? accessCode = null)
+        public static string BuildLaunchLink(string ticket, long placeId, string? serverId = null, string? accessCode = null, string? linkCode = null)
         {
             long browserTrackerId = Random.Shared.NextInt64(100_000_000_000, 999_999_999_999);
 
-            string placeLauncher = !String.IsNullOrEmpty(accessCode)
+            string placeLauncher = !String.IsNullOrEmpty(linkCode)
+                ? $"https://assetgame.roblox.com/game/PlaceLauncher.ashx?request=RequestPrivateGame&browserTrackerId={browserTrackerId}&placeId={placeId}&linkCode={linkCode}&isPlayTogetherGame=false"
+                : !String.IsNullOrEmpty(accessCode)
                 ? $"https://assetgame.roblox.com/game/PlaceLauncher.ashx?request=RequestPrivateGame&browserTrackerId={browserTrackerId}&placeId={placeId}&accessCode={accessCode}&isPlayTogetherGame=false"
                 : !String.IsNullOrEmpty(serverId)
                     ? $"https://assetgame.roblox.com/game/PlaceLauncher.ashx?request=RequestGameJob&browserTrackerId={browserTrackerId}&placeId={placeId}&gameId={serverId}&isPlayTogetherGame=false"

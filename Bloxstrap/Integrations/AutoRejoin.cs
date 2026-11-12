@@ -100,9 +100,6 @@ namespace Bloxstrap.Integrations
 
         private async Task OnGameLeaveAsync()
         {
-            if (!App.Settings.Prop.Gameplay.AutoRejoin)
-                return;
-
             // the watcher has already cleared Data by now; the game we just left is the newest history entry
             var data = _activity.History.FirstOrDefault();
 
@@ -138,6 +135,7 @@ namespace Bloxstrap.Integrations
             if (recentText && NoRejoinText.IsMatch(_lastReasonText!))
             {
                 App.Logger.WriteLine(LOG_IDENT, $"Not rejoining: {_lastReasonText}");
+                NotifyDisconnect(data, rejoining: false);
                 return;
             }
 
@@ -157,19 +155,41 @@ namespace Bloxstrap.Integrations
                 return;
             }
 
+            if (!App.Settings.Prop.Gameplay.AutoRejoin)
+            {
+                NotifyDisconnect(data, rejoining: false);
+                return;
+            }
+
             if (!RecordAttempt())
             {
                 App.Logger.WriteLine(LOG_IDENT, "Already rejoined 3 times in 10 minutes, giving up");
+                NotifyDisconnect(data, rejoining: false, gaveUp: true);
                 return;
             }
+
+            NotifyDisconnect(data, rejoining: true);
 
             string why = _lastReasonText ?? _lastReason?.ToString() ?? "unknown";
             App.Logger.WriteLine(LOG_IDENT, $"Lost the server ({why}), rejoining {placeId}/{(serverId.Length > 0 ? serverId : "any server")}");
             Accounts.ClientRejoin.RejoinServer(_robloxPid, placeId, serverId, accessCode, isPrivate, userId);
         }
 
+        private void NotifyDisconnect(ActivityData data, bool rejoining, bool gaveUp = false)
+        {
+            var hook = App.Settings.Prop.Gameplay.Webhook;
+            string why = _lastReasonText ?? (_lastReason is int code ? $"code {code}" : "no reason given");
+            string game = data.UniverseDetails?.Data.Name ?? $"place {data.PlaceId}";
+            string who = Webhook.AccountSuffix(data.UserId);
+
+            if (rejoining && hook.OnRejoin)
+                Webhook.Send($"Rejoining {game}", $"Got disconnected{who} ({why}). Rejoining the same server.", Webhook.Gold);
+            else if (!rejoining && hook.OnDisconnect)
+                Webhook.Send($"Disconnected from {game}", $"Disconnected{who}: {why}." + (gaveUp ? " Already rejoined 3 times in 10 minutes, so it stopped trying." : ""), Webhook.Red);
+        }
+
         /// <summary>Keeps a small history across watcher restarts (each rejoin starts a new watcher).</summary>
-        private static bool RecordAttempt()
+        internal static bool RecordAttempt()
         {
             try
             {

@@ -60,6 +60,56 @@
             <ui:ToggleSwitch IsChecked="{Binding MuteBackgroundWindows, Mode=TwoWay}" />
         </controls:OptionControl>
 
+        <controls:OptionControl Header="Reopen Roblox if it crashes or freezes"
+            Description="If Roblox crashes, or stops responding for a minute, PSYstrap opens it again in the same server. Max 3 times in 10 minutes (shared with rejoining).">
+            <ui:ToggleSwitch IsChecked="{Binding CrashWatchdog, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <!-- windows -->
+        <TextBlock Text="Roblox windows" Style="{StaticResource Section}" />
+
+        <controls:OptionControl Header="Turn off Roblox's crash reporter"
+            Description="Every Roblox window starts a RobloxCrashHandler process just to send crash reports to Roblox. Closing it saves a bit of RAM per window.">
+            <ui:ToggleSwitch IsChecked="{Binding DisableCrashHandler, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="Minimize to tray"
+            Description="A minimized Roblox disappears from the taskbar. Click its PSYstrap icon in the tray (bottom right) to get it back. Handy with lots of AFK windows.">
+            <ui:ToggleSwitch IsChecked="{Binding MinimizeToTray, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="Recap when you leave a game"
+            Description="A little popup saying how long you played.">
+            <ui:ToggleSwitch IsChecked="{Binding SessionRecap, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="Join links you copy"
+            Description="While Roblox is open, copying a Roblox game, private server or share link pops up a button to join it.">
+            <ui:ToggleSwitch IsChecked="{Binding ClipboardJoin, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="Sort screenshots by game"
+            Description="Moves new Roblox screenshots (Pictures\Roblox) into a folder named after the game.">
+            <ui:ToggleSwitch IsChecked="{Binding OrganiseScreenshots, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <!-- booster -->
+        <TextBlock Text="Game booster" Style="{StaticResource Section}" />
+        <TextBlock Style="{StaticResource Note}" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                   Text="While any Roblox is open. Everything goes back to how it was when the last Roblox closes, including reopening the apps it closed." />
+
+        <controls:OptionControl Header="Game booster" Description="Turn the stuff below on while you play.">
+            <ui:ToggleSwitch IsChecked="{Binding BoosterEnabled, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="High performance power plan" Description="Switches Windows' power plan. Some laptops don't have this plan; then nothing changes.">
+            <ui:ToggleSwitch IsChecked="{Binding BoosterHighPerformance, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="Close these apps" Description="App names from Task Manager's Details tab, without .exe, separated by commas. Like: chrome, Spotify, EpicGamesLauncher">
+            <ui:TextBox Width="260" Text="{Binding BoosterApps, Mode=TwoWay}" PlaceholderText="chrome, Spotify" />
+        </controls:OptionControl>
+
         <!-- remaps -->
         <TextBlock Text="Remap keys" Style="{StaticResource Section}" />
         <TextBlock Style="{StaticResource Note}" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
@@ -70,7 +120,7 @@
                 <DataTemplate>
                     <Border Style="{StaticResource RowBorder}">
                         <DockPanel>
-                            <ui:Button DockPanel.Dock="Right" Icon="Delete24" Appearance="Transparent" ToolTip="Remove"
+                            <ui:Button DockPanel.Dock="Right" Icon="Delete24" Appearance="Transparent" ToolTip="Remove" AutomationProperties.Name="Remove"
                                        Command="{Binding DataContext.DeleteRemapCommand, ElementName=GameplayPageView}" CommandParameter="{Binding}" />
                             <TextBlock VerticalAlignment="Center" FontSize="14">
                                 <Run Text="{Binding From, Mode=OneWay}" FontWeight="Medium" />
@@ -101,19 +151,24 @@
                 <DataTemplate>
                     <Border Style="{StaticResource RowBorder}">
                         <DockPanel>
-                            <ui:Button DockPanel.Dock="Right" Icon="Delete24" Appearance="Transparent" ToolTip="Remove" Margin="6,0,0,0"
+                            <ui:Button DockPanel.Dock="Right" VerticalAlignment="Top" Icon="Delete24" Appearance="Transparent" ToolTip="Remove" AutomationProperties.Name="Remove" Margin="6,0,0,0"
                                        Command="{Binding DataContext.DeleteProfileCommand, ElementName=GameplayPageView}" CommandParameter="{Binding}" />
-                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                                <TextBlock Text="FPS" VerticalAlignment="Center" Margin="0,0,6,0" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                                <ComboBox Width="150" ItemsSource="{Binding DataContext.ProfileFramerateCaps, ElementName=GameplayPageView, Mode=OneTime}"
-                                          DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding FramerateCap, Mode=TwoWay}" />
-                                <TextBlock Text="Potato" VerticalAlignment="Center" Margin="12,0,6,0" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                                <ComboBox Width="140" ItemsSource="{Binding DataContext.PotatoChoices, ElementName=GameplayPageView, Mode=OneTime}"
-                                          SelectedItem="{Binding Potato, Mode=TwoWay}" />
-                            </StackPanel>
-                            <StackPanel VerticalAlignment="Center">
-                                <TextBlock Text="{Binding Title, Mode=OneTime}" FontSize="14" FontWeight="Medium" TextTrimming="CharacterEllipsis" />
-                                <TextBlock Text="{Binding PlaceId, Mode=OneTime, StringFormat=Place {0}}" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                            <StackPanel>
+                                <TextBlock FontSize="14" FontWeight="Medium" TextTrimming="CharacterEllipsis">
+                                    <Run Text="{Binding Title, Mode=OneTime}" />
+                                    <Run Text="{Binding PlaceId, Mode=OneTime, StringFormat=  place {0}}" FontSize="12" FontWeight="Normal" Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                                </TextBlock>
+                                <WrapPanel Margin="0,6,0,0">
+                                    <TextBlock Text="FPS" VerticalAlignment="Center" Margin="0,0,6,0" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                    <ComboBox Width="150" ItemsSource="{Binding DataContext.ProfileFramerateCaps, ElementName=GameplayPageView, Mode=OneTime}"
+                                              DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding FramerateCap, Mode=TwoWay}" />
+                                    <TextBlock Text="Potato" VerticalAlignment="Center" Margin="12,0,6,0" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                    <ComboBox Width="140" ItemsSource="{Binding DataContext.PotatoChoices, ElementName=GameplayPageView, Mode=OneTime}"
+                                              SelectedItem="{Binding Potato, Mode=TwoWay}" />
+                                    <TextBlock Text="Mods" VerticalAlignment="Center" Margin="12,0,6,0" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                    <ComboBox Width="150" ItemsSource="{Binding DataContext.ModProfileChoices, ElementName=GameplayPageView, Mode=OneTime}"
+                                              SelectedItem="{Binding ModProfile, Mode=TwoWay}" ToolTip="Mod profiles are made on the Mods page" />
+                                </WrapPanel>
                             </StackPanel>
                         </DockPanel>
                     </Border>
@@ -130,7 +185,7 @@
 
         <!-- playtime -->
         <DockPanel Margin="0,18,0,0">
-            <ui:Button DockPanel.Dock="Right" Icon="ArrowClockwise24" Appearance="Transparent" ToolTip="Refresh" Command="{Binding RefreshPlaytimeCommand}" />
+            <ui:Button DockPanel.Dock="Right" Icon="ArrowClockwise24" Appearance="Transparent" ToolTip="Refresh" AutomationProperties.Name="Refresh" Command="{Binding RefreshPlaytimeCommand}" />
             <TextBlock Text="Playtime" FontSize="20" FontWeight="Medium" VerticalAlignment="Center" />
         </DockPanel>
         <TextBlock Style="{StaticResource Note}" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding PlaytimeSummary, Mode=OneWay}" />
@@ -212,7 +267,7 @@
                 <DataTemplate>
                     <Border Style="{StaticResource RowBorder}">
                         <DockPanel>
-                            <ui:Button DockPanel.Dock="Right" Icon="Eye24" Appearance="Transparent" ToolTip="Show it again"
+                            <ui:Button DockPanel.Dock="Right" Icon="Eye24" Appearance="Transparent" ToolTip="Show it again" AutomationProperties.Name="Show it again"
                                        Command="{Binding DataContext.UnhideGameCommand, ElementName=GameplayPageView}" CommandParameter="{Binding}" />
                             <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontSize="14" TextTrimming="CharacterEllipsis" />
                         </DockPanel>

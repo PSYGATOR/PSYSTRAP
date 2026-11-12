@@ -18,6 +18,12 @@ namespace Bloxstrap.Models.Persistable
         /// </summary>
         public bool TrimBackgroundMemory { get; set; } = false;
 
+        /// <summary>Only trim a window once it uses more than this many MB. 0 = trim every minute.</summary>
+        public int TrimAboveMB { get; set; } = 0;
+
+        /// <summary>Give each background window its own CPU cores, so they don't all fight over the same ones.</summary>
+        public bool SpreadCpuCores { get; set; } = false;
+
         /// <summary>Turn-taking: which smart macro each instance slot runs (slot → smart macro name).</summary>
         public Dictionary<int, string> RotationMacros { get; set; } = new();
 

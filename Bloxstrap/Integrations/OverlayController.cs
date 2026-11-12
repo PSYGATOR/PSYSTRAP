@@ -104,6 +104,11 @@ namespace Bloxstrap.Integrations
             _options.ApplyNowRequested += (_, _) => RestartRoblox(_getGame()?.GetInviteDeeplink(false));
             _options.SmallestServerRequested += async (_, _) => await HopToSmallestServer();
             _options.DiscordHideRequested += (_, _) => ToggleDiscordHidden();
+            _options.ServerBrowserRequested += (_, _) =>
+            {
+                CloseMenu(refocusRoblox: false);
+                Process.Start(Paths.Process, $"-servers {_getGame()?.PlaceId ?? 0}");
+            };
 
             _options.Changed += (_, _) =>
             {
@@ -412,6 +417,7 @@ namespace Bloxstrap.Integrations
             if (settings.ShowServer)
                 UpdateServerInfo();
         }
+
 
         /// <summary>
         /// Region (only with "Query server location" on, which sends the server address to ipinfo.io like Bloxstrap

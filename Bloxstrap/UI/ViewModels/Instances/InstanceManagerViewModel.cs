@@ -182,6 +182,31 @@ namespace Bloxstrap.UI.ViewModels.Instances
             set => SaveSettings(settings => settings.MultiInstanceOptions.TrimBackgroundMemory = value, nameof(TrimBackgroundMemory));
         }
 
+        public IReadOnlyList<KeyValuePair<int, string>> TrimLimits { get; } = new List<KeyValuePair<int, string>>
+        {
+            new(0, "Every minute"),
+            new(500, "Over 500 MB"),
+            new(800, "Over 800 MB"),
+            new(1200, "Over 1.2 GB"),
+            new(1600, "Over 1.6 GB"),
+            new(2000, "Over 2 GB")
+        };
+
+        public int TrimAboveMB
+        {
+            get => App.Settings.Prop.MultiInstanceOptions.TrimAboveMB;
+            set => SaveSettings(settings => settings.MultiInstanceOptions.TrimAboveMB = value, nameof(TrimAboveMB));
+        }
+
+        public bool SpreadCpuCores
+        {
+            get => App.Settings.Prop.MultiInstanceOptions.SpreadCpuCores;
+            set => SaveSettings(settings => settings.MultiInstanceOptions.SpreadCpuCores = value, nameof(SpreadCpuCores));
+        }
+
+        public string CoresNote => "Each background window gets its own couple of cores, so they don't all fight over the same ones. The window you're using keeps all of them. "
+            + $"Your PC has {Environment.ProcessorCount} CPU threads." + (Environment.ProcessorCount < 4 ? " That's too few to split up, so this does nothing here." : "");
+
         /// <summary>Reload first so changes made elsewhere (Settings window, in-game menu) aren't overwritten.</summary>
         private void SaveSettings(Action<Models.Persistable.Settings> change, string propertyName)
         {

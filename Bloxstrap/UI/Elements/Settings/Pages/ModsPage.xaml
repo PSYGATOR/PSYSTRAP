@@ -7,6 +7,7 @@
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:resources="clr-namespace:Bloxstrap.Resources"
       xmlns:controls="clr-namespace:Bloxstrap.UI.Elements.Controls"
+      xmlns:tools="clr-namespace:Bloxstrap.UI.Elements.Settings.Tools"
       xmlns:dmodels="clr-namespace:Bloxstrap.UI.ViewModels.Settings"
       mc:Ignorable="d"
       d:DataContext="{d:DesignInstance dmodels:ModsViewModel, IsDesignTimeCreatable=True}"
@@ -150,5 +151,6 @@
                 <ui:Button Icon="Delete16" Content="{x:Static resources:Strings.Menu_Mods_Misc_CustomFont_Remove}" Appearance="Danger" Command="{Binding ManageCustomFontCommand}" Visibility="{Binding DeleteCustomFontVisibility, Mode=OneWay}" />
             </StackPanel>
         </controls:OptionControl>
+        <tools:ModProfilesControl />
     </StackPanel>
 </ui:UiPage>

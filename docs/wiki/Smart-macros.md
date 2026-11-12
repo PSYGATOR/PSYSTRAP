@@ -33,6 +33,7 @@ Actions:
 - **Wait** - waits some seconds
 - **Rejoin server** - closes Roblox and opens it back in the same server
 - **Stop smart macro**
+- **Send phone alert** - sends your message to your Discord webhook, see [Phone alerts](AFK-and-launching.md#phone-alerts)
 
 It goes through the rules top to bottom and runs the first one that's ready. Use the up arrow to move them around. The "wait at least X s before firing again" box stops a rule from spamming. "Check every" at the top is how often it looks at the screen (400ms by default).
 

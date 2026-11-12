@@ -60,6 +60,29 @@ namespace Bloxstrap.UI.ViewModels.Settings
             get => Gameplay.MuteBackgroundWindows;
             set => Gameplay.MuteBackgroundWindows = value;
         }
+
+        public bool CrashWatchdog { get => Gameplay.CrashWatchdog; set => Gameplay.CrashWatchdog = value; }
+
+        public bool DisableCrashHandler { get => Gameplay.DisableCrashHandler; set => Gameplay.DisableCrashHandler = value; }
+
+        public bool MinimizeToTray { get => Gameplay.MinimizeToTray; set => Gameplay.MinimizeToTray = value; }
+
+        public bool SessionRecap { get => Gameplay.SessionRecap; set => Gameplay.SessionRecap = value; }
+
+        public bool ClipboardJoin { get => Gameplay.ClipboardJoin; set => Gameplay.ClipboardJoin = value; }
+
+        public bool OrganiseScreenshots { get => Gameplay.OrganiseScreenshots; set => Gameplay.OrganiseScreenshots = value; }
+
+        public bool BoosterEnabled { get => Gameplay.Booster.Enabled; set => Gameplay.Booster.Enabled = value; }
+
+        public bool BoosterHighPerformance { get => Gameplay.Booster.HighPerformancePower; set => Gameplay.Booster.HighPerformancePower = value; }
+
+        /// <summary>Comma separated process names, like "chrome, Spotify".</summary>
+        public string BoosterApps
+        {
+            get => String.Join(", ", Gameplay.Booster.CloseApps);
+            set => Gameplay.Booster.CloseApps = (value ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+        }
         #endregion
 
         #region Remaps
@@ -147,7 +170,18 @@ namespace Bloxstrap.UI.ViewModels.Settings
                 get => Profile.PotatoMode switch { true => "On", false => "Off", null => "Normal setting" };
                 set => Profile.PotatoMode = value switch { "On" => true, "Off" => false, _ => null };
             }
+
+            public string ModProfile
+            {
+                get => String.IsNullOrEmpty(Profile.ModProfile) ? NormalMods : Profile.ModProfile;
+                set => Profile.ModProfile = value == NormalMods ? "" : value ?? "";
+            }
         }
+
+        public const string NormalMods = "Normal mods";
+
+        /// <summary>"Normal mods" plus the mod profiles saved on the Mods page.</summary>
+        public IReadOnlyList<string> ModProfileChoices { get; } = new[] { NormalMods }.Concat(ModProfiles.List()).ToList();
 
         public ObservableCollection<ProfileRow> Profiles { get; } = new();
 

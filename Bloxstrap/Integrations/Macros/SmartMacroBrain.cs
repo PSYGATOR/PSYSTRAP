@@ -108,11 +108,20 @@ namespace Bloxstrap.Integrations.Macros
                     break;
 
                 case RuleAction.Rejoin:
+                    if (App.Settings.Prop.Gameplay.Webhook.OnSmartMacro)
+                        Webhook.Send("Smart macro is rejoining", "A smart macro rule asked to rejoin the server.", Webhook.Gold);
                     rejoin();
                     return false;
 
                 case RuleAction.Stop:
+                    if (App.Settings.Prop.Gameplay.Webhook.OnSmartMacro)
+                        Webhook.Send("Smart macro stopped", "A smart macro rule stopped the smart macro.", Webhook.Grey);
                     return false;
+
+                case RuleAction.Notify:
+                    // always sent: the rule itself is the "tell me" switch
+                    Webhook.Send("Smart macro", String.IsNullOrWhiteSpace(rule.Parameter) ? "A smart macro rule fired." : rule.Parameter, Webhook.Gold);
+                    break;
             }
 
             return true;

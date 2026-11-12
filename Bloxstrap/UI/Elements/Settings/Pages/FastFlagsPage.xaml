@@ -1,4 +1,4 @@
-﻿<ui:UiPage x:Class="Bloxstrap.UI.Elements.Settings.Pages.FastFlagsPage"
+<ui:UiPage x:Class="Bloxstrap.UI.Elements.Settings.Pages.FastFlagsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -7,6 +7,7 @@
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:resources="clr-namespace:Bloxstrap.Resources"
       xmlns:controls="clr-namespace:Bloxstrap.UI.Elements.Controls"
+      xmlns:tools="clr-namespace:Bloxstrap.UI.Elements.Settings.Tools"
       mc:Ignorable="d"
       d:DesignHeight="1500" d:DesignWidth="800"
       Title="FastFlagsPage"
@@ -67,5 +68,6 @@
                 <TextBlock Margin="0,2,0,0" FontSize="12" Text="{x:Static resources:Strings.Menu_FastFlags_Editor_Description}" Padding="0,0,16,0"  Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
             </StackPanel>
         </ui:CardAction>
+        <tools:FlagToolsControl />
     </StackPanel>
 </ui:UiPage>

@@ -46,6 +46,7 @@
             <ui:ToggleSwitch IsChecked="{Binding ShowPlaytime, Mode=TwoWay}" />
         </controls:OptionControl>
 
+
         <controls:OptionControl Header="Position" Description="Which corner they go in.">
             <ComboBox Width="160" Padding="10,5,10,5" ItemsSource="{Binding Corners, Mode=OneTime}" SelectedItem="{Binding Corner, Mode=TwoWay}">
                 <ComboBox.ItemTemplate>
@@ -75,6 +76,7 @@
             <ui:Button Margin="0,8,0,0" Icon="Server24" HorizontalAlignment="Left" Content="Hop to the smallest server of this game" Command="{Binding SmallestServerCommand}" />
             <TextBlock Margin="2,4,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding ServerHopStatus, Mode=OneWay}" />
             <ui:Button Margin="0,8,0,0" Icon="EyeOff24" HorizontalAlignment="Left" Content="{Binding DiscordHideText, Mode=OneWay}" Command="{Binding DiscordHideCommand}" />
+            <ui:Button Margin="0,8,0,0" Icon="Globe24" HorizontalAlignment="Left" Content="Server browser (pick a server)" Command="{Binding ServerBrowserCommand}" />
         </StackPanel>
 
         <controls:OptionControl Header="Potato mode (disable graphics)"

@@ -1,0 +1,28 @@
+<UserControl x:Class="Bloxstrap.UI.Elements.Settings.Tools.TransferControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+    <!-- PSYstrap: import from other straps + backup/restore -->
+    <StackPanel>
+        <TextBlock Text="Coming from another strap?" FontSize="20" FontWeight="Medium" Margin="0,16,0,0" />
+        <TextBlock Margin="0,4,0,0" FontSize="13" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                   Text="Copies settings, fast flags and mods over from Bloxstrap, Fishstrap, Froststrap, Voidstrap or Nyxstrap. PSYstrap's look stays the same." />
+        <TextBlock Margin="0,2,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding ImportNote, Mode=OneTime}" />
+
+        <WrapPanel Margin="0,8,0,0" IsEnabled="{Binding HasStraps, Mode=OneTime}">
+            <ComboBox Width="200" ItemsSource="{Binding Straps, Mode=OneTime}" SelectedItem="{Binding SelectedStrap, Mode=TwoWay}" />
+            <ui:Button Margin="8,0,0,0" Icon="ArrowImport24" Content="Import" Command="{Binding ImportCommand}" />
+        </WrapPanel>
+
+        <TextBlock Text="Backup" FontSize="20" FontWeight="Medium" Margin="0,18,0,0" />
+        <TextBlock Margin="0,4,0,0" FontSize="13" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                   Text="Everything in one zip: settings, macros, smart macros, mods, fast flags, profiles and playtime. Good for moving to a new PC. Saved accounts stay out, they only work on this PC." />
+
+        <WrapPanel Margin="0,8,0,0">
+            <ui:Button Icon="Save24" Content="Save a backup" Command="{Binding BackupCommand}" />
+            <ui:Button Margin="8,0,0,0" Icon="ArrowReset24" Content="Restore a backup" Command="{Binding RestoreCommand}" />
+        </WrapPanel>
+
+        <TextBlock Margin="2,6,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding Status, Mode=OneWay}" />
+    </StackPanel>
+</UserControl>

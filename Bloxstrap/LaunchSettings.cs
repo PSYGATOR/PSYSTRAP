@@ -47,6 +47,21 @@ namespace Bloxstrap
 
         public LaunchFlag SmartMacroEditorFlag      { get; } = new("smartmacroeditor");
 
+        /// <summary>Open a favourite game (desktop shortcuts and the scheduler use this).</summary>
+        public LaunchFlag FavouriteFlag             { get; } = new("favourite");
+
+        /// <summary>With -favourite: close it again after this many minutes.</summary>
+        public LaunchFlag StopAfterFlag             { get; } = new("stopafter");
+
+        /// <summary>With -favourite: it was opened by the scheduler (for the webhook message).</summary>
+        public LaunchFlag ScheduledFlag             { get; } = new("scheduled");
+
+        /// <summary>Started with Windows: open the favourites marked for it.</summary>
+        public LaunchFlag StartupFlag               { get; } = new("startup");
+
+        /// <summary>Server browser for a place.</summary>
+        public LaunchFlag ServersFlag               { get; } = new("servers");
+
 #if DEBUG
         public bool BypassUpdateCheck => true;
 #else

@@ -66,6 +66,12 @@ namespace Bloxstrap.UI.ViewModels.Overlay
             set { Overlay.ShowPlaytime = value; Commit(nameof(ShowPlaytime)); }
         }
 
+
+        /// <summary>Raised when the user wants the server browser for the current game.</summary>
+        public event EventHandler? ServerBrowserRequested;
+
+        public System.Windows.Input.ICommand ServerBrowserCommand => new CommunityToolkit.Mvvm.Input.RelayCommand(() => ServerBrowserRequested?.Invoke(this, EventArgs.Empty));
+
         public IEnumerable<OverlayCorner> Corners { get; } = Enum.GetValues<OverlayCorner>();
 
         public OverlayCorner Corner

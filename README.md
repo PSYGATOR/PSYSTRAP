@@ -26,6 +26,9 @@ Everything Bloxstrap does (mods, fast flags, Discord status, etc.), plus:
 - **Custom skybox** - a few presets, or use your own images.
 - **Potato mode** - lowest graphics in one click.
 - **Everyday stuff** - rejoin when you get disconnected, anti-AFK, remap keys and side mouse buttons, a different FPS cap or potato mode per game, playtime per game, a popup when a friend starts playing, background windows muted.
+- **AFK tools** - favourites with desktop shortcuts, start with Windows, open and close games on a schedule, reopen Roblox if it crashes or freezes, minimize windows to the tray, and messages to your phone (Discord webhook) when something goes wrong.
+- **Server browser** - every public server of a game with player counts, join any of them as any saved account.
+- **Settings tools** - remove fast flags Roblox ignores, fast flag and mod profiles, import from Bloxstrap or Fishstrap, and backups.
 - **Better Discord status** - player count and region of your server, hide games you don't want to show, use your own Discord app, and with several windows it shows the one you're using.
 - A green theme to match the logo.
 

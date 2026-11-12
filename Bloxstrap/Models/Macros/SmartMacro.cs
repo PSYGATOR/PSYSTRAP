@@ -73,7 +73,10 @@ namespace Bloxstrap.Models.Macros
         Rejoin,
 
         [EnumName(StaticName = "Stop smart macro")]
-        Stop
+        Stop,
+
+        [EnumName(StaticName = "Send phone alert (webhook)")]
+        Notify
     }
 
     /// <summary>"When [detector] is [seen / not seen] for [time] → [action]".</summary>

@@ -1,0 +1,84 @@
+<base:WpfUiWindow x:Class="Bloxstrap.UI.Elements.Servers.ServerBrowserWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:base="clr-namespace:Bloxstrap.UI.Elements.Base"
+        Title="PSYstrap Servers"
+        Width="820"
+        Height="640"
+        MinWidth="640"
+        MinHeight="420"
+        Background="{ui:ThemeResource ApplicationBackgroundBrush}"
+        ExtendsContentIntoTitleBar="True"
+        WindowBackdropType="Mica"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0" Padding="8" Title="PSYstrap Servers" Icon="pack://application:,,,/Bloxstrap.ico" />
+
+        <StackPanel Grid.Row="1" Margin="16,4,16,0">
+            <TextBlock FontSize="20" FontWeight="Medium" Text="{Binding GameName, Mode=OneWay, FallbackValue=Servers, TargetNullValue=Servers}" />
+            <Border Height="3" Width="44" HorizontalAlignment="Left" CornerRadius="1.5" Margin="1,4,0,10" Background="{DynamicResource PsyCrownStripBrush}" />
+
+            <DockPanel>
+                <ui:Button DockPanel.Dock="Right" Margin="8,0,0,0" Icon="ArrowClockwise24" Content="Load" Appearance="Primary" Command="{Binding LoadCommand}" IsEnabled="{Binding NotBusy, Mode=OneWay}" />
+                <ui:TextBox PlaceholderText="Place ID or game link" Text="{Binding PlaceText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </DockPanel>
+
+            <WrapPanel Margin="0,10,0,0">
+                <TextBlock Text="Join as" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                <ComboBox Width="250" ItemsSource="{Binding Accounts, Mode=OneTime}" DisplayMemberPath="Label" SelectedValuePath="UserId" SelectedValue="{Binding AccountUserId, Mode=TwoWay}" />
+                <TextBlock Text="Sort" VerticalAlignment="Center" Margin="16,0,8,0" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                <ComboBox Width="190" ItemsSource="{Binding SortChoices, Mode=OneTime}" SelectedItem="{Binding Sort, Mode=TwoWay}" />
+                <CheckBox Margin="16,0,0,0" Content="Hide full servers" IsChecked="{Binding HideFull, Mode=TwoWay}" />
+            </WrapPanel>
+        </StackPanel>
+
+        <TextBlock Grid.Row="2" Margin="18,10,16,6" FontSize="13" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding Status, Mode=OneWay}" />
+
+        <Grid Grid.Row="3" Margin="16,0,16,16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid Margin="14,0,14,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="90" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Players" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                <TextBlock Grid.Column="1" Text="Players' ping" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" ToolTip="The average ping of the people in that server, as Roblox reports it" />
+            </Grid>
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding ServersView}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Margin="0,0,0,4" Padding="14,6,10,6" CornerRadius="6" Background="{DynamicResource ControlFillColorDefaultBrush}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="120" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="90" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" VerticalAlignment="Center" FontWeight="Medium" Text="{Binding Players, Mode=OneTime}" />
+                                    <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding AveragePingText, Mode=OneTime}" />
+                                    <ui:Button Grid.Column="2" HorizontalAlignment="Right" Content="Join" Icon="Play24"
+                                               Command="{Binding DataContext.JoinCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</base:WpfUiWindow>

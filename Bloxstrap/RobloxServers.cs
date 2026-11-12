@@ -24,6 +24,50 @@ namespace Bloxstrap
 
             [JsonPropertyName("maxPlayers")]
             public int MaxPlayers { get; set; }
+
+            [JsonPropertyName("ping")]
+            public double? Ping { get; set; }
+
+            [JsonPropertyName("fps")]
+            public double? Fps { get; set; }
+        }
+
+        /// <summary>A server for the server browser. Ping is the players' average (what Roblox reports).</summary>
+        public record ListedServer(string Id, int Playing, int MaxPlayers, int? AveragePing, double? Fps);
+
+        /// <summary>Up to pages × 100 public servers, biggest first.</summary>
+        public static async Task<List<ListedServer>> ListAsync(long placeId, int pages = 3)
+        {
+            var servers = new List<ListedServer>();
+            string? cursor = null;
+
+            for (int page = 0; page < pages; page++)
+            {
+                try
+                {
+                    string url = $"https://games.roblox.com/v1/games/{placeId}/servers/Public?sortOrder=Desc&limit=100" + (cursor is null ? "" : $"&cursor={Uri.EscapeDataString(cursor)}");
+                    var result = await Http.GetJson<ServerPageWithCursor>(url);
+
+                    if (result is null)
+                        break;
+
+                    servers.AddRange(result.Data
+                        .Where(s => !String.IsNullOrEmpty(s.Id))
+                        .Select(s => new ListedServer(s.Id, s.Playing, s.MaxPlayers, s.Ping is double p ? (int)Math.Round(p) : null, s.Fps)));
+
+                    cursor = result.NextPageCursor;
+
+                    if (String.IsNullOrEmpty(cursor))
+                        break;
+                }
+                catch (Exception ex)
+                {
+                    App.Logger.WriteException("RobloxServers::ListAsync", ex);
+                    break;
+                }
+            }
+
+            return servers;
         }
 
         /// <summary>The public server with the fewest players (but not full), optionally skipping the one you're in.</summary>

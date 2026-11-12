@@ -19,6 +19,9 @@ If Roblox was already open when you turned it on, close all your Roblox windows 
 - **Lower priority of clients you aren't using** - a lighter version of the above, only used if efficiency mode is off
 - **Trim RAM of clients you aren't using** (off by default) - every minute it pushes the unused memory of background windows to the page file. Saves a lot of RAM but there can be a small freeze when you switch back to one.
 
+- **When to trim** - only trim a window once it's using more than a set amount (500 MB to 2 GB), instead of every minute. Fewer freezes when you switch back to it.
+- **Spread windows across CPU cores** (off by default) - each background window gets its own couple of CPU cores so they don't all fight over the same ones. The window you're using keeps all of them. Needs at least 4 CPU threads.
+
 It also shows how much RAM and CPU each one is using.
 
 Only the window you used last makes sound, the rest are muted. You can turn that off in Settings > [Gameplay](Gameplay.md#mute-windows-in-the-background). Discord shows the game in the window you used last too.

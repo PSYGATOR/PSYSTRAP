@@ -72,6 +72,25 @@ namespace Bloxstrap
                 new UI.Elements.Macros.SmartMacroEditorWindow(String.IsNullOrEmpty(name) ? null : name).ShowDialog();
                 App.Terminate();
             }
+            else if (App.LaunchSettings.FavouriteFlag.Active)
+            {
+                App.Logger.WriteLine(LOG_IDENT, "Opening a favourite");
+                int.TryParse(App.LaunchSettings.StopAfterFlag.Data, out int stopAfter);
+                Task.Run(() => Launching.LaunchByIdAsync(App.LaunchSettings.FavouriteFlag.Data ?? "", stopAfter, App.LaunchSettings.ScheduledFlag.Active))
+                    .ContinueWith(_ => App.Terminate());
+            }
+            else if (App.LaunchSettings.StartupFlag.Active)
+            {
+                App.Logger.WriteLine(LOG_IDENT, "Started with Windows");
+                Task.Run(Launching.OpenStartupFavouritesAsync).ContinueWith(_ => App.Terminate());
+            }
+            else if (App.LaunchSettings.ServersFlag.Active)
+            {
+                App.Logger.WriteLine(LOG_IDENT, "Opening server browser");
+                long.TryParse(App.LaunchSettings.ServersFlag.Data, out long placeId);
+                new UI.Elements.Servers.ServerBrowserWindow(placeId).ShowDialog();
+                App.Terminate();
+            }
             else if (App.LaunchSettings.InstanceManagerFlag.Active)
             {
                 App.Logger.WriteLine(LOG_IDENT, "Opening instance manager");

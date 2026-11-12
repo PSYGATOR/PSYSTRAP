@@ -126,10 +126,11 @@ namespace Bloxstrap.UI.ViewModels.Macros
             RuleAction.PlayMacro => "macro name",
             RuleAction.PressKey => "key, e.g. E or Space",
             RuleAction.Wait => "seconds",
+            RuleAction.Notify => "message, e.g. Boss is up",
             _ => ""
         };
 
-        public Visibility ParameterVisibility => Rule.Action is RuleAction.PlayMacro or RuleAction.PressKey or RuleAction.Wait
+        public Visibility ParameterVisibility => Rule.Action is RuleAction.PlayMacro or RuleAction.PressKey or RuleAction.Wait or RuleAction.Notify
             ? Visibility.Visible : Visibility.Collapsed;
 
         public double CooldownSeconds

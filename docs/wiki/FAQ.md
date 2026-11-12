@@ -38,6 +38,15 @@ If you have more than one Roblox open, only the one you clicked into last has so
 **It rejoined when I didn't want it to (or didn't when I did)**
 Turn "Rejoin when you get disconnected" off in Settings > Gameplay. If it got it wrong, send the log (see below), the disconnect reason is in there.
 
+**A desktop shortcut says the favourite isn't there anymore**
+You deleted that favourite. Add it again in Settings > AFK & launching and make a new shortcut.
+
+**The scheduled launch didn't open**
+Your PC has to be on and you have to be logged in at that time. Check that it's ticked, and that you pressed Save after adding it. The tasks are in Task Scheduler under a PSYstrap folder.
+
+**Roblox disappeared from the taskbar**
+That's minimize to tray. Left click the PSYstrap icon in the tray by the clock to get it back, or turn it off in Settings > Gameplay.
+
 **My smart macro never does anything**
 Take a new screenshot in the editor and click Test. Also check the Roblox window is visible, focused, and the same size as when you made it.
 

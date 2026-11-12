@@ -1,0 +1,173 @@
+<ui:UiPage x:Class="Bloxstrap.UI.Elements.Settings.Pages.LaunchingPage"
+      x:Name="LaunchingPageView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:controls="clr-namespace:Bloxstrap.UI.Elements.Controls"
+      xmlns:vm="clr-namespace:Bloxstrap.UI.ViewModels.Settings"
+      mc:Ignorable="d"
+      d:DataContext="{d:DesignInstance vm:LaunchingViewModel}"
+      d:DesignHeight="1600" d:DesignWidth="800"
+      Title="LaunchingPage"
+      Scrollable="True">
+    <!-- PSYstrap: favourites, scheduler, recent servers, phone alerts -->
+    <ui:UiPage.Resources>
+        <Style x:Key="RowBorder" TargetType="Border">
+            <Setter Property="Margin" Value="0,6,0,0" />
+            <Setter Property="Padding" Value="14,8,10,8" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Background" Value="{DynamicResource ControlFillColorDefaultBrush}" />
+        </Style>
+        <Style x:Key="Note" TargetType="TextBlock">
+            <Setter Property="Margin" Value="2,6,0,0" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorTertiaryBrush}" />
+        </Style>
+        <Style x:Key="Lead" TargetType="TextBlock" BasedOn="{StaticResource Note}">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+        </Style>
+        <Style x:Key="Section" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,18,0,0" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontWeight" Value="Medium" />
+        </Style>
+    </ui:UiPage.Resources>
+
+    <StackPanel Margin="0,0,14,14">
+        <TextBlock FontSize="14" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                   Text="Games you play a lot, opening them on a timer, and getting told on your phone when something goes wrong. Hit Save at the bottom when you're done." />
+        <Border Height="3" Width="44" HorizontalAlignment="Left" CornerRadius="1.5" Margin="1,10,0,4" Background="{DynamicResource PsyCrownStripBrush}" />
+
+        <!-- favourites -->
+        <DockPanel Margin="0,18,0,0">
+            <ui:Button DockPanel.Dock="Right" Icon="Globe24" Content="Server browser" Command="{Binding OpenServerBrowserCommand}" />
+            <TextBlock Text="Favourites" FontSize="20" FontWeight="Medium" VerticalAlignment="Center" />
+        </DockPanel>
+        <TextBlock Style="{StaticResource Lead}"
+                   Text="Games and private servers you open a lot. Each one can open as one of your saved accounts. The shortcut button puts it on your desktop with the game's icon." />
+
+        <ItemsControl ItemsSource="{Binding Favourites}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Style="{StaticResource RowBorder}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                <ui:TextBox Text="{Binding Name, Mode=TwoWay}" Padding="8,4,8,4" FontWeight="Medium" />
+                                <WrapPanel Margin="0,6,0,0">
+                                    <TextBlock Text="as" VerticalAlignment="Center" Margin="2,0,6,0" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                    <ComboBox Width="200" ItemsSource="{Binding DataContext.Accounts, ElementName=LaunchingPageView, Mode=OneTime}"
+                                              DisplayMemberPath="Label" SelectedValuePath="UserId" SelectedValue="{Binding AccountUserId, Mode=TwoWay}" />
+                                    <CheckBox Margin="12,0,0,0" Content="Open when Windows starts" IsChecked="{Binding OpenAtStartup, Mode=TwoWay}" />
+                                </WrapPanel>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                <ui:Button Icon="Play24" Content="Play" Appearance="Primary"
+                                           Command="{Binding DataContext.PlayFavouriteCommand, ElementName=LaunchingPageView}" CommandParameter="{Binding}" />
+                                <ui:Button Margin="6,0,0,0" Icon="Desktop24" ToolTip="Desktop shortcut" AutomationProperties.Name="Desktop shortcut"
+                                           Command="{Binding DataContext.ShortcutCommand, ElementName=LaunchingPageView}" CommandParameter="{Binding}" />
+                                <ui:Button Margin="6,0,0,0" Icon="Globe24" ToolTip="Server browser" AutomationProperties.Name="Server browser"
+                                           Command="{Binding DataContext.ServersCommand, ElementName=LaunchingPageView}" CommandParameter="{Binding}" />
+                                <ui:Button Margin="6,0,0,0" Icon="Delete24" Appearance="Transparent" ToolTip="Remove" AutomationProperties.Name="Remove"
+                                           Command="{Binding DataContext.DeleteFavouriteCommand, ElementName=LaunchingPageView}" CommandParameter="{Binding}" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+            <ui:TextBox Width="320" PlaceholderText="Game link, private server link or place ID" Text="{Binding NewFavourite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <ui:Button Margin="10,0,0,0" Icon="Add24" Content="Add" Command="{Binding AddFavouriteCommand}" />
+            <ui:Button Margin="8,0,0,0" Icon="Games24" Content="Add the game I'm in" Command="{Binding AddCurrentGameCommand}" />
+        </StackPanel>
+        <TextBlock Style="{StaticResource Note}" Text="{Binding FavouriteStatus, Mode=OneWay}" />
+
+        <controls:OptionControl Header="Start with Windows" Description="Opens the favourites ticked &quot;Open when Windows starts&quot; about 20 seconds after you log in.">
+            <ui:ToggleSwitch IsChecked="{Binding StartWithWindows, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <!-- schedule -->
+        <TextBlock Text="Schedule" Style="{StaticResource Section}" />
+        <TextBlock Style="{StaticResource Lead}"
+                   Text="Open a favourite every day at a set time, and close it again after a while if you want. It uses Windows' Task Scheduler, so PSYstrap doesn't have to be running. Your PC has to be on (not asleep)." />
+
+        <ItemsControl ItemsSource="{Binding Schedule}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Style="{StaticResource RowBorder}">
+                        <WrapPanel>
+                            <CheckBox VerticalAlignment="Center" IsChecked="{Binding Enabled, Mode=TwoWay}" ToolTip="On / off" />
+                            <TextBlock Text="Open" VerticalAlignment="Center" Margin="4,0,6,0" />
+                            <ComboBox Width="220" ItemsSource="{Binding DataContext.FavouriteChoices, ElementName=LaunchingPageView}"
+                                      DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding FavouriteId, Mode=TwoWay}" />
+                            <TextBlock Text="at" VerticalAlignment="Center" Margin="10,0,6,0" />
+                            <ui:TextBox Width="80" Text="{Binding Time, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="24 hour time, like 07:30 or 22:00" />
+                            <ComboBox Width="150" Margin="10,0,0,0" ItemsSource="{Binding DataContext.StopChoices, ElementName=LaunchingPageView, Mode=OneTime}"
+                                      DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding StopAfterMinutes, Mode=TwoWay}" />
+                            <ui:Button Margin="8,0,0,0" Icon="Delete24" Appearance="Transparent" ToolTip="Remove" AutomationProperties.Name="Remove"
+                                       Command="{Binding DataContext.DeleteScheduleCommand, ElementName=LaunchingPageView}" CommandParameter="{Binding}" />
+                        </WrapPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <ui:Button Margin="0,10,0,0" Icon="Add24" HorizontalAlignment="Left" Content="Add a scheduled launch" Command="{Binding AddScheduleCommand}" />
+        <TextBlock Style="{StaticResource Note}" Text="{Binding ScheduleStatus, Mode=OneWay}" />
+
+        <!-- recent -->
+        <DockPanel Margin="0,18,0,0">
+            <ui:Button DockPanel.Dock="Right" Icon="ArrowClockwise24" Appearance="Transparent" ToolTip="Refresh" AutomationProperties.Name="Refresh" Command="{Binding RefreshRecentCommand}" />
+            <TextBlock Text="Recent servers" FontSize="20" FontWeight="Medium" VerticalAlignment="Center" />
+        </DockPanel>
+        <TextBlock Style="{StaticResource Lead}" Text="The last servers you were in, from any window. Rejoin puts you back in that exact server if it's still running." />
+
+        <ItemsControl ItemsSource="{Binding Recent}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Style="{StaticResource RowBorder}">
+                        <DockPanel>
+                            <ui:Button DockPanel.Dock="Right" Icon="ArrowEnterLeft24" Content="Rejoin"
+                                       Command="{Binding DataContext.RejoinRecentCommand, ElementName=LaunchingPageView}" CommandParameter="{Binding}" />
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Name, Mode=OneTime}" FontSize="14" FontWeight="Medium" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Text="{Binding Detail, Mode=OneTime}" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                            </StackPanel>
+                        </DockPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <TextBlock Style="{StaticResource Note}" Text="Nothing yet. Servers show up here after you play." Visibility="{Binding RecentEmptyVisibility, Mode=OneWay}" />
+
+        <!-- webhook -->
+        <TextBlock Text="Phone alerts" Style="{StaticResource Section}" />
+        <TextBlock Style="{StaticResource Lead}"
+                   Text="PSYstrap can post to a Discord webhook, so you get a notification on your phone when your AFK setup has a problem. In Discord: Server Settings > Integrations > Webhooks > New Webhook > Copy Webhook URL, then paste it here." />
+
+        <DockPanel Margin="0,10,0,0">
+            <ui:Button DockPanel.Dock="Right" Margin="8,0,0,0" Icon="Send24" Content="Test" Command="{Binding TestWebhookCommand}" />
+            <ui:TextBox Text="{Binding WebhookUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="https://discord.com/api/webhooks/..." />
+        </DockPanel>
+        <TextBlock Style="{StaticResource Note}" Text="{Binding WebhookStatus, Mode=OneWay}" />
+
+        <WrapPanel Margin="0,10,0,0">
+            <CheckBox Margin="0,0,18,6" Content="Disconnected" IsChecked="{Binding OnDisconnect, Mode=TwoWay}" />
+            <CheckBox Margin="0,0,18,6" Content="Rejoining" IsChecked="{Binding OnRejoin, Mode=TwoWay}" />
+            <CheckBox Margin="0,0,18,6" Content="Roblox crashed or froze" IsChecked="{Binding OnCrash, Mode=TwoWay}" />
+            <CheckBox Margin="0,0,18,6" Content="Scheduled open/close" IsChecked="{Binding OnSchedule, Mode=TwoWay}" />
+            <CheckBox Margin="0,0,18,6" Content="Smart macro rejoined or stopped" IsChecked="{Binding OnSmartMacro, Mode=TwoWay}" />
+            <CheckBox Margin="0,0,18,6" Content="Friend started playing" IsChecked="{Binding OnFriendJoin, Mode=TwoWay}" />
+        </WrapPanel>
+        <TextBlock Style="{StaticResource Note}" Text="Smart macros can also send their own message with the &quot;Send phone alert&quot; action." />
+    </StackPanel>
+</ui:UiPage>

@@ -287,6 +287,7 @@ namespace Bloxstrap
                 // PSYstrap: a per-game profile can switch potato mode on/off just for this launch
                 _gameProfile = GameProfiles.ForLaunch(_launchCommandLine);
                 PotatoMode.EnsureFlags(PotatoForThisLaunch);
+                ModProfiles.PrepareForLaunch(_gameProfile?.ModProfile);
 
                 allModificationsApplied = await ApplyModifications();
             }

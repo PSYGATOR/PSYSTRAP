@@ -47,6 +47,9 @@ namespace Bloxstrap.UI.ViewModels.Settings
             App.State.Save();
             App.FastFlags.Save();
 
+            // PSYstrap: start-with-Windows entry and scheduled launches live in Windows itself
+            Task.Run(Launching.SyncWithWindows);
+
             foreach (var pair in App.PendingSettingTasks)
             {
                 var task = pair.Value;

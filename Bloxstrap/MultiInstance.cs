@@ -300,6 +300,7 @@ namespace Bloxstrap
                 foreach (var client in clients)
                     SetMuted(client.Id, false);
 
+                SpreadCores(clients, false, 0);
                 return;
             }
 
@@ -325,8 +326,96 @@ namespace Bloxstrap
                 else if (options.LowerBackgroundPriority)
                     SetPriority(client.Id, focused ? ProcessPriorityClass.Normal : ProcessPriorityClass.BelowNormal);
 
-                if (options.TrimBackgroundMemory && trimNow && !focused)
+                if (options.TrimBackgroundMemory && trimNow && !focused && OverTrimLimit(client, options.TrimAboveMB))
                     TrimMemory(client.Id);
+            }
+
+            SpreadCores(clients, options.SpreadCpuCores, foregroundPid);
+        }
+
+        private static bool OverTrimLimit(Process client, int limitMB)
+        {
+            if (limitMB <= 0)
+                return true;
+
+            try
+            {
+                client.Refresh();
+                return client.WorkingSet64 > limitMB * 1024L * 1024L;
+            }
+            catch
+            {
+                return true;
+            }
+        }
+
+        private static readonly HashSet<int> _pinned = new();
+
+        /// <summary>
+        /// Gives each background window its own slice of CPU cores (the window you're using keeps all of them), so a
+        /// pile of AFK windows doesn't all pile onto the same cores.
+        /// </summary>
+        private static void SpreadCores(List<Process> clients, bool enabled, uint foregroundPid)
+        {
+            int cores = Math.Min(Environment.ProcessorCount, 64);
+            ulong all = cores == 64 ? ulong.MaxValue : (1UL << cores) - 1;
+            var background = clients.Where(client => client.Id != foregroundPid).OrderBy(client => client.Id).ToList();
+
+            if (!enabled || cores < 4)
+            {
+                // put back anything this host changed
+                foreach (var client in clients.Where(client => _pinned.Contains(client.Id)))
+                    SetAffinity(client.Id, all);
+
+                _pinned.Clear();
+                return;
+            }
+
+            // each background window gets at least 2 cores, handed out round the clock
+            int slice = Math.Max(2, cores / Math.Max(1, background.Count));
+
+            for (int i = 0; i < background.Count; i++)
+            {
+                ulong mask = 0;
+                int start = (i * slice) % cores;
+
+                for (int c = 0; c < slice; c++)
+                    mask |= 1UL << ((start + c) % cores);
+
+                if (SetAffinity(background[i].Id, mask))
+                    _pinned.Add(background[i].Id);
+            }
+
+            foreach (var client in clients.Where(client => client.Id == foregroundPid && _pinned.Contains(client.Id)))
+            {
+                if (SetAffinity(client.Id, all))
+                    _pinned.Remove(client.Id);
+            }
+        }
+
+        private static readonly Dictionary<int, ulong> _affinity = new();
+
+        public static bool SetAffinity(int processId, ulong mask)
+        {
+            if (_affinity.TryGetValue(processId, out ulong current) && current == mask)
+                return true;
+
+            IntPtr handle = OpenProcess(PROCESS_SET_INFORMATION | PROCESS_QUERY_LIMITED_INFORMATION, false, processId);
+
+            if (handle == IntPtr.Zero)
+                return false;
+
+            try
+            {
+                if (!SetProcessAffinityMask(handle, new UIntPtr(mask)))
+                    return false;
+
+                _affinity[processId] = mask;
+                return true;
+            }
+            finally
+            {
+                CloseHandle(handle);
             }
         }
 
@@ -504,6 +593,9 @@ namespace Bloxstrap
 
         [DllImport("psapi.dll")]
         private static extern bool EmptyWorkingSet(IntPtr process);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool SetProcessAffinityMask(IntPtr process, UIntPtr mask);
 
         [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();

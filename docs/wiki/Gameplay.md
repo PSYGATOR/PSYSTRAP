@@ -27,6 +27,31 @@ On by default. With more than one Roblox open, only the window you used last mak
 
 Windows remembers a mute per app, so if you close a window while it's muted it would open muted next time. PSYstrap unmutes it when it opens, so you don't have to go into the volume mixer.
 
+## Reopen Roblox if it crashes or freezes
+
+On by default. If Roblox crashes, or stops responding for a whole minute while you're in a game, PSYstrap opens it again and puts you back in the same server (as the same saved account). Closing Roblox normally doesn't count as a crash. It shares the "3 times in 10 minutes" limit with rejoining.
+
+## Roblox windows
+
+**Turn off Roblox's crash reporter** (on by default) - every Roblox window starts a RobloxCrashHandler process whose only job is sending crash reports to Roblox. PSYstrap closes it as soon as it starts, which saves a bit of RAM per window. It only touches the ones from PSYstrap's own copy of Roblox, not Studio's.
+
+**Minimize to tray** (off by default) - a minimized Roblox disappears from the taskbar, so a pile of AFK windows doesn't fill it up. Left click the window's PSYstrap icon in the tray (bottom right, by the clock) to bring it back. The window keeps running the whole time.
+
+**Recap when you leave a game** (on by default) - a little popup saying how long you played, and how long today in total.
+
+**Join links you copy** (off by default) - while Roblox is open, copying a Roblox game link, private server link or share link pops up "Play this game?". Click it to go.
+
+**Sort screenshots by game** (off by default) - new screenshots in Pictures\Roblox get moved into a folder named after the game you took them in.
+
+## Game booster
+
+Off by default. While any Roblox is open:
+
+- **High performance power plan** - switches Windows to it. Some laptops don't have that plan, then nothing changes.
+- **Close these apps** - closes the apps you list. Use the names from Task Manager's Details tab without .exe, separated by commas, like `chrome, Spotify, EpicGamesLauncher`. It asks them to close normally first (so they can save), and only forces them after 8 seconds.
+
+When the last Roblox closes, the old power plan comes back and the apps it closed get opened again.
+
 ## Remap keys
 
 Make a key or mouse button act like a different one, only while Roblox is the focused window. Outside Roblox your keys do what they normally do.
@@ -48,7 +73,9 @@ Each key or button can only have one remap. Adding a new one for the same key re
 
 Give one game its own FPS cap or potato mode. For example potato mode on for an AFK game, and 240 FPS for a game you actually play.
 
-Paste a place ID or a roblox.com/games/... link and press Add, or press "Add the game I'm in" while you're in it. Then pick the FPS cap and potato mode for it. "Normal setting" means it uses whatever you have set on the [Overlay](Overlay.md) page.
+Paste a place ID or a roblox.com/games/... link and press Add, or press "Add the game I'm in" while you're in it. Then pick the FPS cap, potato mode and mods for it. "Normal setting" means it uses whatever you have set on the [Overlay](Overlay.md) page.
+
+**Mods** switches to a mod profile (fonts, sounds, sky...) for that game. You make mod profiles on the Mods page: set the mods up how you want, type a name, and press "Save current mods". Your normal mods come back when you open a game without one. All Roblox windows share one Roblox folder, so with several windows open the one you launched last decides the mods.
 
 A profile kicks in when you open that game from the website, a link or the account launcher. It does nothing if you open Roblox on its own and then pick the game inside Roblox, because PSYstrap can't know the game before Roblox starts.
 
