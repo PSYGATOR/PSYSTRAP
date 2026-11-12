@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PSYstrap</title>
+<meta name="description" content="A Roblox launcher based on Bloxstrap, with an overlay, multi instance, saved accounts and macros added on top.">
+<meta property="og:title" content="PSYstrap">
+<meta property="og:description" content="A Roblox launcher based on Bloxstrap, with an overlay, multi instance, saved accounts and macros added on top.">
+<meta property="og:image" content="assets/logo.png">
+<meta name="theme-color" content="#0a170e">
+<link rel="icon" href="assets/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a170e;
+    --bg-2: #08120b;
+    --card: #102217;
+    --card-2: #14291c;
+    --line: #1f3a28;
+    --text: #e8f3ea;
+    --text-2: #a9c4ae;
+    --text-3: #6f8f76;
+    --green: #5fe04c;
+    --green-deep: #1a7f22;
+    --red: #e8213f;
+    --gold: #f2c14e;
+    --radius: 14px;
+    --wrap: 1080px;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background:
+      radial-gradient(900px 500px at 15% -10%, rgba(54, 196, 46, .16), transparent 60%),
+      radial-gradient(700px 400px at 100% 0%, rgba(232, 33, 63, .08), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font: 16px/1.6 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: var(--green); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  h1, h2, h3 { font-family: "Space Grotesk", Inter, sans-serif; line-height: 1.15; margin: 0; }
+
+  .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 20px; }
+
+  /* top bar */
+  .top { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; }
+  .brand { display: flex; align-items: center; gap: 10px; color: var(--text); font: 700 20px "Space Grotesk", sans-serif; }
+  .brand:hover { text-decoration: none; }
+  .brand img { width: 34px; height: 34px; }
+  .top nav { display: flex; gap: 22px; font-size: 15px; }
+  .top nav a { color: var(--text-2); }
+  .top nav a:hover { color: var(--text); text-decoration: none; }
+
+  /* hero */
+  .hero { display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; padding: 56px 0 40px; }
+  .hero h1 { font-size: clamp(44px, 7vw, 76px); letter-spacing: -1.5px; }
+  .stripe { width: 64px; height: 4px; border-radius: 2px; margin: 18px 0 20px; background: linear-gradient(90deg, var(--gold), var(--red), var(--gold)); }
+  .hero p.lead { font-size: 19px; color: var(--text-2); max-width: 520px; margin: 0 0 28px; }
+
+  .buttons { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 22px; border-radius: 10px; font-weight: 600; font-size: 16px;
+    transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+  }
+  .btn:hover { text-decoration: none; transform: translateY(-1px); }
+  .btn svg { width: 20px; height: 20px; flex: none; }
+  .btn-main { background: var(--green); color: #062b0b; box-shadow: 0 8px 28px rgba(95, 224, 76, .25); }
+  .btn-main:hover { box-shadow: 0 10px 34px rgba(95, 224, 76, .38); }
+  .btn-ghost { background: var(--card); color: var(--text); border: 1px solid var(--line); }
+  .btn-ghost:hover { background: var(--card-2); }
+  .release { margin-top: 14px; font-size: 14px; color: var(--text-3); min-height: 22px; }
+
+  .hero-logo { position: relative; justify-self: center; }
+  .hero-logo img { width: min(360px, 70vw); filter: drop-shadow(0 20px 60px rgba(54, 196, 46, .35)); }
+
+  /* screenshot */
+  .shot { margin: 8px 0 72px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); box-shadow: 0 30px 80px rgba(0, 0, 0, .5); }
+
+  /* sections */
+  section { padding: 0 0 72px; }
+  section > h2 { font-size: 32px; margin-bottom: 8px; }
+  section > p.sub { color: var(--text-2); margin: 0 0 28px; }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 20px 18px; }
+  .card h3 { font-size: 18px; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  .card h3 .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green); flex: none; }
+  .card p { margin: 0; color: var(--text-2); font-size: 15px; }
+
+  .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .gallery figure { margin: 0; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+  .gallery { align-items: start; }
+  .gallery figure img { width: 100%; height: auto; }
+  .gallery figure.wide { grid-column: 1 / -1; }
+  .gallery figcaption { padding: 10px 14px; font-size: 14px; color: var(--text-2); }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  ol.steps { margin: 0; padding: 0; list-style: none; counter-reset: s; }
+  ol.steps li { counter-increment: s; position: relative; padding: 0 0 14px 42px; color: var(--text-2); }
+  ol.steps li::before {
+    content: counter(s); position: absolute; left: 0; top: -2px;
+    width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--green-deep); color: var(--text); font-weight: 600; font-size: 14px;
+  }
+  ol.steps li b { color: var(--text); font-weight: 600; }
+
+  table.keys { width: 100%; border-collapse: collapse; font-size: 15px; }
+  table.keys td { padding: 9px 0; border-bottom: 1px solid var(--line); color: var(--text-2); vertical-align: top; }
+  table.keys tr:last-child td { border-bottom: 0; }
+  kbd {
+    display: inline-block; min-width: 54px; text-align: center; padding: 2px 8px; margin-right: 12px;
+    background: var(--bg-2); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6px;
+    font: 600 13px Inter, sans-serif; color: var(--text);
+  }
+
+  .note { color: var(--text-3); font-size: 14px; margin-top: 14px; }
+
+  footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--text-3); font-size: 14px; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+
+  @media (max-width: 860px) {
+    .hero { grid-template-columns: 1fr; gap: 24px; padding-top: 28px; text-align: left; }
+    .hero-logo { order: -1; justify-self: start; }
+    .hero-logo img { width: 150px; }
+    .grid { grid-template-columns: 1fr 1fr; }
+    .two { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .wrap { padding: 0 16px; }
+    .top nav { gap: 16px; font-size: 14px; }
+    .grid, .gallery { grid-template-columns: 1fr; }
+    .btn { width: 100%; justify-content: center; }
+    .shot { margin-bottom: 52px; }
+    section { padding-bottom: 52px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#"><img src="assets/logo.png" alt="">PSYstrap</a>
+    <nav>
+      <a href="#features">Features</a>
+      <a href="https://github.com/AGamingotter/PSYSTRAP/blob/main/docs/wiki/Home.md">Wiki</a>
+      <a href="https://github.com/AGamingotter/PSYSTRAP">GitHub</a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <div>
+      <h1>PSYstrap</h1>
+      <div class="stripe"></div>
+      <p class="lead">A Roblox launcher based on Bloxstrap, with an overlay, multi instance, saved accounts and macros added on top.</p>
+      <div class="buttons">
+        <a class="btn btn-main" id="download" href="https://github.com/AGamingotter/PSYSTRAP/releases/latest/download/PSYstrap.exe">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+          Download for Windows
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/AGamingotter/PSYSTRAP/releases">All releases</a>
+      </div>
+      <div class="release" id="release">Windows 10 or 11</div>
+    </div>
+    <div class="hero-logo"><img src="assets/logo.png" alt="PSYstrap logo"></div>
+  </div>
+
+  <div class="shot"><img src="assets/settings.jpg" alt="PSYstrap settings" width="1000" height="580"></div>
+
+  <section id="features">
+    <h2>What it does</h2>
+    <p class="sub">Everything Bloxstrap does (mods, fast flags, Discord status), plus all of this.</p>
+    <div class="grid">
+      <div class="card"><h3><span class="dot"></span>Overlay</h3><p>FPS, CPS, RAM, session time, server player count and playtime in the corner. Insert opens a menu with the FPS cap and potato mode.</p></div>
+      <div class="card"><h3><span class="dot"></span>Multi instance</h3><p>Run as many Roblox windows as you want. Background ones go into efficiency mode and get muted.</p></div>
+      <div class="card"><h3><span class="dot"></span>Saved accounts</h3><p>Log in once and open any account in one click, even straight into the server your main is in.</p></div>
+      <div class="card"><h3><span class="dot"></span>Macros</h3><p>F6 to record, F7 to play. They pause when Roblox isn't the focused window.</p></div>
+      <div class="card"><h3><span class="dot"></span>Smart macros</h3><p>Watch the screen for a colour, a picture or some text, and do something when it shows up.</p></div>
+      <div class="card"><h3><span class="dot"></span>Auto rejoin</h3><p>Got disconnected? It puts you back in the same server. Not if you got kicked or left yourself.</p></div>
+      <div class="card"><h3><span class="dot"></span>Anti-AFK</h3><p>A tiny mouse wiggle before Roblox's 20 minute idle kick.</p></div>
+      <div class="card"><h3><span class="dot"></span>Key remaps</h3><p>Make your side mouse buttons press E or Shift, only while you're in Roblox.</p></div>
+      <div class="card"><h3><span class="dot"></span>Game profiles</h3><p>A different FPS cap or potato mode for each game.</p></div>
+      <div class="card"><h3><span class="dot"></span>Friend alerts</h3><p>A popup when a friend starts playing. Click it to join them.</p></div>
+      <div class="card"><h3><span class="dot"></span>Better Discord status</h3><p>Shows server size and region, hides games you don't want people to see, and can use your own Discord app.</p></div>
+      <div class="card"><h3><span class="dot"></span>Custom skybox</h3><p>A few presets, or your own images.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Screenshots</h2>
+    <p class="sub">Everything is set up from these windows. No config files to edit.</p>
+    <div class="gallery">
+      <figure><img src="assets/instances.jpg" alt="Instances window" loading="lazy" width="760" height="640"><figcaption>Instances window</figcaption></figure>
+      <figure><img src="assets/smart-macro-editor.jpg" alt="Smart macro editor" loading="lazy" width="1000" height="695"><figcaption>Smart macro editor</figcaption></figure>
+      <figure class="wide"><img src="assets/skybox.jpg" alt="Skybox settings" loading="lazy" width="1000" height="390"><figcaption>Custom skybox</figcaption></figure>
+    </div>
+  </section>
+
+  <section id="install">
+    <div class="two">
+      <div class="card">
+        <h2 style="font-size:26px;margin-bottom:16px">Install</h2>
+        <ol class="steps">
+          <li><b>Download PSYstrap.exe</b> with the button at the top.</li>
+          <li><b>Run it and click Install.</b> If Windows says it protected your PC, click More info, then Run anyway.</li>
+          <li><b>Play Roblox like normal.</b> It opens through PSYstrap now, and PSYstrap updates itself.</li>
+        </ol>
+        <p class="note">Needs the <a href="https://dotnet.microsoft.com/download/dotnet/6.0">.NET 6 Desktop Runtime</a>. Windows asks to install it if you don't have it.</p>
+      </div>
+      <div class="card">
+        <h2 style="font-size:26px;margin-bottom:12px">Hotkeys</h2>
+        <table class="keys">
+          <tr><td><kbd>Insert</kbd>open the PSYstrap menu</td></tr>
+          <tr><td><kbd>F6</kbd>record a macro</td></tr>
+          <tr><td><kbd>F7</kbd>play the selected macro</td></tr>
+          <tr><td><kbd>F8</kbd>start a smart macro</td></tr>
+        </table>
+        <p class="note">They only work while Roblox is the focused window.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Is it safe?</h2>
+    <p class="sub" style="max-width:720px;margin-bottom:0">PSYstrap doesn't inject anything into Roblox or read its memory, so it doesn't mess with the anti-cheat. It changes Roblox's own settings files, the same way Bloxstrap does, and sends normal keyboard and mouse input. The code is all on <a href="https://github.com/AGamingotter/PSYSTRAP">GitHub</a>.</p>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>Based on <a href="https://github.com/bloxstraplabs/bloxstrap">Bloxstrap</a> (MIT license). Not affiliated with Roblox or the Bloxstrap team.</span>
+    <span><a href="https://github.com/AGamingotter/PSYSTRAP/blob/main/docs/wiki/Home.md">Wiki</a> &nbsp;·&nbsp; <a href="https://github.com/AGamingotter/PSYSTRAP">GitHub</a></span>
+  </div>
+</footer>
+
+<script>
+  // fills in the version under the download button; the button works without it
+  fetch("https://api.github.com/repos/AGamingotter/PSYSTRAP/releases/latest")
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (release) {
+      if (!release || !release.tag_name) return;
+      var exe = (release.assets || []).filter(function (a) { return /\.exe$/i.test(a.name); })[0];
+      var parts = [release.tag_name];
+      if (exe) parts.push((exe.size / 1048576).toFixed(1) + " MB");
+      if (release.published_at) parts.push(new Date(release.published_at).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }));
+      parts.push("Windows 10 or 11");
+      document.getElementById("release").textContent = parts.join("  ·  ");
+      if (exe) document.getElementById("download").href = exe.browser_download_url;
+    })
+    .catch(function () {});
+</script>
+</body>
+</html>

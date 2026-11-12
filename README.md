@@ -9,7 +9,7 @@ A Roblox launcher based on Bloxstrap, with an overlay, multi instance, saved acc
 [![Download](https://img.shields.io/github/v/release/AGamingotter/PSYSTRAP?label=download&color=36C42E)](https://github.com/AGamingotter/PSYSTRAP/releases/latest)
 [![License](https://img.shields.io/badge/license-MIT-E8213F)](LICENSE)
 
-**[Download](https://github.com/AGamingotter/PSYSTRAP/releases/latest)** | **[Wiki](docs/wiki/Home.md)**
+**[Download](https://github.com/AGamingotter/PSYSTRAP/releases/latest)** | **[Website](https://agamingotter.github.io/PSYSTRAP/)** | **[Wiki](docs/wiki/Home.md)**
 
 </div>
 
