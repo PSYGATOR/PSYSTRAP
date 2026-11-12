@@ -8,26 +8,26 @@
 <meta property="og:title" content="PSYstrap">
 <meta property="og:description" content="A Roblox launcher based on Bloxstrap, with an overlay, multi instance, saved accounts and macros added on top.">
 <meta property="og:image" content="assets/logo.png">
-<meta name="theme-color" content="#0a170e">
+<meta name="theme-color" content="#07120a">
 <link rel="icon" href="assets/favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Patrick+Hand&display=swap" rel="stylesheet">
 <style>
+  /* colours picked off the logo */
   :root {
-    --bg: #0a170e;
-    --bg-2: #08120b;
-    --card: #102217;
-    --card-2: #14291c;
-    --line: #1f3a28;
-    --text: #e8f3ea;
-    --text-2: #a9c4ae;
-    --text-3: #6f8f76;
-    --green: #5fe04c;
-    --green-deep: #1a7f22;
-    --red: #e8213f;
-    --gold: #f2c14e;
-    --radius: 14px;
+    --bg: #07120a;
+    --bg-2: #0b1a0f;
+    --paper: #0f2214;
+    --g1: #3cf02a;   /* bright marker green */
+    --g2: #27b52b;   /* middle green */
+    --g3: #17761d;   /* dark green */
+    --red: #f0203f;
+    --gold: #e9b632;
+    --cream: #f6e7a6;
+    --ink: #eef8ec;
+    --ink-2: #b6d3b6;
+    --ink-3: #7d9e80;
     --wrap: 1080px;
   }
 
@@ -35,116 +35,223 @@
   html { scroll-behavior: smooth; }
   body {
     margin: 0;
-    background:
-      radial-gradient(900px 500px at 15% -10%, rgba(54, 196, 46, .16), transparent 60%),
-      radial-gradient(700px 400px at 100% 0%, rgba(232, 33, 63, .08), transparent 60%),
-      var(--bg);
-    color: var(--text);
-    font: 16px/1.6 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+    color: var(--ink);
+    font: 20px/1.45 "Patrick Hand", "Comic Sans MS", system-ui, sans-serif;
+    background-color: var(--bg);
+    background-image:
+      radial-gradient(800px 480px at 12% -8%, rgba(60, 240, 42, .14), transparent 60%),
+      radial-gradient(600px 420px at 100% 6%, rgba(240, 32, 63, .08), transparent 60%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .2  0 0 0 0 .9  0 0 0 0 .2  0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
   img { max-width: 100%; display: block; }
-  a { color: var(--green); text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  h1, h2, h3 { font-family: "Space Grotesk", Inter, sans-serif; line-height: 1.15; margin: 0; }
+  a { color: var(--g1); }
+  h1, h2, h3 { font-family: "Permanent Marker", "Patrick Hand", cursive; font-weight: 400; line-height: 1.05; margin: 0; }
 
-  .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 20px; }
+  .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 20px; position: relative; }
 
-  /* top bar */
-  .top { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; }
-  .brand { display: flex; align-items: center; gap: 10px; color: var(--text); font: 700 20px "Space Grotesk", sans-serif; }
-  .brand:hover { text-decoration: none; }
-  .brand img { width: 34px; height: 34px; }
-  .top nav { display: flex; gap: 22px; font-size: 15px; }
-  .top nav a { color: var(--text-2); }
-  .top nav a:hover { color: var(--text); text-decoration: none; }
+  /* ---------- the hand-drawn bits ---------- */
 
-  /* hero */
-  .hero { display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; padding: 56px 0 40px; }
-  .hero h1 { font-size: clamp(44px, 7vw, 76px); letter-spacing: -1.5px; }
-  .stripe { width: 64px; height: 4px; border-radius: 2px; margin: 18px 0 20px; background: linear-gradient(90deg, var(--gold), var(--red), var(--gold)); }
-  .hero p.lead { font-size: 19px; color: var(--text-2); max-width: 520px; margin: 0 0 28px; }
+  /* a wobbly marker outline: put .sketch on anything, the outline is a pseudo element so the text stays sharp */
+  .sketch { position: relative; isolation: isolate; }
+  .sketch::before {
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background: var(--fill, var(--paper));
+    border: 3px solid var(--line, var(--g2));
+    border-radius: 14px 22px 12px 26px / 24px 12px 20px 14px;
+    filter: url(#rough);
+  }
+  .sketch.alt::before { border-radius: 24px 10px 22px 12px / 12px 22px 14px 24px; filter: url(#rough2); }
 
-  .buttons { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  /* marker hatching, like the logo's fill */
+  .hatch {
+    background-image: repeating-linear-gradient(-58deg,
+      var(--g1) 0 5px, #34d726 5px 7px, var(--g1) 7px 12px, #2cc523 12px 14px);
+  }
+
+  /* highlighter swipe behind a word */
+  .hl {
+    padding: 0 .12em; margin: 0 -.08em;
+    background: linear-gradient(100deg, transparent 2%, rgba(60, 240, 42, .32) 4% 94%, transparent 97%) 0 62% / 100% 60% no-repeat;
+  }
+
+  /* scribbled underline under section titles */
+  .scribble-under { display: inline-block; padding-bottom: 14px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 20' preserveAspectRatio='none'%3E%3Cpath d='M3 12 C 50 4, 90 16, 140 9 S 230 5, 297 11' fill='none' stroke='%23f0203f' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M12 16 C 70 10, 150 18, 290 13' fill='none' stroke='%23e9b632' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E") left bottom / 100% 18px no-repeat;
+  }
+
+  .crown { width: 30px; height: 24px; flex: none; }
+  .doodle { position: absolute; pointer-events: none; }
+
+  /* ---------- top bar ---------- */
+  .top { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; gap: 12px; }
+  .brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font: 26px "Permanent Marker", cursive; }
+  .brand img { width: 46px; height: 46px; transform: rotate(-6deg); }
+  .top nav { display: flex; gap: 22px; }
+  .top nav a { color: var(--ink-2); text-decoration: none; font-size: 21px; }
+  .top nav a:hover { color: var(--ink); text-decoration: underline wavy var(--red) 2px; text-underline-offset: 6px; }
+
+  /* ---------- hero ---------- */
+  .hero { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: center; padding: 40px 0 30px; }
+  .hero h1 {
+    font-size: clamp(58px, 9.5vw, 112px); letter-spacing: 1px; color: var(--g1);
+    text-shadow: 4px 4px 0 var(--g3), 7px 7px 0 rgba(0, 0, 0, .35);
+    transform: rotate(-3deg); transform-origin: left bottom;
+  }
+  .hero .tag { font-size: 26px; color: var(--ink); max-width: 520px; margin: 26px 0 30px; }
+
+  .buttons { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; }
   .btn {
-    display: inline-flex; align-items: center; gap: 10px;
-    padding: 14px 22px; border-radius: 10px; font-weight: 600; font-size: 16px;
-    transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+    --line: var(--g3);
+    display: inline-flex; align-items: center; gap: 12px;
+    padding: 16px 28px 14px; color: #062a08; text-decoration: none;
+    font: 24px "Permanent Marker", cursive;
+    transition: transform .15s ease;
   }
-  .btn:hover { text-decoration: none; transform: translateY(-1px); }
-  .btn svg { width: 20px; height: 20px; flex: none; }
-  .btn-main { background: var(--green); color: #062b0b; box-shadow: 0 8px 28px rgba(95, 224, 76, .25); }
-  .btn-main:hover { box-shadow: 0 10px 34px rgba(95, 224, 76, .38); }
-  .btn-ghost { background: var(--card); color: var(--text); border: 1px solid var(--line); }
-  .btn-ghost:hover { background: var(--card-2); }
-  .release { margin-top: 14px; font-size: 14px; color: var(--text-3); min-height: 22px; }
+  .btn.sketch::before { border-width: 4px; }
+  .btn-main { transform: rotate(-2deg); }
+  .btn-main.sketch::before { background-image: repeating-linear-gradient(-58deg, var(--g1) 0 5px, #34d726 5px 7px, var(--g1) 7px 12px, #2cc523 12px 14px); box-shadow: 6px 7px 0 rgba(0, 0, 0, .45); }
+  .btn-main:hover { transform: rotate(1deg) scale(1.04); }
+  .btn-main:hover::before { animation: boil .36s steps(1) infinite; }
+  .btn svg { width: 26px; height: 26px; }
+  .btn-ghost { --fill: transparent; --line: var(--ink-3); color: var(--ink); font-size: 20px; transform: rotate(1.5deg); }
+  .btn-ghost:hover { --line: var(--ink); transform: rotate(-1deg); }
 
-  .hero-logo { position: relative; justify-self: center; }
-  .hero-logo img { width: min(360px, 70vw); filter: drop-shadow(0 20px 60px rgba(54, 196, 46, .35)); }
+  .release { margin-top: 18px; font-size: 18px; color: var(--ink-3); min-height: 26px; }
 
-  /* screenshot */
-  .shot { margin: 8px 0 72px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); box-shadow: 0 30px 80px rgba(0, 0, 0, .5); }
+  .hero-art { position: relative; justify-self: center; }
+  .hero-art img { width: min(400px, 74vw); filter: drop-shadow(0 18px 50px rgba(60, 240, 42, .3)); animation: bob 5s ease-in-out infinite; }
+  .note-free { right: -6px; top: 6px; transform: rotate(10deg); color: var(--cream); font-size: 24px; text-align: center; line-height: 1; }
+  .note-free svg { display: block; margin: 4px auto 0; }
 
-  /* sections */
-  section { padding: 0 0 72px; }
-  section > h2 { font-size: 32px; margin-bottom: 8px; }
-  section > p.sub { color: var(--text-2); margin: 0 0 28px; }
+  @keyframes bob { 0%, 100% { transform: rotate(-2deg) translateY(0); } 50% { transform: rotate(2deg) translateY(-10px); } }
+  @keyframes boil { 0% { filter: url(#rough); } 33% { filter: url(#rough2); } 66% { filter: url(#rough3); } }
 
-  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 20px 18px; }
-  .card h3 { font-size: 18px; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
-  .card h3 .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green); flex: none; }
-  .card p { margin: 0; color: var(--text-2); font-size: 15px; }
+  /* ---------- screenshot pinned with tape ---------- */
+  .pinned { position: relative; margin: 30px auto 90px; max-width: 920px; transform: rotate(-1.2deg); }
+  .pinned .frame { --fill: var(--bg-2); --line: var(--g1); padding: 12px; }
+  .pinned .frame img { border-radius: 6px; }
+  .tape {
+    position: absolute; width: 120px; height: 34px; z-index: 2;
+    background: rgba(246, 231, 166, .78); box-shadow: 0 2px 6px rgba(0, 0, 0, .3);
+    clip-path: polygon(3% 8%, 97% 0, 100% 90%, 1% 100%);
+  }
+  .tape.l { left: -24px; top: 14px; transform: rotate(-38deg); }
+  .tape.r { right: -24px; top: 14px; transform: rotate(36deg); }
 
-  .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .gallery figure { margin: 0; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
-  .gallery { align-items: start; }
-  .gallery figure img { width: 100%; height: auto; }
-  .gallery figure.wide { grid-column: 1 / -1; }
-  .gallery figcaption { padding: 10px 14px; font-size: 14px; color: var(--text-2); }
+  /* ---------- sections ---------- */
+  section { padding: 0 0 90px; }
+  section > h2, .h2 { font-size: clamp(36px, 5vw, 48px); color: var(--ink); }
+  section > p.sub { color: var(--ink-2); margin: 10px 0 34px; font-size: 22px; }
 
-  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px 20px; }
+  .card { padding: 20px 22px 20px; }
+  .card:nth-child(3n+1) { transform: rotate(-1deg); }
+  .card:nth-child(3n+2) { transform: rotate(.8deg); --line: var(--g3); }
+  .card:nth-child(3n) { transform: rotate(-.4deg); }
+  .card:nth-child(4n+1)::before { filter: url(#rough2); }
+  .card:nth-child(4n+3)::before { filter: url(#rough3); }
+  .card h3 { font-size: 24px; display: flex; align-items: center; gap: 10px; margin-bottom: 6px; color: var(--g1); }
+  .card p { margin: 0; color: var(--ink-2); font-size: 19px; }
+  .card:hover { transform: rotate(0) translateY(-3px); }
+  .card { transition: transform .15s ease; }
+
+  .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 34px 30px; align-items: start; }
+  .gallery figure { margin: 0; position: relative; }
+  .gallery figure:nth-child(1) { transform: rotate(-1.6deg); }
+  .gallery figure:nth-child(2) { transform: rotate(1.4deg); margin-top: 20px; }
+  .gallery figure:nth-child(3) { transform: rotate(-.6deg); grid-column: 1 / -1; max-width: 760px; justify-self: center; }
+  .gallery .frame { --fill: var(--bg-2); --line: var(--g2); padding: 10px; }
+  .gallery .frame img { border-radius: 5px; width: 100%; height: auto; }
+  .gallery figcaption { text-align: center; color: var(--cream); font-size: 22px; margin-top: 10px; }
+  .gallery .tape { width: 90px; height: 28px; left: 50%; top: -14px; transform: translateX(-50%) rotate(-3deg); }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+  .two > .sketch { padding: 26px 26px 22px; }
+  .two > .sketch:first-child { transform: rotate(-.8deg); }
+  .two > .sketch:last-child { transform: rotate(.8deg); --line: var(--g3); }
+  .two h2 { font-size: 34px; margin-bottom: 18px; }
+
   ol.steps { margin: 0; padding: 0; list-style: none; counter-reset: s; }
-  ol.steps li { counter-increment: s; position: relative; padding: 0 0 14px 42px; color: var(--text-2); }
+  ol.steps li { counter-increment: s; position: relative; padding: 0 0 16px 50px; color: var(--ink-2); }
   ol.steps li::before {
-    content: counter(s); position: absolute; left: 0; top: -2px;
-    width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
-    background: var(--green-deep); color: var(--text); font-weight: 600; font-size: 14px;
+    content: counter(s); position: absolute; left: 0; top: -4px; width: 36px; height: 36px;
+    display: grid; place-items: center; font: 22px "Permanent Marker", cursive; color: #062a08;
+    background: var(--g1); border-radius: 48% 52% 45% 55% / 55% 45% 55% 45%; transform: rotate(-8deg);
   }
-  ol.steps li b { color: var(--text); font-weight: 600; }
+  ol.steps li b { color: var(--ink); font-weight: 400; }
 
-  table.keys { width: 100%; border-collapse: collapse; font-size: 15px; }
-  table.keys td { padding: 9px 0; border-bottom: 1px solid var(--line); color: var(--text-2); vertical-align: top; }
-  table.keys tr:last-child td { border-bottom: 0; }
+  .keys { list-style: none; margin: 0; padding: 0; }
+  .keys li { display: flex; align-items: center; gap: 16px; padding: 7px 0; color: var(--ink-2); }
   kbd {
-    display: inline-block; min-width: 54px; text-align: center; padding: 2px 8px; margin-right: 12px;
-    background: var(--bg-2); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6px;
-    font: 600 13px Inter, sans-serif; color: var(--text);
+    min-width: 80px; text-align: center; padding: 4px 10px 6px;
+    font: 18px "Permanent Marker", cursive; color: var(--ink);
+    background: var(--bg-2); border: 2.5px solid var(--ink-3); border-bottom-width: 6px;
+    border-radius: 10px 14px 9px 13px / 13px 9px 14px 10px; transform: rotate(-2deg);
   }
+  .keys li:nth-child(even) kbd { transform: rotate(2deg); }
 
-  .note { color: var(--text-3); font-size: 14px; margin-top: 14px; }
+  .note { color: var(--ink-3); font-size: 18px; margin: 14px 0 0; }
 
-  footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--text-3); font-size: 14px; }
-  footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+  .safe { display: grid; grid-template-columns: auto 1fr; gap: 26px; align-items: center; padding: 28px 30px; --line: var(--g3); transform: rotate(-.5deg); }
+  .safe p { margin: 8px 0 0; color: var(--ink-2); font-size: 21px; }
+  .shield { width: 84px; height: 96px; }
+
+  footer { padding: 30px 0 46px; color: var(--ink-3); font-size: 18px; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; border-top: 3px dashed rgba(39, 181, 43, .35); padding-top: 24px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-art img { animation: none; }
+    .btn-main:hover::before { animation: none; }
+    * { transition: none !important; }
+  }
 
   @media (max-width: 860px) {
-    .hero { grid-template-columns: 1fr; gap: 24px; padding-top: 28px; text-align: left; }
-    .hero-logo { order: -1; justify-self: start; }
-    .hero-logo img { width: 150px; }
+    .hero { grid-template-columns: 1fr; gap: 10px; padding-top: 18px; }
+    .hero-art { order: -1; justify-self: start; }
+    .hero-art img { width: 170px; }
+    .note-free { display: none; }
     .grid { grid-template-columns: 1fr 1fr; }
     .two { grid-template-columns: 1fr; }
   }
   @media (max-width: 560px) {
+    body { font-size: 19px; }
     .wrap { padding: 0 16px; }
-    .top nav { gap: 16px; font-size: 14px; }
+    .top nav { gap: 14px; }
+    .top nav a { font-size: 19px; }
+    .brand { font-size: 22px; }
+    .brand img { width: 38px; height: 38px; }
+    .hero .tag { font-size: 22px; }
     .grid, .gallery { grid-template-columns: 1fr; }
+    .gallery figure:nth-child(2) { margin-top: 0; }
     .btn { width: 100%; justify-content: center; }
-    .shot { margin-bottom: 52px; }
-    section { padding-bottom: 52px; }
+    .pinned { margin-bottom: 64px; }
+    .tape.l, .tape.r { width: 80px; height: 26px; left: -12px; }
+    .tape.r { left: auto; right: -12px; }
+    section { padding-bottom: 64px; }
+    .safe { grid-template-columns: 1fr; padding: 22px; }
+    .shield { width: 60px; height: 70px; }
   }
 </style>
 </head>
 <body>
+
+<!-- the wobble filters and the crown doodle -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="2"/><feDisplacementMap in="SourceGraphic" scale="6"/></filter>
+    <filter id="rough2"><feTurbulence type="fractalNoise" baseFrequency=".04" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="6"/></filter>
+    <filter id="rough3"><feTurbulence type="fractalNoise" baseFrequency=".03" numOctaves="2" seed="13"/><feDisplacementMap in="SourceGraphic" scale="7"/></filter>
+    <symbol id="crown-doodle" viewBox="0 0 60 46">
+      <g filter="url(#rough)">
+        <path d="M6 14 C 10 5, 50 3, 54 13 C 57 24, 55 34, 50 38 C 38 43, 20 43, 9 38 C 4 33, 3 22, 6 14 Z" fill="#f0203f" stroke="#e9b632" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M18 9 L 22 41 M 32 7 L 34 42 M 44 9 L 43 40" stroke="#f6e7a6" stroke-width="4" stroke-linecap="round" opacity=".9"/>
+        <path d="M24 6 L 27 1 L 31 5 L 35 0 L 37 6" fill="none" stroke="#e9b632" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
 
 <div class="wrap">
   <header class="top">
@@ -159,78 +266,97 @@
   <div class="hero">
     <div>
       <h1>PSYstrap</h1>
-      <div class="stripe"></div>
-      <p class="lead">A Roblox launcher based on Bloxstrap, with an overlay, multi instance, saved accounts and macros added on top.</p>
+      <p class="tag">A Roblox launcher based on Bloxstrap, with an <span class="hl">overlay</span>, <span class="hl">multi instance</span>, <span class="hl">saved accounts</span> and <span class="hl">macros</span> added on top.</p>
       <div class="buttons">
-        <a class="btn btn-main" id="download" href="https://github.com/AGamingotter/PSYSTRAP/releases/latest/download/PSYstrap.exe">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
-          Download for Windows
+        <a class="btn btn-main sketch" id="download" href="https://github.com/AGamingotter/PSYSTRAP/releases/latest/download/PSYstrap.exe">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5c.2 4 0 7.5-.1 11.5"/><path d="M6.8 10.2c1.8 1.6 3.4 3.3 5.1 5 1.7-1.8 3.3-3.4 5.3-5.1"/><path d="M4.5 20.6c4.9-.3 10-.2 15-.1"/></svg>
+          Download
         </a>
-        <a class="btn btn-ghost" href="https://github.com/AGamingotter/PSYSTRAP/releases">All releases</a>
+        <a class="btn btn-ghost sketch alt" href="https://github.com/AGamingotter/PSYSTRAP/releases">all releases</a>
       </div>
-      <div class="release" id="release">Windows 10 or 11</div>
+      <div class="release" id="release">for Windows 10 and 11</div>
     </div>
-    <div class="hero-logo"><img src="assets/logo.png" alt="PSYstrap logo"></div>
+
+    <div class="hero-art">
+      <img src="assets/logo.png" alt="PSYstrap logo">
+      <div class="doodle note-free">
+        it's free!
+        <svg width="70" height="60" viewBox="0 0 70 60" fill="none" stroke="#f6e7a6" stroke-width="3" stroke-linecap="round"><path d="M60 4 C 52 30, 34 44, 10 50"/><path d="M10 50 L 22 40 M 10 50 L 24 56"/></svg>
+      </div>
+    </div>
   </div>
 
-  <div class="shot"><img src="assets/settings.jpg" alt="PSYstrap settings" width="1000" height="580"></div>
+  <div class="pinned">
+    <span class="tape l"></span><span class="tape r"></span>
+    <div class="frame sketch"><img src="assets/settings.jpg" alt="PSYstrap settings" width="1000" height="580"></div>
+  </div>
 
   <section id="features">
-    <h2>What it does</h2>
+    <h2><span class="scribble-under">What it does</span></h2>
     <p class="sub">Everything Bloxstrap does (mods, fast flags, Discord status), plus all of this.</p>
     <div class="grid">
-      <div class="card"><h3><span class="dot"></span>Overlay</h3><p>FPS, CPS, RAM, session time, server player count and playtime in the corner. Insert opens a menu with the FPS cap and potato mode.</p></div>
-      <div class="card"><h3><span class="dot"></span>Multi instance</h3><p>Run as many Roblox windows as you want. Background ones go into efficiency mode and get muted.</p></div>
-      <div class="card"><h3><span class="dot"></span>Saved accounts</h3><p>Log in once and open any account in one click, even straight into the server your main is in.</p></div>
-      <div class="card"><h3><span class="dot"></span>Macros</h3><p>F6 to record, F7 to play. They pause when Roblox isn't the focused window.</p></div>
-      <div class="card"><h3><span class="dot"></span>Smart macros</h3><p>Watch the screen for a colour, a picture or some text, and do something when it shows up.</p></div>
-      <div class="card"><h3><span class="dot"></span>Auto rejoin</h3><p>Got disconnected? It puts you back in the same server. Not if you got kicked or left yourself.</p></div>
-      <div class="card"><h3><span class="dot"></span>Anti-AFK</h3><p>A tiny mouse wiggle before Roblox's 20 minute idle kick.</p></div>
-      <div class="card"><h3><span class="dot"></span>Key remaps</h3><p>Make your side mouse buttons press E or Shift, only while you're in Roblox.</p></div>
-      <div class="card"><h3><span class="dot"></span>Game profiles</h3><p>A different FPS cap or potato mode for each game.</p></div>
-      <div class="card"><h3><span class="dot"></span>Friend alerts</h3><p>A popup when a friend starts playing. Click it to join them.</p></div>
-      <div class="card"><h3><span class="dot"></span>Better Discord status</h3><p>Shows server size and region, hides games you don't want people to see, and can use your own Discord app.</p></div>
-      <div class="card"><h3><span class="dot"></span>Custom skybox</h3><p>A few presets, or your own images.</p></div>
+      <div class="card sketch"><h3><svg class="crown"><use href="#crown-doodle"/></svg>Overlay</h3><p>FPS, CPS, RAM, session time, server player count and playtime in the corner. Insert opens a menu with the FPS cap and potato mode.</p></div>
+      <div class="card sketch"><h3><svg class="crown"><use href="#crown-doodle"/></svg>Multi instance</h3><p>Run as many Roblox windows as you want. Background ones go into efficiency mode and get muted.</p></div>
+      <div class="card sketch"><h3><svg class="crown"><use href="#crown-doodle"/></svg>Saved accounts</h3><p>Log in once and open any account in one click, even straight into the server your main is in.</p></div>
+      <div class="card sketch"><h3><svg class="crown"><use href="#crown-doodle"/></svg>Macros</h3><p>F6 to record, F7 to play. They pause when Roblox isn't the focused window.</p></div>
+      <div class="card sketch"><h3><svg class="crown"><use href="#crown-doodle"/></svg>Smart macros</h3><p>Watch the screen for a colour, a picture or some text, and do something when it shows up.</p></div>
+      <div class="card sketch"><h3><svg class="crown"><use href="#crown-doodle"/></svg>Auto rejoin</h3><p>Got disconnected? It puts you back in the same server. Not if you got kicked or left yourself.</p></div>
+      <div class="card sketch"><h3><svg class="crown"><use href="#crown-doodle"/></svg>Anti-AFK</h3><p>A tiny mouse wiggle before Roblox's 20 minute idle kick.</p></div>
+      <div class="card sketch"><h3><svg class="crown"><use href="#crown-doodle"/></svg>Key remaps</h3><p>Make your side mouse buttons press E or Shift, only while you're in Roblox.</p></div>
+      <div class="card sketch"><h3><svg class="crown"><use href="#crown-doodle"/></svg>Game profiles</h3><p>A different FPS cap or potato mode for each game.</p></div>
+      <div class="card sketch"><h3><svg class="crown"><use href="#crown-doodle"/></svg>Friend alerts</h3><p>A popup when a friend starts playing. Click it to join them.</p></div>
+      <div class="card sketch"><h3><svg class="crown"><use href="#crown-doodle"/></svg>Discord status</h3><p>Shows server size and region, hides games you don't want people to see, and can use your own Discord app.</p></div>
+      <div class="card sketch"><h3><svg class="crown"><use href="#crown-doodle"/></svg>Custom skybox</h3><p>A few presets, or your own images.</p></div>
     </div>
   </section>
 
   <section>
-    <h2>Screenshots</h2>
+    <h2><span class="scribble-under">Screenshots</span></h2>
     <p class="sub">Everything is set up from these windows. No config files to edit.</p>
     <div class="gallery">
-      <figure><img src="assets/instances.jpg" alt="Instances window" loading="lazy" width="760" height="640"><figcaption>Instances window</figcaption></figure>
-      <figure><img src="assets/smart-macro-editor.jpg" alt="Smart macro editor" loading="lazy" width="1000" height="695"><figcaption>Smart macro editor</figcaption></figure>
-      <figure class="wide"><img src="assets/skybox.jpg" alt="Skybox settings" loading="lazy" width="1000" height="390"><figcaption>Custom skybox</figcaption></figure>
+      <figure><span class="tape"></span><div class="frame sketch"><img src="assets/instances.jpg" alt="Instances window" loading="lazy" width="760" height="640"></div><figcaption>the Instances window</figcaption></figure>
+      <figure><span class="tape"></span><div class="frame sketch alt"><img src="assets/smart-macro-editor.jpg" alt="Smart macro editor" loading="lazy" width="1000" height="695"></div><figcaption>making a smart macro</figcaption></figure>
+      <figure><span class="tape"></span><div class="frame sketch"><img src="assets/skybox.jpg" alt="Skybox settings" loading="lazy" width="1000" height="390"></div><figcaption>custom skybox</figcaption></figure>
     </div>
   </section>
 
   <section id="install">
     <div class="two">
-      <div class="card">
-        <h2 style="font-size:26px;margin-bottom:16px">Install</h2>
+      <div class="sketch">
+        <h2>Install</h2>
         <ol class="steps">
-          <li><b>Download PSYstrap.exe</b> with the button at the top.</li>
+          <li><b>Download PSYstrap.exe</b> with the big green button.</li>
           <li><b>Run it and click Install.</b> If Windows says it protected your PC, click More info, then Run anyway.</li>
           <li><b>Play Roblox like normal.</b> It opens through PSYstrap now, and PSYstrap updates itself.</li>
         </ol>
         <p class="note">Needs the <a href="https://dotnet.microsoft.com/download/dotnet/6.0">.NET 6 Desktop Runtime</a>. Windows asks to install it if you don't have it.</p>
       </div>
-      <div class="card">
-        <h2 style="font-size:26px;margin-bottom:12px">Hotkeys</h2>
-        <table class="keys">
-          <tr><td><kbd>Insert</kbd>open the PSYstrap menu</td></tr>
-          <tr><td><kbd>F6</kbd>record a macro</td></tr>
-          <tr><td><kbd>F7</kbd>play the selected macro</td></tr>
-          <tr><td><kbd>F8</kbd>start a smart macro</td></tr>
-        </table>
+      <div class="sketch alt">
+        <h2>Hotkeys</h2>
+        <ul class="keys">
+          <li><kbd>Insert</kbd>open the PSYstrap menu</li>
+          <li><kbd>F6</kbd>record a macro</li>
+          <li><kbd>F7</kbd>play the selected macro</li>
+          <li><kbd>F8</kbd>start a smart macro</li>
+        </ul>
         <p class="note">They only work while Roblox is the focused window.</p>
       </div>
     </div>
   </section>
 
   <section>
-    <h2>Is it safe?</h2>
-    <p class="sub" style="max-width:720px;margin-bottom:0">PSYstrap doesn't inject anything into Roblox or read its memory, so it doesn't mess with the anti-cheat. It changes Roblox's own settings files, the same way Bloxstrap does, and sends normal keyboard and mouse input. The code is all on <a href="https://github.com/AGamingotter/PSYSTRAP">GitHub</a>.</p>
+    <div class="safe sketch">
+      <svg class="shield" viewBox="0 0 84 96" aria-hidden="true">
+        <g filter="url(#rough2)">
+          <path d="M42 5 C 56 13, 68 15, 78 15 C 79 52, 68 76, 42 91 C 16 76, 5 52, 6 15 C 17 15, 29 12, 42 5 Z" fill="#17761d" stroke="#3cf02a" stroke-width="4" stroke-linejoin="round"/>
+          <path d="M26 49 L 38 61 L 60 35" fill="none" stroke="#f6e7a6" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+      </svg>
+      <div>
+        <h2 class="h2">Is it safe?</h2>
+        <p>PSYstrap doesn't inject anything into Roblox or read its memory, so it doesn't mess with the anti-cheat. It changes Roblox's own settings files, the same way Bloxstrap does, and sends normal keyboard and mouse input. The code is all on <a href="https://github.com/AGamingotter/PSYSTRAP">GitHub</a>.</p>
+      </div>
+    </div>
   </section>
 </div>
 
@@ -251,7 +377,7 @@
       var parts = [release.tag_name];
       if (exe) parts.push((exe.size / 1048576).toFixed(1) + " MB");
       if (release.published_at) parts.push(new Date(release.published_at).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }));
-      parts.push("Windows 10 or 11");
+      parts.push("Windows 10 and 11");
       document.getElementById("release").textContent = parts.join("  ·  ");
       if (exe) document.getElementById("download").href = exe.browser_download_url;
     })
