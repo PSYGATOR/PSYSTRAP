@@ -351,3 +351,6 @@ MigrationBackup/
 
 # PSYstrap build output
 fork/dist/
+
+# built from docs/wiki by fork/wiki/build.py
+site/wiki/

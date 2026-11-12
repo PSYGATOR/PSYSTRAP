@@ -1,7 +1,5 @@
 # Overlay
 
-<img src="../images/overlay.jpg" width="600" alt="Overlay in the bottom left of Roblox" />
-
 Small counters in the corner of the Roblox window, plus a menu you open with Insert. It's its own window sitting on top of Roblox, not something inside the game.
 
 ## Counters

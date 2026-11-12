@@ -6,10 +6,10 @@
 
 A Roblox launcher based on Bloxstrap, with an overlay, multi instance, saved accounts and macros added on top.
 
-[![Download](https://img.shields.io/github/v/release/AGamingotter/PSYSTRAP?label=download&color=36C42E)](https://github.com/AGamingotter/PSYSTRAP/releases/latest)
+[![Download](https://img.shields.io/github/v/release/PSYGATOR/PSYSTRAP?label=download&color=36C42E)](https://github.com/PSYGATOR/PSYSTRAP/releases/latest)
 [![License](https://img.shields.io/badge/license-MIT-E8213F)](LICENSE)
 
-**[Download](https://github.com/AGamingotter/PSYSTRAP/releases/latest)** | **[Website](https://psygator.github.io/PSYSTRAP/)** | **[Wiki](docs/wiki/Home.md)**
+**[Download](https://github.com/PSYGATOR/PSYSTRAP/releases/latest)** | **[Website](https://psygator.github.io/PSYSTRAP/)** | **[Wiki](https://psygator.github.io/PSYSTRAP/wiki/)**
 
 </div>
 
@@ -46,7 +46,7 @@ It doesn't inject anything into Roblox or touch its memory. It only changes Robl
 
 ## Install
 
-1. Get `PSYstrap.exe` from [releases](https://github.com/AGamingotter/PSYSTRAP/releases/latest).
+1. Get `PSYstrap.exe` from [releases](https://github.com/PSYGATOR/PSYSTRAP/releases/latest).
 2. Run it and click Install.
 3. Play Roblox like normal. It opens through PSYstrap now.
 
@@ -54,17 +54,17 @@ You need Windows 10 or 11 and the [.NET 6 Desktop Runtime](https://dotnet.micros
 
 Hotkeys in game: **Insert** menu, **F6** record macro, **F7** play macro, **F8** smart macro.
 
-How everything works is in the [wiki](docs/wiki/Home.md).
+How everything works is in the [wiki](https://psygator.github.io/PSYSTRAP/wiki/).
 
 ## Building
 
 ```
-git clone --recursive https://github.com/AGamingotter/PSYSTRAP.git
+git clone --recursive https://github.com/PSYGATOR/PSYSTRAP.git
 cd PSYSTRAP
 powershell -ExecutionPolicy Bypass -File fork\build.ps1
 ```
 
-The exe ends up in `fork\dist`. More info on the [building page](docs/wiki/Building.md).
+The exe ends up in `fork\dist`. More info on the [building page](https://psygator.github.io/PSYSTRAP/wiki/Building.html).
 
 ## Credits
 

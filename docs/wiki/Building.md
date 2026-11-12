@@ -3,7 +3,7 @@
 You need Windows, Git and the .NET SDK (6 or newer works).
 
 ```
-git clone --recursive https://github.com/AGamingotter/PSYSTRAP.git
+git clone --recursive https://github.com/PSYGATOR/PSYSTRAP.git
 cd PSYSTRAP
 powershell -ExecutionPolicy Bypass -File fork\build.ps1
 ```
@@ -15,21 +15,33 @@ You get `fork\dist\PSYstrap.exe` plus the license files. Don't use the exe that 
 Every push gets built by the Build workflow. To make a release:
 
 ```
-git tag v2.12.1
-git push origin v2.12.1
+git tag v2.13.1
+git push origin v2.13.1
 ```
 
 GitHub builds it and puts out a release with the exe, and installed copies update themselves next time they launch. Two things:
 
-- the tag has to be higher than the version in `Bloxstrap/Bloxstrap.csproj` (2.11.4 right now), otherwise the updater thinks it's older
+- bump `<Version>` in `Bloxstrap/Bloxstrap.csproj` to the same number as the tag first, otherwise the updater keeps offering the release to people who already have it
 - the repo has to be public, because the updater checks GitHub without logging in
+
+## Website and wiki
+
+The website is in `site/` and goes up on GitHub Pages by itself when you push (the Website workflow). The wiki pages on it are built from the markdown in `docs/wiki`, so to change the wiki just edit those files. To look at it on your PC first:
+
+```
+pip install markdown
+python fork/wiki/build.py
+python -m http.server 8000 --directory site
+```
+
+then open http://localhost:8000. The sidebar order comes from the list on `Home.md`.
 
 ## rebrand.ps1
 
 Changes the app name and which repo it updates from:
 
 ```
-powershell -ExecutionPolicy Bypass -File fork\rebrand.ps1 -Name PSYstrap -Repo AGamingotter/PSYSTRAP -Icon path\to\icon.ico
+powershell -ExecutionPolicy Bypass -File fork\rebrand.ps1 -Name PSYstrap -Repo PSYGATOR/PSYSTRAP -Icon path\to\icon.ico
 ```
 
 It updates the exe name, install folder, window titles, translations and links. You can run it again whenever. It leaves the code namespace as `Bloxstrap` on purpose so Bloxstrap updates are easy to merge.

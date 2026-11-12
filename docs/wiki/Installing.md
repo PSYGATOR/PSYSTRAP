@@ -2,7 +2,7 @@
 
 You need Windows 10 (1809 or newer) or Windows 11, and the [.NET 6 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/6.0). If you don't have the runtime, Windows asks to install it the first time you open PSYstrap.
 
-1. Download `PSYstrap.exe` from the [latest release](https://github.com/AGamingotter/PSYSTRAP/releases/latest).
+1. Download `PSYstrap.exe` from the [latest release](https://github.com/PSYGATOR/PSYSTRAP/releases/latest).
 2. Run it and click Install.
 
 It installs to `%LocalAppData%\PSYstrap` and adds Start menu and desktop shortcuts. After that, the Play button on the Roblox website opens Roblox through PSYstrap. The first launch downloads Roblox, so it takes a bit longer.

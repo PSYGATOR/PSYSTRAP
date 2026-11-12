@@ -1,12 +1,13 @@
 name: Website
 
-# Publishes the site/ folder to GitHub Pages (https://agamingotter.github.io/PSYSTRAP/).
+# Publishes the site/ folder to GitHub Pages (https://psygator.github.io/PSYSTRAP/),
+# with the wiki (docs/wiki/*.md) built into site/wiki by fork/wiki/build.py.
 # One-time setup: repo Settings > Pages > Source: "GitHub Actions". Pages needs the repo to be public on a free plan.
 
 on:
   push:
     branches: [main]
-    paths: ['site/**', '.github/workflows/pages.yml']
+    paths: ['site/**', 'docs/**', 'fork/wiki/**', '.github/workflows/pages.yml']
   workflow_dispatch:
 
 permissions:
@@ -26,6 +27,13 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v6
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build the wiki pages
+        run: |
+          pip install markdown
+          python fork/wiki/build.py
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

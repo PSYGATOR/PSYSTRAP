@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Shell;
@@ -23,16 +23,16 @@ namespace Bloxstrap
         // FORK: GitHub "owner/repo" this fork publishes releases to. Leave empty until the
         // repo exists - the auto-updater is disabled while it's empty, so the fork can never
         // "update" itself into upstream Bloxstrap.
-        public const string ProjectRepository = "AGamingotter/PSYSTRAP";
+        public const string ProjectRepository = "PSYGATOR/PSYSTRAP";
 
         // FORK: upstream Bloxstrap's metrics/exception-log endpoints belong to the Bloxstrap
         // team, so the fork never talks to them.
         public const bool AnalyticsEnabled = false;
 
         public static bool UpdatesEnabled => !String.IsNullOrEmpty(ProjectRepository);
-        public const string ProjectDownloadLink = "https://github.com/AGamingotter/PSYSTRAP/releases/latest";
-        public const string ProjectHelpLink = "https://github.com/AGamingotter/PSYSTRAP/blob/main/docs/wiki/Home.md";
-        public const string ProjectSupportLink = "https://github.com/AGamingotter/PSYSTRAP/issues/new";
+        public const string ProjectDownloadLink = "https://github.com/PSYGATOR/PSYSTRAP/releases/latest";
+        public const string ProjectHelpLink = "https://psygator.github.io/PSYSTRAP/wiki/";
+        public const string ProjectSupportLink = "https://github.com/PSYGATOR/PSYSTRAP/issues/new";
 
         public const string RobloxPlayerAppName = "RobloxPlayerBeta";
         public const string RobloxStudioAppName = "RobloxStudioBeta";

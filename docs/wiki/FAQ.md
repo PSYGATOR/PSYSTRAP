@@ -12,7 +12,7 @@ Not really. If you cap Roblox's connection you just rubber band and disconnect. 
 ## Common problems
 
 **Settings or the shortcuts won't open after installing**
-You probably installed from an exe in a `bin` folder. Get `PSYstrap.exe` from the [releases](https://github.com/AGamingotter/PSYSTRAP/releases/latest) and run that instead.
+You probably installed from an exe in a `bin` folder. Get `PSYstrap.exe` from the [releases](https://github.com/PSYGATOR/PSYSTRAP/releases/latest) and run that instead.
 
 **My skybox goes away after I join**
 That game has its own sky. See [Skybox](Skybox.md).
@@ -43,4 +43,4 @@ Take a new screenshot in the editor and click Test. Also check the Roblox window
 
 ## Logs and reporting bugs
 
-Logs are in `%LocalAppData%\PSYstrap\Logs`. If something's broken, [open an issue](https://github.com/AGamingotter/PSYSTRAP/issues/new) and say what you did and what happened, and attach the newest log. Logs don't have passwords or saved logins in them, but they do have your Windows username in file paths, so have a quick look before you post one.
+Logs are in `%LocalAppData%\PSYstrap\Logs`. If something's broken, [open an issue](https://github.com/PSYGATOR/PSYSTRAP/issues/new) and say what you did and what happened, and attach the newest log. Logs don't have passwords or saved logins in them, but they do have your Windows username in file paths, so have a quick look before you post one.

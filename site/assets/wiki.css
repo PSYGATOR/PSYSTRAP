@@ -1,0 +1,145 @@
+/* PSYstrap wiki pages - same hand-drawn look as the front page */
+:root {
+  --bg: #07120a;
+  --bg-2: #0b1a0f;
+  --paper: #0f2214;
+  --g1: #3cf02a;
+  --g2: #27b52b;
+  --g3: #17761d;
+  --red: #f0203f;
+  --gold: #e9b632;
+  --cream: #f6e7a6;
+  --ink: #eef8ec;
+  --ink-2: #c3dcc3;
+  --ink-3: #7d9e80;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  color: var(--ink);
+  font: 20px/1.5 "Patrick Hand", "Comic Sans MS", system-ui, sans-serif;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(800px 480px at 12% -8%, rgba(60, 240, 42, .12), transparent 60%),
+    radial-gradient(600px 420px at 100% 6%, rgba(240, 32, 63, .07), transparent 60%);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+img { max-width: 100%; height: auto; }
+a { color: var(--g1); }
+h1, h2, h3 { font-family: "Permanent Marker", "Patrick Hand", cursive; font-weight: 400; line-height: 1.1; }
+
+.wrap { max-width: 1160px; margin: 0 auto; padding: 0 20px; }
+
+/* wobbly marker outline (the outline is a pseudo element so text stays sharp) */
+.sketch { position: relative; isolation: isolate; }
+.sketch::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: var(--fill, var(--paper));
+  border: 3px solid var(--line, var(--g2));
+  border-radius: 14px 22px 12px 26px / 24px 12px 20px 14px;
+  filter: url(#rough);
+}
+.sketch.alt::before { border-radius: 24px 10px 22px 12px / 12px 22px 14px 24px; filter: url(#rough2); }
+
+/* top bar */
+.top { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; gap: 12px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font: 26px "Permanent Marker", cursive; }
+.brand img { width: 44px; height: 44px; transform: rotate(-6deg); }
+.top nav { display: flex; align-items: center; gap: 20px; }
+.top nav a { color: var(--ink-2); text-decoration: none; font-size: 21px; }
+.top nav a:hover, .top nav a.on { color: var(--ink); text-decoration: underline wavy var(--red) 2px; text-underline-offset: 6px; }
+.top nav a.dl {
+  --line: var(--g3); color: #062a08; padding: 6px 16px 5px; font: 18px "Permanent Marker", cursive; transform: rotate(-2deg);
+}
+.top nav a.dl::before { background-image: repeating-linear-gradient(-58deg, var(--g1) 0 5px, #34d726 5px 7px, var(--g1) 7px 12px, #2cc523 12px 14px); }
+.top nav a.dl:hover { text-decoration: none; transform: rotate(1deg); }
+
+/* layout */
+.layout { display: grid; grid-template-columns: 240px 1fr; gap: 30px; align-items: start; padding: 10px 0 60px; }
+main { min-width: 0; }
+
+.side { position: sticky; top: 16px; }
+.pages { padding: 18px 18px 14px; transform: rotate(-.8deg); --line: var(--g3); }
+.pages h2 { font-size: 28px; margin: 0 0 10px; color: var(--g1); }
+.pages ul { list-style: none; margin: 0; padding: 0; }
+.pages li a { display: block; padding: 3px 8px; margin: 0 -8px; color: var(--ink-2); text-decoration: none; font-size: 20px; border-radius: 6px; }
+.pages li a:hover { color: var(--ink); }
+.pages li a.here {
+  color: var(--ink);
+  background: linear-gradient(100deg, transparent 1%, rgba(60, 240, 42, .3) 3% 95%, transparent 98%) 0 60% / 100% 70% no-repeat;
+}
+
+/* the page itself */
+/* long pages are too tall for the SVG wobble filter (the browser cuts it off), so the page box uses an uneven border instead */
+.page { padding: 30px 38px 34px; }
+.page::before { filter: none; border-radius: 18px 30px 14px 34px / 30px 14px 26px 18px; box-shadow: inset 0 0 0 1px rgba(60, 240, 42, .12); }
+.page > :first-child { margin-top: 0; }
+.page h1 {
+  font-size: clamp(40px, 6vw, 60px); color: var(--g1); margin: 0 0 22px;
+  text-shadow: 3px 3px 0 var(--g3); transform: rotate(-2deg); transform-origin: left;
+}
+.page h2 {
+  font-size: 32px; margin: 38px 0 12px; display: inline-block; padding-bottom: 10px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 20' preserveAspectRatio='none'%3E%3Cpath d='M3 12 C 50 4, 90 16, 140 9 S 230 5, 297 11' fill='none' stroke='%23f0203f' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M12 16 C 70 10, 150 18, 290 13' fill='none' stroke='%23e9b632' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E") left bottom / 100% 14px no-repeat;
+}
+.page h3 { font-size: 24px; margin: 28px 0 8px; color: var(--cream); }
+.page p, .page li { color: var(--ink-2); }
+.page strong { color: var(--ink); font-weight: 400; background: linear-gradient(transparent 62%, rgba(60, 240, 42, .25) 62% 92%, transparent 92%); }
+.page ul, .page ol { padding-left: 26px; }
+.page li { margin: 4px 0; }
+.page ul li::marker { color: var(--g1); content: "✱  "; }
+.page ol li::marker { color: var(--g1); font-family: "Permanent Marker", cursive; }
+
+.page code {
+  font: .82em ui-monospace, Consolas, "Cascadia Mono", monospace;
+  background: var(--bg-2); color: var(--cream); padding: 2px 6px; border-radius: 6px; border: 1px solid #1f3a28;
+}
+.page pre {
+  background: #050d07; border: 2px dashed var(--g3); border-radius: 12px; padding: 14px 18px; overflow-x: auto;
+  transform: rotate(-.3deg);
+}
+.page pre code { background: none; border: 0; padding: 0; color: var(--ink); font-size: 15px; line-height: 1.6; }
+
+.page img { display: block; margin: 18px 0; border-radius: 6px; border: 3px solid var(--g2); transform: rotate(-.8deg); box-shadow: 6px 7px 0 rgba(0, 0, 0, .4); }
+
+.page table { border-collapse: separate; border-spacing: 0; margin: 16px 0; width: 100%; display: block; overflow-x: auto; }
+.page th, .page td { text-align: left; padding: 8px 14px; border-bottom: 2px dashed #1f3a28; vertical-align: top; color: var(--ink-2); }
+.page th { font: 20px "Permanent Marker", cursive; color: var(--g1); border-bottom: 3px solid var(--g3); }
+.page tr:last-child td { border-bottom: 0; }
+
+.page blockquote { margin: 16px 0; padding: 4px 18px; border-left: 4px solid var(--gold); color: var(--cream); }
+
+.pager { display: flex; justify-content: space-between; gap: 20px; margin-top: 26px; }
+.pn { display: inline-flex; flex-direction: column; padding: 10px 20px; color: var(--ink); text-decoration: none; font: 22px "Permanent Marker", cursive; --line: var(--g3); }
+.pn small { font: 16px "Patrick Hand", cursive; color: var(--ink-3); }
+.pn.prev { transform: rotate(-1.5deg); }
+.pn.next { margin-left: auto; text-align: right; transform: rotate(1.5deg); }
+.pn:hover { --line: var(--g1); }
+
+.edit { text-align: center; font-size: 17px; margin: 28px 0 0; }
+.edit a { color: var(--ink-3); }
+
+footer { padding: 0 0 40px; color: var(--ink-3); font-size: 17px; }
+footer .wrap { border-top: 3px dashed rgba(39, 181, 43, .35); padding-top: 22px; }
+
+@media (max-width: 860px) {
+  .layout { grid-template-columns: 1fr; gap: 20px; }
+  .side { position: static; }
+  .pages { transform: none; }
+  .pages ul { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+  .pages li a { margin: 0; padding: 2px 6px; font-size: 18px; }
+}
+@media (max-width: 560px) {
+  body { font-size: 19px; }
+  .wrap { padding: 0 16px; }
+  .top nav { gap: 14px; }
+  .top nav a { font-size: 19px; }
+  .brand { font-size: 22px; }
+  .brand img { width: 38px; height: 38px; }
+  .page { padding: 22px 18px 24px; transform: none; }
+  .pager { flex-direction: column; }
+  .pn.next { margin-left: 0; }
+}

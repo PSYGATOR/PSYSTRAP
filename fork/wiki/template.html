@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{title}} · PSYstrap wiki</title>
+<meta name="theme-color" content="#07120a">
+<link rel="icon" href="../assets/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Patrick+Hand&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/wiki.css">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="2"/><feDisplacementMap in="SourceGraphic" scale="6"/></filter>
+    <filter id="rough2"><feTurbulence type="fractalNoise" baseFrequency=".04" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="6"/></filter>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="../"><img src="../assets/logo.png" alt="">PSYstrap</a>
+    <nav>
+      <a href="../">Home</a>
+      <a href="./" class="on">Wiki</a>
+      <a href="https://github.com/PSYGATOR/PSYSTRAP">GitHub</a>
+      <a class="dl sketch" href="https://github.com/PSYGATOR/PSYSTRAP/releases/latest/download/PSYstrap.exe">Download</a>
+    </nav>
+  </header>
+
+  <div class="layout">
+    <aside class="side">
+      <div class="sketch alt pages">
+        <h2>Wiki</h2>
+        <ul>
+{{nav}}
+        </ul>
+      </div>
+    </aside>
+
+    <main>
+      <article class="sketch page">
+{{content}}
+      </article>
+
+      <div class="pager">{{prev}}{{next}}</div>
+      <p class="edit"><a href="{{edit}}">Something wrong? Edit this page on GitHub</a></p>
+    </main>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>Based on <a href="https://github.com/bloxstraplabs/bloxstrap">Bloxstrap</a> (MIT license). Not affiliated with Roblox or the Bloxstrap team.</span>
+  </div>
+</footer>
+</body>
+</html>

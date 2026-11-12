@@ -258,8 +258,8 @@
     <a class="brand" href="#"><img src="assets/logo.png" alt="">PSYstrap</a>
     <nav>
       <a href="#features">Features</a>
-      <a href="https://github.com/AGamingotter/PSYSTRAP/blob/main/docs/wiki/Home.md">Wiki</a>
-      <a href="https://github.com/AGamingotter/PSYSTRAP">GitHub</a>
+      <a href="wiki/">Wiki</a>
+      <a href="https://github.com/PSYGATOR/PSYSTRAP">GitHub</a>
     </nav>
   </header>
 
@@ -268,11 +268,11 @@
       <h1>PSYstrap</h1>
       <p class="tag">A Roblox launcher based on Bloxstrap, with an <span class="hl">overlay</span>, <span class="hl">multi instance</span>, <span class="hl">saved accounts</span> and <span class="hl">macros</span> added on top.</p>
       <div class="buttons">
-        <a class="btn btn-main sketch" id="download" href="https://github.com/AGamingotter/PSYSTRAP/releases/latest/download/PSYstrap.exe">
+        <a class="btn btn-main sketch" id="download" href="https://github.com/PSYGATOR/PSYSTRAP/releases/latest/download/PSYstrap.exe">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5c.2 4 0 7.5-.1 11.5"/><path d="M6.8 10.2c1.8 1.6 3.4 3.3 5.1 5 1.7-1.8 3.3-3.4 5.3-5.1"/><path d="M4.5 20.6c4.9-.3 10-.2 15-.1"/></svg>
           Download
         </a>
-        <a class="btn btn-ghost sketch alt" href="https://github.com/AGamingotter/PSYSTRAP/releases">all releases</a>
+        <a class="btn btn-ghost sketch alt" href="https://github.com/PSYGATOR/PSYSTRAP/releases">all releases</a>
       </div>
       <div class="release" id="release">for Windows 10 and 11</div>
     </div>
@@ -354,7 +354,7 @@
       </svg>
       <div>
         <h2 class="h2">Is it safe?</h2>
-        <p>PSYstrap doesn't inject anything into Roblox or read its memory, so it doesn't mess with the anti-cheat. It changes Roblox's own settings files, the same way Bloxstrap does, and sends normal keyboard and mouse input. The code is all on <a href="https://github.com/AGamingotter/PSYSTRAP">GitHub</a>.</p>
+        <p>PSYstrap doesn't inject anything into Roblox or read its memory, so it doesn't mess with the anti-cheat. It changes Roblox's own settings files, the same way Bloxstrap does, and sends normal keyboard and mouse input. The code is all on <a href="https://github.com/PSYGATOR/PSYSTRAP">GitHub</a>.</p>
       </div>
     </div>
   </section>
@@ -363,13 +363,13 @@
 <footer>
   <div class="wrap">
     <span>Based on <a href="https://github.com/bloxstraplabs/bloxstrap">Bloxstrap</a> (MIT license). Not affiliated with Roblox or the Bloxstrap team.</span>
-    <span><a href="https://github.com/AGamingotter/PSYSTRAP/blob/main/docs/wiki/Home.md">Wiki</a> &nbsp;·&nbsp; <a href="https://github.com/AGamingotter/PSYSTRAP">GitHub</a></span>
+    <span><a href="wiki/">Wiki</a> &nbsp;·&nbsp; <a href="https://github.com/PSYGATOR/PSYSTRAP">GitHub</a></span>
   </div>
 </footer>
 
 <script>
   // fills in the version under the download button; the button works without it
-  fetch("https://api.github.com/repos/AGamingotter/PSYSTRAP/releases/latest")
+  fetch("https://api.github.com/repos/PSYGATOR/PSYSTRAP/releases/latest")
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (release) {
       if (!release || !release.tag_name) return;
