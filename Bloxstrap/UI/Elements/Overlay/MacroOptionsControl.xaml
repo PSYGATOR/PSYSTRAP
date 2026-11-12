@@ -42,7 +42,7 @@
             <ComboBox Width="160" Padding="10,5,10,5" ItemsSource="{Binding MacroSpeedChoices, Mode=OneTime}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding MacroSpeed, Mode=TwoWay}" />
         </controls:OptionControl>
 
-        <TextBlock Text="Smart macros" FontSize="16" FontWeight="Medium" Margin="0,16,0,0" />
+        <TextBlock Text="Smart macros" FontSize="19" FontFamily="{DynamicResource PsyMarkerFont}" Margin="0,16,0,0" />
         <TextBlock Margin="2,2,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
                    Text="Watch the screen and do stuff when something shows up, like rejoining when you get disconnected. F8 in game starts/stops the one picked here." />
 

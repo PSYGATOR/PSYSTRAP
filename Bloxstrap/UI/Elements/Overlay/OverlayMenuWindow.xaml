@@ -12,7 +12,7 @@
         ShowInTaskbar="False"
         Background="{DynamicResource ApplicationBackgroundBrush}"
         ExtendsContentIntoTitleBar="True"
-        WindowBackdropType="None"
+        WindowBackdropType="Mica"
         WindowStartupLocation="Manual">
     <!-- PSYstrap in-game menu: opened with the menu key over Roblox, closes when Roblox is clicked again -->
     <Grid>
@@ -25,7 +25,15 @@
 
         <ui:TitleBar Grid.Row="0" Padding="8" Title="PSYstrap" ShowMinimize="False" ShowMaximize="False" CanMaximize="False" Icon="pack://application:,,,/Bloxstrap.ico" KeyboardNavigation.TabNavigation="None" />
 
-        <Border Grid.Row="1" Height="3" Margin="16,0,16,4" CornerRadius="1.5" Background="{DynamicResource PsyCrownStripBrush}" />
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="18,0,16,6">
+            <Image Width="40" Height="40" Source="pack://application:,,,/Resources/BootstrapperStyles/PSY/Logo.png" RenderOptions.BitmapScalingMode="HighQuality" RenderTransformOrigin="0.5,0.5">
+                <Image.RenderTransform><RotateTransform Angle="-6" /></Image.RenderTransform>
+            </Image>
+            <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Text="PSYstrap" FontFamily="{DynamicResource PsyMarkerFont}" FontSize="28" Foreground="{DynamicResource PsyPageTitleBrush}" Effect="{DynamicResource PsyTitleEffect}" RenderTransformOrigin="0,1">
+                <TextBlock.RenderTransform><RotateTransform Angle="{DynamicResource PsyPageTitleAngle}" /></TextBlock.RenderTransform>
+            </TextBlock>
+            <TextBlock Margin="10,6,0,0" VerticalAlignment="Center" Text="menu" FontFamily="{DynamicResource PsyHandFont}" FontSize="18" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+        </StackPanel>
 
         <ScrollViewer Grid.Row="2" Padding="16,4,16,8" VerticalScrollBarVisibility="Auto">
             <StackPanel>
@@ -35,7 +43,7 @@
         </ScrollViewer>
 
         <Border Grid.Row="3" Padding="16,10" Background="{DynamicResource SolidBackgroundFillColorSecondaryBrush}">
-            <TextBlock x:Name="FooterText" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Changes save right away. Press Insert or click Roblox to close." TextWrapping="Wrap" />
+            <TextBlock x:Name="FooterText" FontFamily="{DynamicResource PsyHandFont}" FontSize="15" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Changes save right away. Press Insert or click Roblox to close." TextWrapping="Wrap" />
         </Border>
     </Grid>
 </base:WpfUiWindow>

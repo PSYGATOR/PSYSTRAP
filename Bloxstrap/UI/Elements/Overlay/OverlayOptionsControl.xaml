@@ -16,7 +16,7 @@
             <ui:ToggleSwitch IsChecked="{Binding Enabled, Mode=TwoWay}" />
         </controls:OptionControl>
 
-        <TextBlock Text="Counters" FontSize="16" FontWeight="Medium" Margin="0,14,0,0" />
+        <TextBlock Text="Counters" FontSize="19" FontFamily="{DynamicResource PsyMarkerFont}" Margin="0,14,0,0" />
 
         <controls:OptionControl Header="FPS counter" Description="Green 55+, yellow 30+, red under 30.">
             <ui:ToggleSwitch IsChecked="{Binding ShowFramerate, Mode=TwoWay}" />
@@ -67,10 +67,10 @@
             </ComboBox>
         </controls:OptionControl>
 
-        <TextBlock Text="Macros" FontSize="16" FontWeight="Medium" Margin="0,14,0,0" />
+        <TextBlock Text="Macros" FontSize="19" FontFamily="{DynamicResource PsyMarkerFont}" Margin="0,14,0,0" />
         <overlay:MacroOptionsControl />
 
-        <TextBlock Text="Roblox" FontSize="16" FontWeight="Medium" Margin="0,14,0,0" />
+        <TextBlock Text="Roblox" FontSize="19" FontFamily="{DynamicResource PsyMarkerFont}" Margin="0,14,0,0" />
 
         <StackPanel Visibility="{Binding ApplyNowVisibility, Mode=OneTime}">
             <ui:Button Margin="0,8,0,0" Icon="Server24" HorizontalAlignment="Left" Content="Hop to the smallest server of this game" Command="{Binding SmallestServerCommand}" />
