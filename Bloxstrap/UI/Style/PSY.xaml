@@ -158,7 +158,7 @@
     </Style>
     <DropShadowEffect x:Key="PsyTitleEffect" Color="#17761D" BlurRadius="0" ShadowDepth="3" Direction="315" Opacity="1" />
 
-    <!-- WPF UI buttons drawn with a marker: sketched outline, hatched green for Primary, no box for Transparent -->
+    <!-- WPF UI buttons drawn with a marker: sketched outline, hatched green for Success (Primary is every button's default, so it stays outlined), no box for Transparent -->
     <Style TargetType="{x:Type ui:Button}">
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource DefaultControlFocusVisualStyle}" />
@@ -187,7 +187,7 @@
                         <Trigger Property="Content" Value="{x:Null}">
                             <Setter TargetName="IconPart" Property="Margin" Value="0" />
                         </Trigger>
-                        <Trigger Property="Appearance" Value="Primary">
+                        <Trigger Property="Appearance" Value="Success">
                             <Setter TargetName="Box" Property="Hatched" Value="True" />
                             <Setter TargetName="Box" Property="BorderBrush" Value="#17761D" />
                             <Setter Property="Foreground" Value="#062A08" />

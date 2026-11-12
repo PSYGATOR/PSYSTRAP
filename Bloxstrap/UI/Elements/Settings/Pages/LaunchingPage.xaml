@@ -69,7 +69,7 @@
                                 </WrapPanel>
                             </StackPanel>
                             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                                <ui:Button Icon="Play24" Content="Play" Appearance="Primary"
+                                <ui:Button Icon="Play24" Content="Play" Appearance="Success"
                                            Command="{Binding DataContext.PlayFavouriteCommand, ElementName=LaunchingPageView}" CommandParameter="{Binding}" />
                                 <ui:Button Margin="6,0,0,0" Icon="Desktop24" ToolTip="Desktop shortcut" AutomationProperties.Name="Desktop shortcut"
                                            Command="{Binding DataContext.ShortcutCommand, ElementName=LaunchingPageView}" CommandParameter="{Binding}" />

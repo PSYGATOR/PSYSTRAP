@@ -11,9 +11,11 @@
              d:DesignWidth="600">
     <!-- PSYstrap: macro options, shown on the Settings "Macros" and "Overlay" pages and in the in-game menu -->
     <StackPanel>
-        <ui:Card Margin="0,8,0,0">
+        <controls:SketchBorder Margin="0,10,0,0" Padding="16,12,16,12" CornerRadius="8"
+                               Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{DynamicResource PsyCardStrokeBrush}"
+                               BorderThickness="{DynamicResource PsyCardStrokeThickness}" Roughness="{DynamicResource PsySketchRoughness}">
             <StackPanel>
-                <TextBlock FontSize="14" FontWeight="SemiBold" Text="How to use" />
+                <TextBlock Text="How to use" FontFamily="{DynamicResource PsyMarkerFont}" FontSize="{DynamicResource PsyCardTitleSize}" Foreground="{DynamicResource PsyCardTitleBrush}" />
                 <TextBlock Margin="0,4,0,0" FontSize="13" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}">
                     <Run FontWeight="Bold" Foreground="#5FE04C">F6</Run><Run Text=" in Roblox starts recording your keys and mouse. " />
                     <Run FontWeight="Bold" Foreground="#5FE04C">F6</Run><Run Text=" again saves it as a new macro." />
@@ -24,15 +26,22 @@
                     <Run Text="If you click off Roblox, playback pauses so it can't type into other windows." />
                 </TextBlock>
             </StackPanel>
-        </ui:Card>
+        </controls:SketchBorder>
 
-        <controls:OptionControl Header="Macro" Description="{Binding SelectedMacroDetails, Mode=OneWay}">
-            <StackPanel Orientation="Horizontal">
-                <ComboBox Width="160" Padding="10,5,10,5" ItemsSource="{Binding MacroNames}" SelectedItem="{Binding SelectedMacro, Mode=TwoWay}" />
-                <ui:Button Margin="6,0,0,0" Icon="Delete24" ToolTip="Delete this macro" Command="{Binding DeleteMacroCommand}" />
-                <ui:Button Margin="6,0,0,0" Icon="Folder24" ToolTip="Open the macros folder" Command="{Binding OpenMacroFolderCommand}" />
+        <controls:SketchBorder Margin="0,10,0,0" Padding="16,12,16,12" CornerRadius="8"
+                               Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{DynamicResource PsyCardStrokeBrush}"
+                               BorderThickness="{DynamicResource PsyCardStrokeThickness}" Roughness="{DynamicResource PsySketchRoughness}">
+            <StackPanel>
+                <TextBlock Text="Macro" FontFamily="{DynamicResource PsyMarkerFont}" FontSize="{DynamicResource PsyCardTitleSize}" Foreground="{DynamicResource PsyCardTitleBrush}" />
+                <TextBlock Margin="0,2,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding SelectedMacroDetails, Mode=OneWay}" />
+                <!-- controls on their own line, so the text keeps its width in the narrow in-game menu -->
+                <WrapPanel Margin="0,10,0,0">
+                    <ComboBox Width="200" Margin="0,0,6,6" Padding="10,5,10,5" ItemsSource="{Binding MacroNames}" SelectedItem="{Binding SelectedMacro, Mode=TwoWay}" AutomationProperties.Name="Macro" />
+                    <ui:Button Margin="0,0,6,6" Icon="Delete24" ToolTip="Delete this macro" AutomationProperties.Name="Delete this macro" Command="{Binding DeleteMacroCommand}" />
+                    <ui:Button Margin="0,0,6,6" Icon="Folder24" ToolTip="Open the macros folder" AutomationProperties.Name="Open the macros folder" Command="{Binding OpenMacroFolderCommand}" />
+                </WrapPanel>
             </StackPanel>
-        </controls:OptionControl>
+        </controls:SketchBorder>
 
         <controls:OptionControl Header="Repeat" Description="How many times F7 plays it.">
             <ComboBox Width="160" Padding="10,5,10,5" ItemsSource="{Binding MacroRunChoices, Mode=OneTime}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding MacroRuns, Mode=TwoWay}" />
@@ -46,13 +55,20 @@
         <TextBlock Margin="2,2,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
                    Text="Watch the screen and do stuff when something shows up, like rejoining when you get disconnected. F8 in game starts/stops the one picked here." />
 
-        <controls:OptionControl Header="Smart macro" Description="{Binding SelectedSmartMacroDetails, Mode=OneWay}">
-            <StackPanel Orientation="Horizontal">
-                <ComboBox Width="160" Padding="10,5,10,5" ItemsSource="{Binding SmartMacroNames}" SelectedItem="{Binding SelectedSmartMacro, Mode=TwoWay}" />
-                <ui:Button Margin="6,0,0,0" Icon="Add24" Content="New" Command="{Binding NewSmartMacroCommand}" />
-                <ui:Button Margin="6,0,0,0" Icon="Edit24" Content="Edit" Command="{Binding EditSmartMacroCommand}" />
-                <ui:Button Margin="6,0,0,0" Icon="Delete24" ToolTip="Delete" Command="{Binding DeleteSmartMacroCommand}" />
+        <controls:SketchBorder Margin="0,10,0,0" Padding="16,12,16,12" CornerRadius="8"
+                               Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{DynamicResource PsyCardStrokeBrush}"
+                               BorderThickness="{DynamicResource PsyCardStrokeThickness}" Roughness="{DynamicResource PsySketchRoughness}">
+            <StackPanel>
+                <TextBlock Text="Smart macro" FontFamily="{DynamicResource PsyMarkerFont}" FontSize="{DynamicResource PsyCardTitleSize}" Foreground="{DynamicResource PsyCardTitleBrush}" />
+                <TextBlock Margin="0,2,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding SelectedSmartMacroDetails, Mode=OneWay}" />
+                <!-- controls on their own line, so the text keeps its width in the narrow in-game menu -->
+                <WrapPanel Margin="0,10,0,0">
+                    <ComboBox Width="200" Margin="0,0,6,6" Padding="10,5,10,5" ItemsSource="{Binding SmartMacroNames}" SelectedItem="{Binding SelectedSmartMacro, Mode=TwoWay}" AutomationProperties.Name="Smart macro" />
+                    <ui:Button Margin="0,0,6,6" Icon="Add24" Content="New" Command="{Binding NewSmartMacroCommand}" />
+                    <ui:Button Margin="0,0,6,6" Icon="Edit24" Content="Edit" Command="{Binding EditSmartMacroCommand}" />
+                    <ui:Button Margin="0,0,6,6" Icon="Delete24" ToolTip="Delete" AutomationProperties.Name="Delete smart macro" Command="{Binding DeleteSmartMacroCommand}" />
+                </WrapPanel>
             </StackPanel>
-        </controls:OptionControl>
+        </controls:SketchBorder>
     </StackPanel>
 </UserControl>

@@ -37,7 +37,7 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
-                    <ui:Button Icon="Camera24" Appearance="Primary" Content="Screenshot Roblox" Click="Capture_Click" />
+                    <ui:Button Icon="Camera24" Appearance="Success" Content="Screenshot Roblox" Click="Capture_Click" />
                     <ui:Button Margin="6,0,0,0" Icon="Image24" Content="Open image" Command="{Binding LoadImageCommand}" />
                     <RadioButton Margin="16,0,0,0" VerticalAlignment="Center" Content="Click = pixel check" IsChecked="{Binding PixelMode, Mode=TwoWay}" />
                     <RadioButton Margin="10,0,0,0" VerticalAlignment="Center" Content="Drag = picture check" IsChecked="{Binding ImageMode, Mode=TwoWay}" />
@@ -171,7 +171,7 @@
                 <TextBlock VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
                            Text="F8 in Roblox starts/stops the smart macro picked on the Macros page. It pauses when Roblox isn't focused, and the window has to be visible." />
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <ui:Button Appearance="Primary" Content="Save" Click="Save_Click" />
+                    <ui:Button Appearance="Success" Content="Save" Click="Save_Click" />
                     <ui:Button Margin="8,0,0,0" Content="Cancel" Click="Cancel_Click" />
                 </StackPanel>
             </Grid>

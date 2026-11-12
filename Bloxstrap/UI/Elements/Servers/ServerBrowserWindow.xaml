@@ -27,7 +27,7 @@
             <Border Height="3" Width="44" HorizontalAlignment="Left" CornerRadius="1.5" Margin="1,4,0,10" Background="{DynamicResource PsyCrownStripBrush}" />
 
             <DockPanel>
-                <ui:Button DockPanel.Dock="Right" Margin="8,0,0,0" Icon="ArrowClockwise24" Content="Load" Appearance="Primary" Command="{Binding LoadCommand}" IsEnabled="{Binding NotBusy, Mode=OneWay}" />
+                <ui:Button DockPanel.Dock="Right" Margin="8,0,0,0" Icon="ArrowClockwise24" Content="Load" Appearance="Success" Command="{Binding LoadCommand}" IsEnabled="{Binding NotBusy, Mode=OneWay}" />
                 <ui:TextBox PlaceholderText="Place ID or game link" Text="{Binding PlaceText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </DockPanel>
 

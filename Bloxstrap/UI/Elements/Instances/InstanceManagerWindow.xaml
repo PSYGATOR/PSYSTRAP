@@ -104,7 +104,7 @@
                                 </Grid.ColumnDefinitions>
                                 <ComboBox Grid.Column="0" Padding="10,5,10,5" ItemsSource="{Binding Targets}" DisplayMemberPath="Label" SelectedItem="{Binding SelectedTarget, Mode=TwoWay}" />
                                 <ui:TextBox Grid.Column="1" Margin="8,0,0,0" Width="150" PlaceholderText="Place ID" Text="{Binding PlaceIdText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding PlaceIdVisibility, Mode=OneWay}" />
-                                <ui:Button Grid.Column="2" Margin="8,0,0,0" Icon="Play24" Appearance="Primary" Content="Launch" Command="{Binding LaunchCommand}" />
+                                <ui:Button Grid.Column="2" Margin="8,0,0,0" Icon="Play24" Appearance="Success" Content="Launch" Command="{Binding LaunchCommand}" />
                             </Grid>
                             <TextBlock Margin="0,6,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Status, Mode=OneWay}" />
                             <TextBlock Margin="0,4,0,0" FontSize="11" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
@@ -124,7 +124,7 @@
                         <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding Summary, Mode=OneWay}" />
                     </StackPanel>
                     <ui:Button Grid.Column="1" Margin="8,0,0,0" Icon="Grid24" Content="Arrange windows" Command="{Binding ArrangeCommand}" />
-                    <ui:Button Grid.Column="2" Margin="8,0,0,0" Icon="Add24" Appearance="Primary" Content="Launch new instance" Command="{Binding LaunchCommand}" />
+                    <ui:Button Grid.Column="2" Margin="8,0,0,0" Icon="Add24" Appearance="Success" Content="Launch new instance" Command="{Binding LaunchCommand}" />
                 </Grid>
 
                 <!-- turn-taking: one smart macro per client, cycled because Roblox only listens to the focused window -->
@@ -140,7 +140,7 @@
                                 <TextBlock Margin="0,2,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}"
                                            Text="Roblox only listens to the focused window, so this switches between your windows and runs each one's smart macro for a moment. Keep them visible (Arrange windows helps). Move the mouse or press a key to take over, it carries on when you stop." />
                             </StackPanel>
-                            <ui:Button Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Top" Icon="ArrowSync24" Appearance="Primary"
+                            <ui:Button Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Top" Icon="ArrowSync24" Appearance="Success"
                                        Content="{Binding RotationButtonText, Mode=OneWay}" Command="{Binding ToggleRotationCommand}" />
                         </Grid>
                         <TextBlock Margin="0,8,0,0" FontSize="12" FontWeight="SemiBold" TextWrapping="Wrap" Foreground="#5FE04C" Text="{Binding RotationStatus, Mode=OneWay}" />
