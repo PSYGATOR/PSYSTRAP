@@ -3,7 +3,7 @@ name: Build
 # Builds PSYstrap.exe on every push / pull request.
 # Pushing a version tag (e.g. v2.12.0) also publishes a GitHub release with the exe attached,
 # which PSYstrap's auto-updater uses once ProjectRepository is set (fork\rebrand.ps1 -Repo owner/name).
-# Tags must be newer than the version in Bloxstrap.csproj (2.11.4), or the updater treats them as old.
+# The tag must match <Version> in Bloxstrap.csproj (bump both), or the updater keeps offering the release.
 
 on:
   push:
