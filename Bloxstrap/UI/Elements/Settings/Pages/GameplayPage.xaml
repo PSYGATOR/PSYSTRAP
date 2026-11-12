@@ -1,0 +1,231 @@
+<ui:UiPage x:Class="Bloxstrap.UI.Elements.Settings.Pages.GameplayPage"
+      x:Name="GameplayPageView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:controls="clr-namespace:Bloxstrap.UI.Elements.Controls"
+      xmlns:vm="clr-namespace:Bloxstrap.UI.ViewModels.Settings"
+      mc:Ignorable="d"
+      d:DataContext="{d:DesignInstance vm:GameplayViewModel}"
+      d:DesignHeight="1600" d:DesignWidth="800"
+      Title="GameplayPage"
+      Scrollable="True">
+    <!-- PSYstrap: everyday gameplay stuff -->
+    <ui:UiPage.Resources>
+        <Style x:Key="RowBorder" TargetType="Border">
+            <Setter Property="Margin" Value="0,6,0,0" />
+            <Setter Property="Padding" Value="14,8,10,8" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Background" Value="{DynamicResource ControlFillColorDefaultBrush}" />
+        </Style>
+        <Style x:Key="Note" TargetType="TextBlock">
+            <Setter Property="Margin" Value="2,6,0,0" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorTertiaryBrush}" />
+        </Style>
+        <Style x:Key="Section" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,18,0,0" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontWeight" Value="Medium" />
+        </Style>
+    </ui:UiPage.Resources>
+
+    <StackPanel Margin="0,0,14,14">
+        <TextBlock FontSize="14" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                   Text="Stuff for normal everyday playing. Hit Save at the bottom when you're done." />
+        <Border Height="3" Width="44" HorizontalAlignment="Left" CornerRadius="1.5" Margin="1,10,0,4" Background="{DynamicResource PsyCrownStripBrush}" />
+
+        <!-- staying in game -->
+        <TextBlock Text="Staying in game" Style="{StaticResource Section}" />
+
+        <controls:OptionControl Header="Rejoin when you get disconnected"
+            Description="If Roblox drops you (lost connection, server shut down) it rejoins the same server. Not if you got kicked or left yourself. Max 3 times in 10 minutes.">
+            <ui:ToggleSwitch IsChecked="{Binding AutoRejoin, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="Anti-AFK"
+            Description="Roblox kicks you after 20 minutes of doing nothing. This wiggles the mouse a tiny bit before that. If the window is in the background it waits until you've stopped using the PC for a minute.">
+            <ui:ToggleSwitch IsChecked="{Binding AntiAfk, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="Anti-AFK after" Description="Minutes without input before it does anything.">
+            <ComboBox Width="160" Padding="10,5,10,5" ItemsSource="{Binding AntiAfkChoices, Mode=OneTime}" SelectedItem="{Binding AntiAfkMinutes, Mode=TwoWay}" ItemStringFormat="{}{0} minutes" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="Mute windows in the background"
+            Description="With more than one Roblox open, only the one you used last makes sound.">
+            <ui:ToggleSwitch IsChecked="{Binding MuteBackgroundWindows, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <!-- remaps -->
+        <TextBlock Text="Remap keys" Style="{StaticResource Section}" />
+        <TextBlock Style="{StaticResource Note}" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                   Text="Make one key or mouse button act like another, only while Roblox is focused. Good for side mouse buttons. Type a key name or pick one." />
+
+        <ItemsControl ItemsSource="{Binding Remaps}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Style="{StaticResource RowBorder}">
+                        <DockPanel>
+                            <ui:Button DockPanel.Dock="Right" Icon="Delete24" Appearance="Transparent" ToolTip="Remove"
+                                       Command="{Binding DataContext.DeleteRemapCommand, ElementName=GameplayPageView}" CommandParameter="{Binding}" />
+                            <TextBlock VerticalAlignment="Center" FontSize="14">
+                                <Run Text="{Binding From, Mode=OneWay}" FontWeight="Medium" />
+                                <Run Text="  acts as  " Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                                <Run Text="{Binding To, Mode=OneWay}" FontWeight="Medium" />
+                            </TextBlock>
+                        </DockPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+            <ComboBox Width="150" IsEditable="True" ItemsSource="{Binding InputNames, Mode=OneTime}" Text="{Binding NewRemapFrom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Text="acts as" VerticalAlignment="Center" Margin="10,0,10,0" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+            <ComboBox Width="150" IsEditable="True" ItemsSource="{Binding InputNames, Mode=OneTime}" Text="{Binding NewRemapTo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <ui:Button Margin="10,0,0,0" Icon="Add24" Content="Add" Command="{Binding AddRemapCommand}" />
+        </StackPanel>
+        <TextBlock Style="{StaticResource Note}" Text="{Binding RemapStatus, Mode=OneWay}" />
+
+        <!-- game profiles -->
+        <TextBlock Text="Game profiles" Style="{StaticResource Section}" />
+        <TextBlock Style="{StaticResource Note}" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                   Text="Different FPS cap or potato mode for one game. Used when you launch that game from the website or a link." />
+
+        <ItemsControl ItemsSource="{Binding Profiles}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Style="{StaticResource RowBorder}">
+                        <DockPanel>
+                            <ui:Button DockPanel.Dock="Right" Icon="Delete24" Appearance="Transparent" ToolTip="Remove" Margin="6,0,0,0"
+                                       Command="{Binding DataContext.DeleteProfileCommand, ElementName=GameplayPageView}" CommandParameter="{Binding}" />
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                <TextBlock Text="FPS" VerticalAlignment="Center" Margin="0,0,6,0" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                <ComboBox Width="150" ItemsSource="{Binding DataContext.ProfileFramerateCaps, ElementName=GameplayPageView, Mode=OneTime}"
+                                          DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding FramerateCap, Mode=TwoWay}" />
+                                <TextBlock Text="Potato" VerticalAlignment="Center" Margin="12,0,6,0" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                <ComboBox Width="140" ItemsSource="{Binding DataContext.PotatoChoices, ElementName=GameplayPageView, Mode=OneTime}"
+                                          SelectedItem="{Binding Potato, Mode=TwoWay}" />
+                            </StackPanel>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Title, Mode=OneTime}" FontSize="14" FontWeight="Medium" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Text="{Binding PlaceId, Mode=OneTime, StringFormat=Place {0}}" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                            </StackPanel>
+                        </DockPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+            <ui:TextBox Width="260" PlaceholderText="Place ID or game link" Text="{Binding NewProfilePlace, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <ui:Button Margin="10,0,0,0" Icon="Add24" Content="Add" Command="{Binding AddProfileCommand}" />
+            <ui:Button Margin="8,0,0,0" Icon="Games24" Content="Add the game I'm in" Command="{Binding AddCurrentGameProfileCommand}" />
+        </StackPanel>
+        <TextBlock Style="{StaticResource Note}" Text="{Binding ProfileStatus, Mode=OneWay}" />
+
+        <!-- playtime -->
+        <DockPanel Margin="0,18,0,0">
+            <ui:Button DockPanel.Dock="Right" Icon="ArrowClockwise24" Appearance="Transparent" ToolTip="Refresh" Command="{Binding RefreshPlaytimeCommand}" />
+            <TextBlock Text="Playtime" FontSize="20" FontWeight="Medium" VerticalAlignment="Center" />
+        </DockPanel>
+        <TextBlock Style="{StaticResource Note}" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding PlaytimeSummary, Mode=OneWay}" />
+
+        <Grid Margin="14,8,10,0" Visibility="{Binding PlaytimeHeaderVisibility, Mode=OneWay}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="90" />
+                <ColumnDefinition Width="90" />
+                <ColumnDefinition Width="90" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Game" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+            <TextBlock Grid.Column="1" Text="Today" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+            <TextBlock Grid.Column="2" Text="7 days" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+            <TextBlock Grid.Column="3" Text="All time" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+        </Grid>
+
+        <ItemsControl ItemsSource="{Binding Playtime}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Style="{StaticResource RowBorder}" Margin="0,4,0,0" Padding="14,6,10,6">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="90" />
+                                <ColumnDefinition Width="90" />
+                                <ColumnDefinition Width="90" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{Binding Name}" TextTrimming="CharacterEllipsis" Margin="0,0,10,0" />
+                            <TextBlock Grid.Column="1" Text="{Binding Today}" />
+                            <TextBlock Grid.Column="2" Text="{Binding Week}" />
+                            <TextBlock Grid.Column="3" Text="{Binding Total}" FontWeight="Medium" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- friend alerts -->
+        <TextBlock Text="Friend alerts" Style="{StaticResource Section}" />
+
+        <controls:OptionControl Header="Tell me when a friend starts playing"
+            Description="A popup when someone on your friends list joins a game. Click it to join them.">
+            <ui:ToggleSwitch IsChecked="{Binding FriendAlerts, Mode=TwoWay}" IsEnabled="{Binding HasSavedAccounts, Mode=OneTime}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="Whose friends" Description="Which saved account's friends list to watch.">
+            <ComboBox Width="220" Padding="10,5,10,5" ItemsSource="{Binding FriendAccounts, Mode=OneTime}" DisplayMemberPath="Label" SelectedValuePath="UserId"
+                      SelectedValue="{Binding FriendAlertsUserId, Mode=TwoWay}" IsEnabled="{Binding HasSavedAccounts, Mode=OneTime}" />
+        </controls:OptionControl>
+        <TextBlock Style="{StaticResource Note}" Text="{Binding FriendAlertsNote, Mode=OneTime}" />
+
+        <!-- discord -->
+        <TextBlock Text="Discord" Style="{StaticResource Section}" />
+        <TextBlock Style="{StaticResource Note}" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                   Text="These add to the Discord options in Integrations. Discord Rich Presence has to be on there." />
+
+        <controls:OptionControl Header="Show server info"
+            Description="Adds the player count (like &quot;3 of 12&quot;), and the region if &quot;Query server location&quot; is on in Integrations.">
+            <ui:ToggleSwitch IsChecked="{Binding DiscordShowServerInfo, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="Follow the window you're using"
+            Description="With more than one Roblox open, Discord shows the game in the window you clicked last. Off = it sticks with the first window.">
+            <ui:ToggleSwitch IsChecked="{Binding DiscordFollowFocusedWindow, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="Your own Discord app ID"
+            Description="Leave empty to use the normal one. With your own app, Discord shows your app's name, and the small icon is an art asset you upload called &quot;psystrap&quot;.">
+            <ui:TextBox Width="220" PlaceholderText="Default" Text="{Binding DiscordAppId, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <TextBlock Text="Hidden games" FontSize="16" FontWeight="Medium" Margin="0,14,0,0" />
+        <TextBlock Style="{StaticResource Note}" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                   Text="These show on Discord as just &quot;Playing Roblox&quot;. No game name, no join button." />
+
+        <ItemsControl ItemsSource="{Binding HiddenGames}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Style="{StaticResource RowBorder}">
+                        <DockPanel>
+                            <ui:Button DockPanel.Dock="Right" Icon="Eye24" Appearance="Transparent" ToolTip="Show it again"
+                                       Command="{Binding DataContext.UnhideGameCommand, ElementName=GameplayPageView}" CommandParameter="{Binding}" />
+                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontSize="14" TextTrimming="CharacterEllipsis" />
+                        </DockPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+            <ui:TextBox Width="260" PlaceholderText="Place ID or game link" Text="{Binding NewHiddenGame, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <ui:Button Margin="10,0,0,0" Icon="EyeOff24" Content="Hide" Command="{Binding HideGameCommand}" />
+            <ui:Button Margin="8,0,0,0" Icon="Games24" Content="Hide the game I'm in" Command="{Binding HideCurrentGameCommand}" />
+        </StackPanel>
+        <TextBlock Style="{StaticResource Note}" Text="{Binding HiddenStatus, Mode=OneWay}" />
+    </StackPanel>
+</ui:UiPage>

@@ -6,8 +6,26 @@ namespace Bloxstrap.Integrations
 {
     public class DiscordRichPresence : IDisposable
     {
-        private readonly DiscordRpcClient _rpcClient = new("1005469189907173486");
+        /// <summary>Bloxstrap's Discord app, used when no app ID of your own is set.</summary>
+        public const string DefaultAppId = "1005469189907173486";
+
+        // PSYstrap: your own Discord app (Settings > Gameplay). Its art assets need a "psystrap" image.
+        private static readonly string AppId = App.Settings.Prop.Gameplay.DiscordAppId is { Length: > 0 } custom && custom.All(Char.IsDigit) ? custom : DefaultAppId;
+        private static bool CustomApp => AppId != DefaultAppId;
+        private static string AppImage => CustomApp ? "psystrap" : "roblox";
+        private static string AppImageText => CustomApp ? "PSYstrap" : "Roblox";
+
+        private readonly DiscordRpcClient _rpcClient = new(AppId);
         private readonly ActivityWatcher _activityWatcher;
+
+        // PSYstrap: with several Roblox windows, only the "owner" shows presence (the focused or first one)
+        private readonly int _robloxProcessId;
+        private readonly System.Threading.Timer _ownerTimer;
+        private bool _isOwner = true;
+        private bool _hidden;
+        private string? _baseState;
+        private DateTime _nextServerInfo = DateTime.MaxValue;
+        private bool _serverInfoRunning;
         private readonly Queue<Message> _messageQueue = new();
 
         private DiscordRPC.RichPresence? _currentPresence;
@@ -21,11 +39,16 @@ namespace Bloxstrap.Integrations
 
         private bool _visible = true;
 
-        public DiscordRichPresence(ActivityWatcher activityWatcher)
+        public DiscordRichPresence(ActivityWatcher activityWatcher, int robloxProcessId)
         {
             const string LOG_IDENT = "DiscordRichPresence";
 
             _activityWatcher = activityWatcher;
+            _robloxProcessId = robloxProcessId;
+            _isOwner = DiscordOwner.Check(robloxProcessId);
+            _ownerTimer = new System.Threading.Timer(_ => OwnerTick(), null, 2000, 2000);
+
+            App.Logger.WriteLine(LOG_IDENT, $"Using Discord app {(CustomApp ? "(custom)" : "(default)")}, owner={_isOwner}");
 
             _activityWatcher.OnGameJoin += (_, _) => Task.Run(() => SetCurrentGame());
             _activityWatcher.OnGameLeave += (_, _) => Task.Run(() => SetCurrentGame());
@@ -59,6 +82,9 @@ namespace Bloxstrap.Integrations
 
             if (message.Command != "SetRichPresence" && message.Command != "SetLaunchData")
                 return;
+
+            if (_hidden)
+                return; // the game doesn't get to show anything while it's hidden
 
             if (_currentPresence is null || _originalPresence is null)
             {
@@ -331,15 +357,17 @@ namespace Bloxstrap.Integrations
 
                 _currentPresence = _originalPresence =  null;
                 _messageQueue.Clear();
+                _hidden = false;
+                _nextServerInfo = DateTime.MaxValue;
 
                 UpdatePresence();
                 return true;
             }
 
             string icon = "roblox";
-            string smallImageText = "Roblox";
-            string smallImage = "roblox";
-            
+            string smallImageText = AppImageText;
+            string smallImage = AppImage;
+
 
             var activity = _activityWatcher.Data;
             long placeId = activity.PlaceId;
@@ -351,6 +379,27 @@ namespace Bloxstrap.Integrations
 
             if (activity.RootActivity is not null)
                 timeStarted = activity.RootActivity.TimeJoined;
+
+            // PSYstrap: games on the hidden list just show "Playing Roblox"
+            _hidden = IsHidden(activity.UniverseId);
+
+            if (_hidden)
+            {
+                App.Logger.WriteLine(LOG_IDENT, "Game is hidden from Discord");
+
+                _currentPresence = new DiscordRPC.RichPresence
+                {
+                    Details = "Playing Roblox",
+                    Timestamps = new Timestamps { Start = timeStarted.ToUniversalTime() },
+                    Assets = new Assets { LargeImageKey = AppImage, LargeImageText = AppImageText }
+                };
+
+                _originalPresence = _currentPresence.Clone();
+                _messageQueue.Clear();
+                _nextServerInfo = DateTime.MaxValue;
+                UpdatePresence();
+                return true;
+            }
 
             if (activity.UniverseDetails is null)
             {
@@ -413,6 +462,11 @@ namespace Bloxstrap.Integrations
                 }
             };
 
+            _baseState = status;
+
+            // PSYstrap: region and player count, filled in a moment later
+            _nextServerInfo = App.Settings.Prop.Gameplay.DiscordShowServerInfo ? DateTime.Now : DateTime.MaxValue;
+
             // this is used for configuration from BloxstrapRPC
             _originalPresence = _currentPresence.Clone();
 
@@ -474,13 +528,96 @@ namespace Bloxstrap.Integrations
 
             App.Logger.WriteLine(LOG_IDENT, $"Updating presence");
 
-            if (_visible)
+            if (_visible && _isOwner)
                 _rpcClient.SetPresence(_currentPresence);
+            else
+                _rpcClient.ClearPresence();
         }
+
+        #region PSYstrap
+        private static bool IsHidden(long universeId) => App.Settings.Prop.Gameplay.DiscordHiddenGames.Contains(universeId);
+
+        private void OwnerTick()
+        {
+            try
+            {
+                bool owner = DiscordOwner.Check(_robloxProcessId);
+
+                if (owner != _isOwner)
+                {
+                    App.Logger.WriteLine("DiscordRichPresence::OwnerTick", owner ? "This window now shows Discord presence" : "Another window shows Discord presence now");
+                    _isOwner = owner;
+                    UpdatePresence();
+                }
+
+                // the hidden list can change while playing (in-game menu or settings)
+                if (_activityWatcher.InGame && _currentPresence is not null && IsHidden(_activityWatcher.Data.UniverseId) != _hidden)
+                {
+                    Task.Run(() => SetCurrentGame());
+                    return;
+                }
+
+                if (DateTime.Now >= _nextServerInfo && !_serverInfoRunning)
+                    _ = UpdateServerInfo();
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException("DiscordRichPresence::OwnerTick", ex);
+            }
+        }
+
+        /// <summary>Puts the server's region in the status and its player count as the party size ("3 of 12").</summary>
+        private async Task UpdateServerInfo()
+        {
+            _serverInfoRunning = true;
+            _nextServerInfo = DateTime.Now.AddMinutes(2);
+
+            try
+            {
+                var game = _activityWatcher.Data;
+
+                if (!_activityWatcher.InGame || _hidden || !App.Settings.Prop.Gameplay.DiscordShowServerInfo)
+                    return;
+
+                string? region = App.Settings.Prop.ShowServerDetails && game.MachineAddressValid ? await game.QueryServerLocation() : null;
+                var server = game.ServerType == ServerType.Public ? await RobloxServers.FindServerAsync(game.PlaceId, game.JobId) : null;
+
+                if (_currentPresence is null || !_activityWatcher.InGame || _activityWatcher.Data != game)
+                    return;
+
+                if (!String.IsNullOrEmpty(region) && _baseState is not null && _currentPresence.State == _baseState)
+                {
+                    string state = $"{_baseState} · {region}";
+                    _currentPresence.State = _baseState = state.Length <= 128 ? state : _baseState;
+                }
+
+                if (server is { Playing: > 0, MaxPlayers: > 0 })
+                {
+                    _currentPresence.Party = new Party
+                    {
+                        ID = game.JobId,
+                        Size = Math.Min(server.Playing, server.MaxPlayers),
+                        Max = server.MaxPlayers
+                    };
+                }
+
+                UpdatePresence();
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException("DiscordRichPresence::UpdateServerInfo", ex);
+            }
+            finally
+            {
+                _serverInfoRunning = false;
+            }
+        }
+        #endregion
 
         public void Dispose()
         {
             App.Logger.WriteLine("DiscordRichPresence::Dispose", "Cleaning up Discord RPC and Presence");
+            _ownerTimer.Dispose();
             _rpcClient.ClearPresence();
             _rpcClient.Dispose();
             GC.SuppressFinalize(this);

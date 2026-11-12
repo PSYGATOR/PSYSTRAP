@@ -86,11 +86,12 @@ namespace Bloxstrap
         }
 
         /// <summary>Writes App.Settings.Prop.FramerateCap into Roblox's settings file, if one is chosen.</summary>
-        public static void ApplyFramerateCap()
+        /// <param name="overrideCap">A game profile's cap for this launch, if it has one.</param>
+        public static void ApplyFramerateCap(int? overrideCap = null)
         {
             const string LOG_IDENT = "RobloxUserSettings::ApplyFramerateCap";
 
-            int cap = App.Settings.Prop.FramerateCap;
+            int cap = overrideCap ?? App.Settings.Prop.FramerateCap;
 
             if (cap == 0)
                 return;

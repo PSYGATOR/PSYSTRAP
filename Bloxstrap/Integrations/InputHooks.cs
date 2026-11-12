@@ -3,8 +3,9 @@ using System.Runtime.InteropServices;
 namespace Bloxstrap.Integrations
 {
     /// <summary>
-    /// PSYstrap: low-level keyboard/mouse hooks for the overlay. They only observe input - every event is passed on
-    /// untouched - to count clicks per second and to notice the menu key.
+    /// PSYstrap: low-level keyboard/mouse hooks for the overlay. They count clicks per second, notice the menu key, feed
+    /// the macro recorder, and let the key remapper swap one input for another. Nothing is blocked unless
+    /// <see cref="Intercept"/> says so.
     /// Must be created on a thread with a message loop (the WPF UI thread); callbacks arrive on that thread.
     /// </summary>
     public sealed class InputHooks : IDisposable
@@ -39,6 +40,15 @@ namespace Bloxstrap.Integrations
 
         /// <summary>Clicks only count while this returns true (e.g. while Roblox is focused).</summary>
         public Func<bool>? ShouldCountClicks { get; set; }
+
+        /// <summary>
+        /// Sees every real (not injected) key and button press first. Returning true swallows it: nothing else on the PC
+        /// gets it, and the other events here don't fire for it.
+        /// </summary>
+        public Func<RawInputEvent, bool>? Intercept { get; set; }
+
+        /// <summary>dwExtraInfo PSYstrap puts on remapped input, so it counts as the user's own (recorder, anti-AFK).</summary>
+        public static readonly IntPtr RemapMarker = new(0x5059_5352); // "PYSR"
 
         public InputHooks()
         {
@@ -75,9 +85,19 @@ namespace Bloxstrap.Integrations
                 int vkCode = Marshal.ReadInt32(lParam);        // KBDLLHOOKSTRUCT.vkCode
                 int scanCode = Marshal.ReadInt32(lParam, 4);   // .scanCode
                 int flags = Marshal.ReadInt32(lParam, 8);      // .flags
+                IntPtr extraInfo = Marshal.ReadIntPtr(lParam, 16); // .dwExtraInfo
                 bool injected = (flags & 0x10) != 0;           // LLKHF_INJECTED
                 bool extended = (flags & 0x01) != 0;           // LLKHF_EXTENDED
                 bool down = message is WM_KEYDOWN or WM_SYSKEYDOWN;
+
+                if (injected && extraInfo == RemapMarker)
+                    injected = false; // a remapped key is still the user pressing something
+
+                var keyEvent = new RawInputEvent(down ? Models.Macros.MacroStepKind.KeyDown : Models.Macros.MacroStepKind.KeyUp,
+                    vkCode, scanCode, extended, default, 0, 0, 0, injected);
+
+                if ((flags & 0x10) == 0 && SafeIntercept(keyEvent))
+                    return (IntPtr)1;
 
                 if (down)
                 {
@@ -89,8 +109,7 @@ namespace Bloxstrap.Integrations
                     _keysDown.Remove(vkCode);
                 }
 
-                RawInput?.Invoke(new RawInputEvent(down ? Models.Macros.MacroStepKind.KeyDown : Models.Macros.MacroStepKind.KeyUp,
-                    vkCode, scanCode, extended, default, 0, 0, 0, injected));
+                RawInput?.Invoke(keyEvent);
             }
 
             return CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
@@ -102,6 +121,38 @@ namespace Bloxstrap.Integrations
             {
                 int message = (int)wParam;
 
+                // MSLLHOOKSTRUCT: pt.x @0, pt.y @4, mouseData @8, flags @12, time @16, dwExtraInfo @24 (x64)
+                int x = Marshal.ReadInt32(lParam);
+                int y = Marshal.ReadInt32(lParam, 4);
+                int mouseData = Marshal.ReadInt32(lParam, 8);
+                bool realInjected = (Marshal.ReadInt32(lParam, 12) & 0x01) != 0; // LLMHF_INJECTED
+                bool injected = realInjected && Marshal.ReadIntPtr(lParam, IntPtr.Size == 8 ? 24 : 20) != RemapMarker;
+                int xButton = (mouseData >> 16) & 0xFFFF;
+                var sideButton = xButton == 2 ? Models.Macros.MacroMouseButton.XButton2 : Models.Macros.MacroMouseButton.XButton1;
+
+                (Models.Macros.MacroStepKind kind, Models.Macros.MacroMouseButton button)? mapped = message switch
+                {
+                    0x0200 => (Models.Macros.MacroStepKind.MouseMove, default),
+                    0x0201 => (Models.Macros.MacroStepKind.MouseDown, Models.Macros.MacroMouseButton.Left),
+                    0x0202 => (Models.Macros.MacroStepKind.MouseUp, Models.Macros.MacroMouseButton.Left),
+                    0x0204 => (Models.Macros.MacroStepKind.MouseDown, Models.Macros.MacroMouseButton.Right),
+                    0x0205 => (Models.Macros.MacroStepKind.MouseUp, Models.Macros.MacroMouseButton.Right),
+                    0x0207 => (Models.Macros.MacroStepKind.MouseDown, Models.Macros.MacroMouseButton.Middle),
+                    0x0208 => (Models.Macros.MacroStepKind.MouseUp, Models.Macros.MacroMouseButton.Middle),
+                    0x020A => (Models.Macros.MacroStepKind.Wheel, default),
+                    0x020B => (Models.Macros.MacroStepKind.MouseDown, sideButton),
+                    0x020C => (Models.Macros.MacroStepKind.MouseUp, sideButton),
+                    _ => null
+                };
+
+                RawInputEvent? mouseEvent = mapped is null ? null
+                    : new RawInputEvent(mapped.Value.kind, 0, 0, false, mapped.Value.button, x, y, (short)(mouseData >> 16), injected);
+
+                if (!realInjected
+                    && mouseEvent is { Kind: Models.Macros.MacroStepKind.MouseDown or Models.Macros.MacroStepKind.MouseUp } button
+                    && SafeIntercept(button))
+                    return (IntPtr)1;
+
                 if (ShouldCountClicks?.Invoke() ?? true)
                 {
                     if (message == WM_LBUTTONDOWN)
@@ -110,33 +161,28 @@ namespace Bloxstrap.Integrations
                         _rightClicks.Enqueue(Environment.TickCount64);
                 }
 
-                if (RawInput is not null)
-                {
-                    // MSLLHOOKSTRUCT: pt.x @0, pt.y @4, mouseData @8, flags @12
-                    int x = Marshal.ReadInt32(lParam);
-                    int y = Marshal.ReadInt32(lParam, 4);
-                    int mouseData = Marshal.ReadInt32(lParam, 8);
-                    bool injected = (Marshal.ReadInt32(lParam, 12) & 0x01) != 0; // LLMHF_INJECTED
-
-                    (Models.Macros.MacroStepKind kind, Models.Macros.MacroMouseButton button)? mapped = message switch
-                    {
-                        0x0200 => (Models.Macros.MacroStepKind.MouseMove, default),
-                        0x0201 => (Models.Macros.MacroStepKind.MouseDown, Models.Macros.MacroMouseButton.Left),
-                        0x0202 => (Models.Macros.MacroStepKind.MouseUp, Models.Macros.MacroMouseButton.Left),
-                        0x0204 => (Models.Macros.MacroStepKind.MouseDown, Models.Macros.MacroMouseButton.Right),
-                        0x0205 => (Models.Macros.MacroStepKind.MouseUp, Models.Macros.MacroMouseButton.Right),
-                        0x0207 => (Models.Macros.MacroStepKind.MouseDown, Models.Macros.MacroMouseButton.Middle),
-                        0x0208 => (Models.Macros.MacroStepKind.MouseUp, Models.Macros.MacroMouseButton.Middle),
-                        0x020A => (Models.Macros.MacroStepKind.Wheel, default),
-                        _ => null
-                    };
-
-                    if (mapped is not null)
-                        RawInput.Invoke(new RawInputEvent(mapped.Value.kind, 0, 0, false, mapped.Value.button, x, y, (short)(mouseData >> 16), injected));
-                }
+                if (mouseEvent is not null)
+                    RawInput?.Invoke(mouseEvent.Value);
             }
 
             return CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
+        }
+
+        /// <summary>An exception escaping a hook callback would take the whole process down, so never let one out.</summary>
+        private bool SafeIntercept(RawInputEvent input)
+        {
+            if (Intercept is null)
+                return false;
+
+            try
+            {
+                return Intercept(input);
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException("InputHooks::Intercept", ex);
+                return false;
+            }
         }
 
         public void Dispose()

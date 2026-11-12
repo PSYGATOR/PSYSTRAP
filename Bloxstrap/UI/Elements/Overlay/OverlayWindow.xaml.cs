@@ -53,6 +53,8 @@ namespace Bloxstrap.UI.Elements.Overlay
             MemoryWidget.Visibility = settings.ShowMemory ? Visibility.Visible : Visibility.Collapsed;
             SessionWidget.Visibility = settings.ShowSessionTime ? Visibility.Visible : Visibility.Collapsed;
             ClockWidget.Visibility = settings.ShowClock ? Visibility.Visible : Visibility.Collapsed;
+            ServerWidget.Visibility = settings.ShowServer ? Visibility.Visible : Visibility.Collapsed;
+            PlaytimeWidget.Visibility = settings.ShowPlaytime ? Visibility.Visible : Visibility.Collapsed;
             MenuHintText.Text = $"{settings.MenuKey.ToEnumName()}: PSYstrap menu";
 
             if (!framerateAvailable)
@@ -80,7 +82,7 @@ namespace Bloxstrap.UI.Elements.Overlay
                 return;
             }
 
-            foreach (var widget in new[] { FramerateWidget, ClicksWidget, MemoryWidget, SessionWidget, ClockWidget })
+            foreach (var widget in new[] { FramerateWidget, ClicksWidget, MemoryWidget, SessionWidget, ClockWidget, ServerWidget, PlaytimeWidget })
                 widget.Visibility = Visibility.Collapsed;
         }
 
@@ -113,6 +115,12 @@ namespace Bloxstrap.UI.Elements.Overlay
         public void SetSession(TimeSpan elapsed) => SessionText.Text = elapsed.TotalHours >= 1
             ? elapsed.ToString(@"h\:mm\:ss", CultureInfo.InvariantCulture)
             : elapsed.ToString(@"m\:ss", CultureInfo.InvariantCulture);
+
+        public void SetServer(string? text) => ServerText.Text = text ?? "not in a game";
+
+        public void SetPlaytime(TimeSpan? today) => PlaytimeText.Text = today is null
+            ? "--"
+            : today.Value.TotalHours >= 1 ? $"{(int)today.Value.TotalHours}h {today.Value.Minutes}m" : $"{today.Value.Minutes}m";
 
         public void SetClock(DateTime now) => ClockText.Text = now.ToString("t", CultureInfo.CurrentCulture);
 

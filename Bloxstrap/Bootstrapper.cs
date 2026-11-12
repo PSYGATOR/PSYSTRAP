@@ -49,6 +49,10 @@ namespace Bloxstrap
         private LaunchMode _launchMode;
 
         private string _launchCommandLine = App.LaunchSettings.RobloxLaunchArgs;
+
+        // PSYstrap: per-game profile for the game being launched, if any
+        private GameProfile? _gameProfile;
+        private bool PotatoForThisLaunch => _gameProfile?.PotatoMode ?? App.Settings.Prop.PotatoMode;
         private Version? _latestVersion = null;
         private string _latestVersionGuid = null!;
         private string _latestVersionDirectory = null!;
@@ -280,7 +284,9 @@ namespace Bloxstrap
 
                 // we require deployment details for applying modifications for a worst case scenario,
                 // where we'd need to restore files from a package that isn't present on disk and needs to be redownloaded
-                PotatoMode.EnsureFlags();
+                // PSYstrap: a per-game profile can switch potato mode on/off just for this launch
+                _gameProfile = GameProfiles.ForLaunch(_launchCommandLine);
+                PotatoMode.EnsureFlags(PotatoForThisLaunch);
 
                 allModificationsApplied = await ApplyModifications();
             }
@@ -563,8 +569,8 @@ namespace Bloxstrap
             SetStatus(Strings.Bootstrapper_Status_Starting);
 
             // PSYstrap: Roblox only reads its frame rate cap at startup
-            RobloxUserSettings.ApplyFramerateCap();
-            PotatoMode.ApplyGraphicsQuality();
+            RobloxUserSettings.ApplyFramerateCap(_gameProfile is { FramerateCap: not 0 } ? _gameProfile.FramerateCap : null);
+            PotatoMode.ApplyGraphicsQuality(PotatoForThisLaunch, allowCap: _gameProfile is not { FramerateCap: not 0 });
 
             // PSYstrap multi-instance: claim Roblox's singleton names first, then start from a free instance path
             string launchDirectory = AppData.Directory;

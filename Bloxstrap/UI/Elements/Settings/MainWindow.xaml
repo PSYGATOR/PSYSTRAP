@@ -58,6 +58,7 @@
                     <ui:NavigationItem Content="{x:Static resources:Strings.Menu_Mods_Title}" PageType="{x:Type pages:ModsPage}" Icon="WrenchScrewdriver20" Tag="mods" />
                     <ui:NavigationItem Content="Overlay" PageType="{x:Type pages:OverlayPage}" Icon="Gauge24" Tag="overlay" />
                     <ui:NavigationItem Content="Macros" PageType="{x:Type pages:MacrosPage}" Icon="Keyboard24" Tag="macros" />
+                    <ui:NavigationItem Content="Gameplay" PageType="{x:Type pages:GameplayPage}" Icon="Games24" Tag="gameplay" />
                     <ui:NavigationItem Content="Instances" Icon="Window24" Command="{Binding OpenInstancesCommand, Mode=OneTime}" />
                     <ui:NavigationItem Content="{x:Static resources:Strings.Menu_FastFlags_Title}" PageType="{x:Type pages:FastFlagsPage}" Icon="Flag24" Tag="fastflags" />
                     <ui:NavigationItem Content="{x:Static resources:Strings.Menu_Appearance_Title}" PageType="{x:Type pages:AppearancePage}" Icon="PaintBrush24" Tag="appearance" />

@@ -1,4 +1,4 @@
-﻿using Bloxstrap.AppData;
+using Bloxstrap.AppData;
 using Bloxstrap.Integrations;
 using Bloxstrap.Models;
 
@@ -18,6 +18,12 @@ namespace Bloxstrap
         public readonly DiscordRichPresence? RichPresence;
 
         public readonly OverlayController? Overlay;
+
+        public readonly AutoRejoin? AutoRejoin;
+
+        public readonly PlaytimeTracker? Playtime;
+
+        private readonly FriendAlerts? _friendAlerts;
 
         public Watcher()
         {
@@ -54,9 +60,28 @@ namespace Bloxstrap
                 App.Logger.WriteLine(LOG_IDENT, "Watcher instance already exists for this client");
                 return;
             }
+            // PSYstrap: Windows remembers a mute per app, so a window closed while muted in the background would open
+            // muted next time. A lone client always gets its sound back; with more, the multi-instance host decides.
+            int clientPid = _watcherData.ProcessId;
 
-            // only the first client shows Discord presence; several would fight over the one Discord status
-            bool otherClientsRunning = MultiInstance.GetRobloxProcesses().Any(process => process.Id != _watcherData.ProcessId);
+            Task.Run(async () =>
+            {
+                for (int attempt = 0; attempt < 30; attempt++)
+                {
+                    if (MultiInstance.GetRobloxProcesses().Any(process => process.Id != clientPid))
+                        return;
+
+                    var (found, changed) = AudioMute.SetMute(clientPid, false);
+
+                    if (changed > 0)
+                        App.Logger.WriteLine(LOG_IDENT, "Unmuted Roblox (it was left muted from last time)");
+
+                    if (found > 0)
+                        return;
+
+                    await Task.Delay(2000);
+                }
+            });
 
             if (App.Settings.Prop.EnableActivityTracking)
             {
@@ -72,14 +97,21 @@ namespace Bloxstrap
                     };
                 }
 
+                // PSYstrap: rejoin the same server if Roblox drops you
+                AutoRejoin = new AutoRejoin(ActivityWatcher, _watcherData.ProcessId);
+
+                // PSYstrap: time played per game per day
+                Playtime = new PlaytimeTracker(ActivityWatcher);
+
                 // PSYstrap: let the account launcher see which server this client is in
                 int robloxPid = _watcherData.ProcessId;
                 var activity = ActivityWatcher;
                 activity.OnGameJoin += (_, _) => Accounts.LiveSessions.Publish(robloxPid, activity.Data);
                 activity.OnGameLeave += (_, _) => Accounts.LiveSessions.Clear(robloxPid);
 
-                if (App.Settings.Prop.UseDiscordRichPresence && !otherClientsRunning)
-                    RichPresence = new(ActivityWatcher);
+                // every window gets presence, but only one shows it at a time (see DiscordOwner)
+                if (App.Settings.Prop.UseDiscordRichPresence)
+                    RichPresence = new(ActivityWatcher, _watcherData.ProcessId);
             }
 
             // PSYstrap in-game overlay. Created on the UI thread (the watcher is constructed there).
@@ -87,7 +119,10 @@ namespace Bloxstrap
             try
             {
                 Overlay = new OverlayController(_watcherData.ProcessId, () =>
-                    ActivityWatcher is { InGame: true } activity ? activity.Data : null);
+                    ActivityWatcher is { InGame: true } activity ? activity.Data : null)
+                {
+                    GetPlaytimeToday = () => Playtime?.TodayInCurrentGame()
+                };
             }
             catch (Exception ex)
             {
@@ -96,6 +131,10 @@ namespace Bloxstrap
             }
 
             _notifyIcon = new(this);
+
+            // PSYstrap: friend alerts (only one watcher actually checks; see FriendAlerts)
+            _friendAlerts = new FriendAlerts((caption, message, onClick) =>
+                System.Windows.Application.Current.Dispatcher.BeginInvoke(() => _notifyIcon?.ShowAlert(caption, message, 10, onClick)));
         }
 
         public void KillRobloxProcess() => CloseProcess(_watcherData!.ProcessId, true);
@@ -153,6 +192,8 @@ namespace Bloxstrap
             App.Logger.WriteLine("Watcher::Dispose", "Disposing Watcher");
 
             Overlay?.Dispose();
+            Playtime?.Dispose();
+            _friendAlerts?.Dispose();
 
             if (_watcherData is not null)
                 Accounts.LiveSessions.Clear(_watcherData.ProcessId);

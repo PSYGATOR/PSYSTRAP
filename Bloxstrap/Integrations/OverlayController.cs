@@ -22,6 +22,7 @@ namespace Bloxstrap.Integrations
         private readonly DateTime _robloxStarted;
         private readonly FrameRateMonitor _frameRate;
         private readonly InputHooks _hooks;
+        private readonly KeyRemapper _remapper;
         private readonly OverlayWindow _hud;
         private readonly OverlayOptionsViewModel _options = new(saveImmediately: true);
         private readonly DispatcherTimer _timer;
@@ -41,6 +42,16 @@ namespace Bloxstrap.Integrations
         private const int VK_SMART = 0x77;  // F8
 
         private readonly Macros.SmartMacroRunner _smartRunner;
+        private readonly AntiAfk _antiAfk;
+
+        /// <summary>Time played today in the current game (set by the watcher).</summary>
+        public Func<TimeSpan?>? GetPlaytimeToday { get; init; }
+
+        // server/playtime counters are looked up now and then, not every frame
+        private string? _serverForInfo;
+        private DateTime _nextServerLookup = DateTime.MinValue;
+        private DateTime _nextPlaytimeLookup = DateTime.MinValue;
+        private bool _serverLookupRunning;
 
         private readonly Macros.MacroRecorder _recorder;
         private readonly Macros.MacroPlayer _player;
@@ -64,7 +75,8 @@ namespace Bloxstrap.Integrations
             if (!_frameRate.Start())
                 App.Logger.WriteLine(LOG_IDENT, $"FPS counter unavailable: {_frameRate.Error}");
 
-            _hooks = new InputHooks { ShouldCountClicks = IsRobloxFocused };
+            _remapper = new KeyRemapper(IsRobloxFocusedThreadSafe);
+            _hooks = new InputHooks { ShouldCountClicks = IsRobloxFocused, Intercept = _remapper.Intercept };
             _hooks.KeyPressed += OnKeyPressed;
 
             _hud = new OverlayWindow();
@@ -76,6 +88,14 @@ namespace Bloxstrap.Integrations
             _player = new Macros.MacroPlayer(GetClientAreaThreadSafe, IsRobloxFocusedThreadSafe);
             _hooks.RawInput += _recorder.OnInput;
 
+            // anti-AFK: any real input to this window resets its idle timer
+            _antiAfk = new AntiAfk(GetRobloxWindow, () => _getGame() is not null);
+            _hooks.RawInput += input =>
+            {
+                if (!input.Injected && IsRobloxFocusedThreadSafe())
+                    _antiAfk.NoteActivity();
+            };
+
             // smart macros get their own player so they don't fight with F7 playback
             _smartRunner = new Macros.SmartMacroRunner(GetClientAreaThreadSafe, IsRobloxFocusedThreadSafe,
                 new Macros.MacroPlayer(GetClientAreaThreadSafe, IsRobloxFocusedThreadSafe),
@@ -83,6 +103,7 @@ namespace Bloxstrap.Integrations
 
             _options.ApplyNowRequested += (_, _) => RestartRoblox(_getGame()?.GetInviteDeeplink(false));
             _options.SmallestServerRequested += async (_, _) => await HopToSmallestServer();
+            _options.DiscordHideRequested += (_, _) => ToggleDiscordHidden();
 
             _options.Changed += (_, _) =>
             {
@@ -282,6 +303,12 @@ namespace Bloxstrap.Integrations
 
             SyncFromDisk();
 
+            // a running macro is input too; otherwise nudge the window before Roblox's 20 minute idle kick
+            if (_player.Playing || _smartRunner.Running)
+                _antiAfk.NoteActivity();
+            else
+                _antiAfk.Tick();
+
             var settings = App.Settings.Prop.Overlay;
             bool robloxFocused = IsRobloxFocused();
             bool macroActive = _recorder.Recording || _player.Playing || DateTime.Now < _macroMessageUntil;
@@ -375,6 +402,63 @@ namespace Bloxstrap.Integrations
 
             if (settings.ShowClock)
                 _hud.SetClock(DateTime.Now);
+
+            if (settings.ShowPlaytime && DateTime.Now >= _nextPlaytimeLookup)
+            {
+                _nextPlaytimeLookup = DateTime.Now.AddSeconds(15);
+                _hud.SetPlaytime(GetPlaytimeToday?.Invoke());
+            }
+
+            if (settings.ShowServer)
+                UpdateServerInfo();
+        }
+
+        /// <summary>
+        /// Region (only with "Query server location" on, which sends the server address to ipinfo.io like Bloxstrap
+        /// does) and player count (from Roblox's public server list). Refreshed every minute.
+        /// </summary>
+        private void UpdateServerInfo()
+        {
+            var game = _getGame();
+
+            if (game is null)
+            {
+                _hud.SetServer(null);
+                _serverForInfo = null;
+                return;
+            }
+
+            if (_serverLookupRunning || (game.JobId == _serverForInfo && DateTime.Now < _nextServerLookup))
+                return;
+
+            _serverForInfo = game.JobId;
+            _nextServerLookup = DateTime.Now.AddMinutes(1);
+            _serverLookupRunning = true;
+
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    string? region = App.Settings.Prop.ShowServerDetails && game.MachineAddressValid ? await game.QueryServerLocation() : null;
+                    var server = game.ServerType == ServerType.Public ? await RobloxServers.FindServerAsync(game.PlaceId, game.JobId) : null;
+
+                    string text = String.Join("  ·  ", new[]
+                    {
+                        region,
+                        server is null ? null : $"{server.Playing}/{server.MaxPlayers} players"
+                    }.Where(part => !String.IsNullOrEmpty(part)));
+
+                    Application.Current.Dispatcher.Invoke(() => _hud.SetServer(String.IsNullOrEmpty(text) ? "?" : text));
+                }
+                catch (Exception ex)
+                {
+                    App.Logger.WriteException(LOG_IDENT, ex);
+                }
+                finally
+                {
+                    _serverLookupRunning = false;
+                }
+            });
         }
 
         private void PositionHud(OverlayCorner corner)
@@ -570,8 +654,34 @@ namespace Bloxstrap.Integrations
                 _hud.SetMacroStatus(null);
         }
 
+        /// <summary>Puts the current game on (or takes it off) the Discord hidden list. Every window picks it up.</summary>
+        private void ToggleDiscordHidden()
+        {
+            if (_getGame() is not ActivityData game || game.UniverseId == 0)
+            {
+                _options.DiscordHideText = "Join a game first";
+                return;
+            }
+
+            var hidden = App.Settings.Prop.Gameplay.DiscordHiddenGames;
+
+            if (!hidden.Remove(game.UniverseId))
+                hidden.Add(game.UniverseId);
+
+            App.Settings.Save();
+            UpdateDiscordHideText();
+        }
+
+        private void UpdateDiscordHideText()
+        {
+            bool hidden = _getGame() is ActivityData game && App.Settings.Prop.Gameplay.DiscordHiddenGames.Contains(game.UniverseId);
+            _options.DiscordHideText = hidden ? "Show this game on Discord again" : "Hide this game from Discord";
+        }
+
         private void OpenMenu()
         {
+            UpdateDiscordHideText();
+
             if (_menu is null)
             {
                 _menu = new OverlayMenuWindow(_options);

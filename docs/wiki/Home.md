@@ -7,6 +7,7 @@ Guides for everything PSYstrap adds on top of Bloxstrap. If you haven't installe
 - [Skybox](Skybox.md) - custom skies
 - [Multi instance](Multi-instance.md) - running more than one Roblox
 - [Accounts](Accounts.md) - saving accounts and opening them
+- [Gameplay](Gameplay.md) - auto rejoin, anti-AFK, key remaps, game profiles, playtime, friend alerts, Discord
 - [Macros](Macros.md) - record and play
 - [Smart macros](Smart-macros.md) - macros that react to the screen
 - [Turn taking](Turn-taking.md) - smart macros on several windows

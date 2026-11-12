@@ -33,6 +33,20 @@ namespace Bloxstrap.UI.Elements.Settings
                 ShowAlreadyRunningSnackbar();
 
             LoadState();
+
+            // PSYstrap: open on a given page (PSYSTRAP_PAGE=gameplay), handy for testing and shortcuts
+            if (Environment.GetEnvironmentVariable("PSYSTRAP_PAGE") is { Length: > 0 } page)
+            {
+                // after the navigation has opened its default page
+                Loaded += (_, _) => Dispatcher.BeginInvoke(() =>
+                {
+                    var item = RootNavigation.Items.Concat(RootNavigation.Footer).OfType<Wpf.Ui.Controls.NavigationItem>()
+                        .FirstOrDefault(i => String.Equals(i.Tag as string, page, StringComparison.OrdinalIgnoreCase));
+
+                    if (item?.PageType is not null)
+                        Navigate(item.PageType);
+                }, System.Windows.Threading.DispatcherPriority.ContextIdle);
+            }
         }
 
         public void LoadState()

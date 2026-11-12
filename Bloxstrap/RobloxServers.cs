@@ -58,7 +58,77 @@ namespace Bloxstrap
             }
         }
 
+        private class ServerPageWithCursor : ServerPage
+        {
+            [JsonPropertyName("nextPageCursor")]
+            public string? NextPageCursor { get; set; }
+        }
+
+        /// <summary>
+        /// Player count of one public server, found by paging through the game's server list (a few pages at most,
+        /// so huge games may not be found). Private/reserved servers aren't listed.
+        /// </summary>
+        // the overlay and Discord both ask every minute or two; share the answer and back off if Roblox says slow down
+        private static readonly Dictionary<(long, string), (Task<ServerInfo?> Task, DateTime At)> _serverCache = new();
+        private static DateTime _backoffUntil = DateTime.MinValue;
+
+        public static Task<ServerInfo?> FindServerAsync(long placeId, string serverId, int maxPages = 5)
+        {
+            lock (_serverCache)
+            {
+                var key = (placeId, serverId);
+
+                if (_serverCache.TryGetValue(key, out var cached) && DateTime.Now - cached.At < TimeSpan.FromSeconds(90))
+                    return cached.Task;
+
+                if (DateTime.Now < _backoffUntil)
+                    return cached.Task ?? Task.FromResult<ServerInfo?>(null);
+
+                var task = LookUpServerAsync(placeId, serverId, maxPages);
+                _serverCache[key] = (task, DateTime.Now);
+                return task;
+            }
+        }
+
+        private static async Task<ServerInfo?> LookUpServerAsync(long placeId, string serverId, int maxPages)
+        {
+            string? cursor = null;
+
+            for (int page = 0; page < maxPages; page++)
+            {
+                try
+                {
+                    string url = $"https://games.roblox.com/v1/games/{placeId}/servers/Public?sortOrder=Desc&limit=100" + (cursor is null ? "" : $"&cursor={Uri.EscapeDataString(cursor)}");
+                    var result = await Http.GetJson<ServerPageWithCursor>(url);
+                    var match = result?.Data.FirstOrDefault(server => server.Id == serverId);
+
+                    if (match is not null)
+                        return new ServerInfo(match.Id, match.Playing, match.MaxPlayers);
+
+                    cursor = result?.NextPageCursor;
+
+                    if (String.IsNullOrEmpty(cursor))
+                        break;
+                }
+                catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.TooManyRequests)
+                {
+                    App.Logger.WriteLine("RobloxServers::FindServerAsync", "Roblox says too many requests, waiting 3 minutes");
+                    _backoffUntil = DateTime.Now.AddMinutes(3);
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    App.Logger.WriteException("RobloxServers::FindServerAsync", ex);
+                    break;
+                }
+            }
+
+            return null;
+        }
+
         public static string GetJoinLink(long placeId, string serverId) =>
-            $"roblox://experiences/start?placeId={placeId}&gameInstanceId={serverId}";
+            String.IsNullOrEmpty(serverId)
+                ? $"roblox://experiences/start?placeId={placeId}"
+                : $"roblox://experiences/start?placeId={placeId}&gameInstanceId={serverId}";
     }
 }

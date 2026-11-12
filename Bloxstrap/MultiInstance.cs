@@ -283,6 +283,7 @@ namespace Bloxstrap
                 }
             }
 
+            UnmuteAll();
             eventBlocker?.Dispose();
             App.Logger.WriteLine(HOST_IDENT, "All Roblox clients closed, exiting");
         }
@@ -291,15 +292,30 @@ namespace Bloxstrap
         private static void ApplyResourceRules(List<Process> clients, bool trimNow)
         {
             var options = App.Settings.Prop.MultiInstanceOptions;
+            bool muteBackground = App.Settings.Prop.Gameplay.MuteBackgroundWindows;
 
             if (clients.Count < 2)
-                return; // nothing to balance with a single client
+            {
+                // nothing to balance with a single client - and it should never be left muted
+                foreach (var client in clients)
+                    SetMuted(client.Id, false);
+
+                return;
+            }
 
             GetWindowThreadProcessId(GetForegroundWindow(), out uint foregroundPid);
+
+            // if none of the clients is focused (you're in another app), keep the one used last audible
+            if (clients.Any(client => client.Id == foregroundPid))
+                _lastFocusedClient = (int)foregroundPid;
+            else if (clients.All(client => client.Id != _lastFocusedClient))
+                _lastFocusedClient = clients[0].Id; // none used yet (or it closed): keep one audible
 
             foreach (var client in clients)
             {
                 bool focused = client.Id == foregroundPid;
+
+                SetMuted(client.Id, muteBackground && client.Id != _lastFocusedClient);
 
                 // efficiency mode (Task Manager's leaf icon) = idle priority + Windows' power throttling
                 SetEfficiencyMode(client.Id, options.EfficiencyModeBackground && !focused);
@@ -312,6 +328,37 @@ namespace Bloxstrap
                 if (options.TrimBackgroundMemory && trimNow && !focused)
                     TrimMemory(client.Id);
             }
+        }
+
+        private static int _lastFocusedClient;
+        private static readonly Dictionary<int, bool> _muted = new();
+
+        /// <summary>Mutes/unmutes a client in the volume mixer, only touching it when the wanted state changes.</summary>
+        private static void SetMuted(int processId, bool mute)
+        {
+            if (_muted.TryGetValue(processId, out bool current) && current == mute)
+                return;
+
+            // a client can take a while to open its audio session (and may start muted from last time),
+            // so keep trying until the session exists
+            var (found, changed) = Integrations.AudioMute.SetMute(processId, mute);
+
+            if (found == 0)
+                return;
+
+            if (changed > 0)
+                App.Logger.WriteLine("MultiInstance::SetMuted", $"{(mute ? "Muted" : "Unmuted")} client {processId}");
+
+            _muted[processId] = mute;
+        }
+
+        /// <summary>Unmutes every client this host muted (when it exits).</summary>
+        private static void UnmuteAll()
+        {
+            foreach (var pair in _muted.Where(pair => pair.Value).ToList())
+                Integrations.AudioMute.SetMute(pair.Key, false);
+
+            _muted.Clear();
         }
 
         // Each helper opens the client with only the one right it needs; asking for full access (Process.Handle)

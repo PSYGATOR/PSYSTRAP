@@ -11,6 +11,8 @@ Small counters in the corner of the Roblox window, plus a menu you open with Ins
 - **RAM** - how much memory that Roblox window is using
 - **Session** - how long Roblox has been open
 - **Clock** - your PC time
+- **Server** - how many players are in your server, plus the region if "Query server location" is on in Settings > Integrations (off by default)
+- **Today** - how long you've played this game today, see [Playtime](Gameplay.md#playtime) (off by default)
 
 You can turn each one on/off and pick which corner they go in, either in Settings > Overlay or the in-game menu. They hide when Roblox isn't the focused window.
 
@@ -33,5 +35,7 @@ By default potato mode also caps Roblox at 60 FPS (the lowest Roblox allows), so
 If you're running a bunch of windows, also turn on efficiency mode in the [Instances window](Multi-instance.md).
 
 **Hop to the smallest server** - moves you to the emptiest public server of the game you're in.
+
+**Hide this game from Discord** - your Discord status just says "Playing Roblox" for this game from now on. Press it again to undo. See [Discord](Gameplay.md#discord).
 
 **Instances and macros** - opens the [Instances window](Multi-instance.md).

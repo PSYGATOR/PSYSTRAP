@@ -73,6 +73,18 @@
                 <TextBlock x:Name="ClockText" Style="{StaticResource Value}" Text="--" />
             </StackPanel>
         </Border>
+        <Border x:Name="ServerWidget" Style="{StaticResource Pill}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Style="{StaticResource Label}" Text="SERVER" />
+                <TextBlock x:Name="ServerText" Style="{StaticResource Value}" FontSize="12" Text="--" />
+            </StackPanel>
+        </Border>
+        <Border x:Name="PlaytimeWidget" Style="{StaticResource Pill}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Style="{StaticResource Label}" Text="TODAY" />
+                <TextBlock x:Name="PlaytimeText" Style="{StaticResource Value}" Text="--" />
+            </StackPanel>
+        </Border>
         <Border x:Name="MacroWidget" Style="{StaticResource Pill}" Visibility="Collapsed">
             <TextBlock x:Name="MacroText" Style="{StaticResource Value}" FontSize="12" Text="" />
         </Border>

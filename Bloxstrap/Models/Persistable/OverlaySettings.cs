@@ -21,6 +21,12 @@ namespace Bloxstrap.Models.Persistable
 
         public bool ShowClock { get; set; } = false;
 
+        /// <summary>Server region and player count (region needs "Query server location").</summary>
+        public bool ShowServer { get; set; } = false;
+
+        /// <summary>Time played in this game today.</summary>
+        public bool ShowPlaytime { get; set; } = false;
+
         // macros: F6 records, F7 plays the selected one
         public string SelectedMacro { get; set; } = "";
 

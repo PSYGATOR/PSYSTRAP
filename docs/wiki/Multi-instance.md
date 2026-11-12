@@ -21,6 +21,8 @@ If Roblox was already open when you turned it on, close all your Roblox windows 
 
 It also shows how much RAM and CPU each one is using.
 
+Only the window you used last makes sound, the rest are muted. You can turn that off in Settings > [Gameplay](Gameplay.md#mute-windows-in-the-background). Discord shows the game in the window you used last too.
+
 ## Making lots of windows run faster
 
 1. Turn on potato mode with the 60 FPS cap (see [Overlay](Overlay.md)). This is the biggest one.

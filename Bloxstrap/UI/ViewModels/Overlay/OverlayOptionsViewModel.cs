@@ -54,6 +54,18 @@ namespace Bloxstrap.UI.ViewModels.Overlay
             set { Overlay.ShowClock = value; Commit(nameof(ShowClock)); }
         }
 
+        public bool ShowServer
+        {
+            get => Overlay.ShowServer;
+            set { Overlay.ShowServer = value; Commit(nameof(ShowServer)); }
+        }
+
+        public bool ShowPlaytime
+        {
+            get => Overlay.ShowPlaytime;
+            set { Overlay.ShowPlaytime = value; Commit(nameof(ShowPlaytime)); }
+        }
+
         public IEnumerable<OverlayCorner> Corners { get; } = Enum.GetValues<OverlayCorner>();
 
         public OverlayCorner Corner
@@ -144,6 +156,19 @@ namespace Bloxstrap.UI.ViewModels.Overlay
         {
             get => _serverHopStatus;
             set { _serverHopStatus = value; OnPropertyChanged(nameof(ServerHopStatus)); }
+        }
+
+        /// <summary>Raised when the user toggles hiding the current game from Discord.</summary>
+        public event EventHandler? DiscordHideRequested;
+
+        public System.Windows.Input.ICommand DiscordHideCommand => new CommunityToolkit.Mvvm.Input.RelayCommand(() => DiscordHideRequested?.Invoke(this, EventArgs.Empty));
+
+        private string _discordHideText = "Hide this game from Discord";
+
+        public string DiscordHideText
+        {
+            get => _discordHideText;
+            set { _discordHideText = value; OnPropertyChanged(nameof(DiscordHideText)); }
         }
 
         #region Macros

@@ -14,7 +14,9 @@ namespace Bloxstrap.Models.Macros
     {
         Left,
         Right,
-        Middle
+        Middle,
+        XButton1,
+        XButton2
     }
 
     /// <summary>

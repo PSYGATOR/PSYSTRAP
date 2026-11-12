@@ -156,13 +156,13 @@ namespace Bloxstrap.Integrations.Macros
 
                 case MacroStepKind.MouseDown:
                     MoveTo(step.X, step.Y);
-                    SendMouse(ButtonFlag(step.Button, down: true), 0);
+                    SendMouse(ButtonFlag(step.Button, down: true), ButtonData(step.Button));
                     lock (_heldLock) _held.Add((false, (int)step.Button));
                     break;
 
                 case MacroStepKind.MouseUp:
                     MoveTo(step.X, step.Y);
-                    SendMouse(ButtonFlag(step.Button, down: false), 0);
+                    SendMouse(ButtonFlag(step.Button, down: false), ButtonData(step.Button));
                     lock (_heldLock) _held.Remove((false, (int)step.Button));
                     break;
 
@@ -187,7 +187,7 @@ namespace Bloxstrap.Integrations.Macros
                 if (isKey)
                     SendKey(new MacroStep { Key = code, ScanCode = (int)MapVirtualKeyW((uint)code, 0) }, up: true);
                 else
-                    SendMouse(ButtonFlag((MacroMouseButton)code, down: false), 0);
+                    SendMouse(ButtonFlag((MacroMouseButton)code, down: false), ButtonData((MacroMouseButton)code));
             }
         }
 
@@ -267,13 +267,23 @@ namespace Bloxstrap.Integrations.Macros
         {
             MacroMouseButton.Right => down ? MOUSEEVENTF_RIGHTDOWN : MOUSEEVENTF_RIGHTUP,
             MacroMouseButton.Middle => down ? MOUSEEVENTF_MIDDLEDOWN : MOUSEEVENTF_MIDDLEUP,
+            MacroMouseButton.XButton1 or MacroMouseButton.XButton2 => down ? MOUSEEVENTF_XDOWN : MOUSEEVENTF_XUP,
             _ => down ? MOUSEEVENTF_LEFTDOWN : MOUSEEVENTF_LEFTUP
+        };
+
+        /// <summary>Side buttons say which one in mouseData.</summary>
+        private static int ButtonData(MacroMouseButton button) => button switch
+        {
+            MacroMouseButton.XButton1 => 1,
+            MacroMouseButton.XButton2 => 2,
+            _ => 0
         };
 
         private const uint INPUT_MOUSE = 0, INPUT_KEYBOARD = 1;
         private const uint MOUSEEVENTF_MOVE = 0x0001, MOUSEEVENTF_LEFTDOWN = 0x0002, MOUSEEVENTF_LEFTUP = 0x0004;
         private const uint MOUSEEVENTF_RIGHTDOWN = 0x0008, MOUSEEVENTF_RIGHTUP = 0x0010;
         private const uint MOUSEEVENTF_MIDDLEDOWN = 0x0020, MOUSEEVENTF_MIDDLEUP = 0x0040;
+        private const uint MOUSEEVENTF_XDOWN = 0x0080, MOUSEEVENTF_XUP = 0x0100;
         private const uint MOUSEEVENTF_WHEEL = 0x0800, MOUSEEVENTF_VIRTUALDESK = 0x4000, MOUSEEVENTF_ABSOLUTE = 0x8000;
         private const uint KEYEVENTF_EXTENDEDKEY = 0x0001, KEYEVENTF_KEYUP = 0x0002, KEYEVENTF_SCANCODE = 0x0008;
         private const int SM_XVIRTUALSCREEN = 76, SM_YVIRTUALSCREEN = 77, SM_CXVIRTUALSCREEN = 78, SM_CYVIRTUALSCREEN = 79;

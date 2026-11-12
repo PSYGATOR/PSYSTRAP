@@ -17,7 +17,7 @@ A Roblox launcher based on Bloxstrap, with an overlay, multi instance, saved acc
 
 Everything Bloxstrap does (mods, fast flags, Discord status, etc.), plus:
 
-- **Overlay** - FPS, CPS, RAM, session time and a clock in the corner of Roblox. Press Insert in game for a menu with the FPS cap, potato mode and a "go to smallest server" button.
+- **Overlay** - FPS, CPS, RAM, session time, a clock, server player count and today's playtime in the corner of Roblox. Press Insert in game for a menu with the FPS cap, potato mode and a "go to smallest server" button.
 - **Multi instance** - run as many Roblox windows as you want. There's a window to manage them (lower their priority, trim RAM, tile them on screen).
 - **Saved accounts** - log in once on the normal Roblox login page and you can open that account later in one click, even straight into the server your main is in.
 - **Macros** - F6 to record, F7 to play.
@@ -25,6 +25,8 @@ Everything Bloxstrap does (mods, fast flags, Discord status, etc.), plus:
 - **Turn taking** - run smart macros on all your Roblox windows by switching between them really fast.
 - **Custom skybox** - a few presets, or use your own images.
 - **Potato mode** - lowest graphics in one click.
+- **Everyday stuff** - rejoin when you get disconnected, anti-AFK, remap keys and side mouse buttons, a different FPS cap or potato mode per game, playtime per game, a popup when a friend starts playing, background windows muted.
+- **Better Discord status** - player count and region of your server, hide games you don't want to show, use your own Discord app, and with several windows it shows the one you're using.
 - A green theme to match the logo.
 
 It doesn't inject anything into Roblox or touch its memory. It only changes Roblox's own settings files and sends normal keyboard and mouse input.

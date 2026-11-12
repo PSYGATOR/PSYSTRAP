@@ -45,30 +45,32 @@ namespace Bloxstrap
         /// Before mods are applied at launch: makes sure every potato flag is set, so flags added in newer versions of
         /// PSYstrap also reach people who switched potato mode on earlier.
         /// </summary>
-        public static void EnsureFlags()
+        /// <param name="enabled">Whether potato mode applies to this launch (a game profile can override the setting).</param>
+        public static void EnsureFlags(bool enabled)
         {
-            if (!App.Settings.Prop.PotatoMode)
+            bool allSet = Flags.All(pair => App.FastFlags.GetValue(pair.Key) == pair.Value);
+            bool noneSet = Flags.All(pair => App.FastFlags.GetValue(pair.Key) is null);
+
+            if (enabled ? allSet : noneSet)
                 return;
 
-            if (Flags.All(pair => App.FastFlags.GetValue(pair.Key) == pair.Value))
-                return;
-
-            SetFlags(true);
+            SetFlags(enabled);
             App.FastFlags.Save();
-            App.Logger.WriteLine("PotatoMode::EnsureFlags", "Added missing potato flags");
+            App.Logger.WriteLine("PotatoMode::EnsureFlags", enabled ? "Added potato flags" : "Removed potato flags");
         }
 
         /// <summary>At launch: Roblox's graphics slider to its lowest manual level, and the 60 FPS cap if chosen.</summary>
-        public static void ApplyGraphicsQuality()
+        /// <param name="allowCap">False when a game profile sets its own FPS cap, which then wins over potato's 60.</param>
+        public static void ApplyGraphicsQuality(bool enabled, bool allowCap = true)
         {
-            if (!App.Settings.Prop.PotatoMode)
+            if (!enabled)
                 return;
 
             RobloxUserSettings.SetValue("int", "GraphicsQualityLevel", "1");
             RobloxUserSettings.SetValue("token", "SavedQualityLevel", "1");
 
             // overrides the normal frame-rate cap, which is written just before this
-            if (App.Settings.Prop.PotatoCapFramerate)
+            if (allowCap && App.Settings.Prop.PotatoCapFramerate)
                 RobloxUserSettings.SetValue("int", "FramerateCap", FramerateCap.ToString());
         }
     }

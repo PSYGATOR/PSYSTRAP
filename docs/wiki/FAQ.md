@@ -32,6 +32,12 @@ Turn on Multi-instance in the Instances window and close all your Roblox windows
 **"Roblox refused ... saved sign-in"**
 The login expired (password change, logged out everywhere etc). Click Add account and log in again.
 
+**Roblox has no sound**
+If you have more than one Roblox open, only the one you clicked into last has sound. See [Gameplay](Gameplay.md#mute-windows-in-the-background). If it's the only window, check the Windows volume mixer.
+
+**It rejoined when I didn't want it to (or didn't when I did)**
+Turn "Rejoin when you get disconnected" off in Settings > Gameplay. If it got it wrong, send the log (see below), the disconnect reason is in there.
+
 **My smart macro never does anything**
 Take a new screenshot in the editor and click Test. Also check the Roblox window is visible, focused, and the same size as when you made it.
 
