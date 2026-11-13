@@ -75,7 +75,7 @@ Each key or button can only have one remap. Adding a new one for the same key re
 
 Give one game its own FPS cap or potato mode. For example potato mode on for an AFK game, and 240 FPS for a game you actually play.
 
-Paste a place ID or a roblox.com/games/... link and press Add, or press "Add the game I'm in" while you're in it. Then pick the FPS cap, potato mode and mods for it. "Normal setting" means it uses whatever you have set on the [Overlay](Overlay.md) page.
+Paste a place ID or a roblox.com/games/... link and press Add, or press "Add the game I'm in" while you're in it. Then pick the FPS cap (Custom lets you type any number), potato mode and mods for it. "Normal setting" means it uses whatever you have set on the [Overlay](Overlay.md) page.
 
 **Mods** switches to a mod profile (fonts, sounds, sky...) for that game. You make mod profiles on the Mods page: set the mods up how you want, type a name, and press "Save current mods". Your normal mods come back when you open a game without one. All Roblox windows share one Roblox folder, so with several windows open the one you launched last decides the mods.
 

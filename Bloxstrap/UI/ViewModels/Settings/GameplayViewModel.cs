@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
 
 using CommunityToolkit.Mvvm.Input;
@@ -151,20 +152,55 @@ namespace Bloxstrap.UI.ViewModels.Settings
         #endregion
 
         #region Game profiles
-        public class ProfileRow
+        public class ProfileRow : NotifyPropertyChangedViewModel
         {
             public long PlaceId { get; }
 
             public GameProfile Profile { get; }
 
-            public ProfileRow(long placeId, GameProfile profile) { PlaceId = placeId; Profile = profile; }
+            // the number "Custom" uses for this game until one is typed
+            private int _custom;
+
+            public ProfileRow(long placeId, GameProfile profile)
+            {
+                PlaceId = placeId;
+                Profile = profile;
+                _custom = RobloxUserSettings.ChoiceFor(profile.FramerateCap) == RobloxUserSettings.CustomFramerate
+                    ? profile.FramerateCap
+                    : App.Settings.Prop.CustomFramerateCap;
+            }
 
             public string Title => String.IsNullOrEmpty(Profile.Name) ? $"Place {PlaceId}" : Profile.Name;
 
+            /// <summary>The list entry: "Normal setting", a preset, or "Custom" for any other number.</summary>
             public int FramerateCap
             {
-                get => Profile.FramerateCap;
-                set => Profile.FramerateCap = value;
+                get => RobloxUserSettings.ChoiceFor(Profile.FramerateCap);
+                set
+                {
+                    Profile.FramerateCap = value == RobloxUserSettings.CustomFramerate ? _custom : value;
+                    OnPropertyChanged(nameof(CustomFramerateVisibility));
+                }
+            }
+
+            public Visibility CustomFramerateVisibility =>
+                FramerateCap == RobloxUserSettings.CustomFramerate ? Visibility.Visible : Visibility.Collapsed;
+
+            public string CustomFramerate
+            {
+                get => _custom.ToString(CultureInfo.InvariantCulture);
+                set
+                {
+                    if (RobloxUserSettings.ParseCustomFramerate(value) is int fps)
+                    {
+                        _custom = fps;
+
+                        if (FramerateCap == RobloxUserSettings.CustomFramerate)
+                            Profile.FramerateCap = fps;
+                    }
+
+                    OnPropertyChanged(nameof(CustomFramerate));
+                }
             }
 
             public string Potato

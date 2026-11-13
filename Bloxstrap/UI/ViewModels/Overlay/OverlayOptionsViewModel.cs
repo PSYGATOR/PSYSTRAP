@@ -117,10 +117,41 @@ namespace Bloxstrap.UI.ViewModels.Overlay
 
         public IReadOnlyList<KeyValuePair<int, string>> FramerateCaps => RobloxUserSettings.FramerateCapChoices;
 
+        /// <summary>The list entry: a preset, or "Custom" for any other number.</summary>
         public int FramerateCap
         {
-            get => App.Settings.Prop.FramerateCap;
-            set { App.Settings.Prop.FramerateCap = value; Commit(nameof(FramerateCap)); }
+            get => RobloxUserSettings.ChoiceFor(App.Settings.Prop.FramerateCap);
+            set
+            {
+                App.Settings.Prop.FramerateCap = value == RobloxUserSettings.CustomFramerate ? App.Settings.Prop.CustomFramerateCap : value;
+                Commit(nameof(FramerateCap));
+                OnPropertyChanged(nameof(CustomFramerate));
+                OnPropertyChanged(nameof(CustomFramerateVisibility));
+            }
+        }
+
+        public System.Windows.Visibility CustomFramerateVisibility =>
+            FramerateCap == RobloxUserSettings.CustomFramerate ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+
+        /// <summary>The typed-in number for "Custom".</summary>
+        public string CustomFramerate
+        {
+            get => App.Settings.Prop.CustomFramerateCap.ToString(CultureInfo.InvariantCulture);
+            set
+            {
+                if (RobloxUserSettings.ParseCustomFramerate(value) is int fps)
+                {
+                    App.Settings.Prop.CustomFramerateCap = fps;
+
+                    if (FramerateCap == RobloxUserSettings.CustomFramerate)
+                        App.Settings.Prop.FramerateCap = fps;
+
+                    Commit(nameof(CustomFramerate));
+                }
+
+                // shows the clamped number (or the old one if it wasn't a number)
+                OnPropertyChanged(nameof(CustomFramerate));
+            }
         }
 
         public string RobloxFramerateCapText
@@ -372,12 +403,14 @@ namespace Bloxstrap.UI.ViewModels.Overlay
         {
             var overlay = App.Settings.Prop.Overlay;
             int framerateCap = App.Settings.Prop.FramerateCap;
+            int customCap = App.Settings.Prop.CustomFramerateCap;
             bool potato = App.Settings.Prop.PotatoMode;
             bool potatoCap = App.Settings.Prop.PotatoCapFramerate;
 
             App.Settings.Load(false);
             App.Settings.Prop.Overlay = overlay;
             App.Settings.Prop.FramerateCap = framerateCap;
+            App.Settings.Prop.CustomFramerateCap = customCap;
             App.Settings.Prop.PotatoMode = potato;
             App.Settings.Prop.PotatoCapFramerate = potatoCap;
             App.Settings.Save();

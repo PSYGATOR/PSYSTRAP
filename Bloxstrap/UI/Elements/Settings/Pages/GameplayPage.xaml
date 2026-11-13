@@ -167,6 +167,8 @@
                                     <TextBlock Text="FPS" VerticalAlignment="Center" Margin="0,0,6,0" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                                     <ComboBox Width="150" ItemsSource="{Binding DataContext.ProfileFramerateCaps, ElementName=GameplayPageView, Mode=OneTime}"
                                               DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding FramerateCap, Mode=TwoWay}" />
+                                    <ui:TextBox Width="80" Margin="6,0,0,0" Padding="8,4,8,4" PlaceholderText="FPS" Visibility="{Binding CustomFramerateVisibility, Mode=OneWay}"
+                                                Text="{Binding CustomFramerate, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" AutomationProperties.Name="Custom FPS for this game" />
                                     <TextBlock Text="Potato" VerticalAlignment="Center" Margin="12,0,6,0" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                                     <ComboBox Width="140" ItemsSource="{Binding DataContext.PotatoChoices, ElementName=GameplayPageView, Mode=OneTime}"
                                               SelectedItem="{Binding Potato, Mode=TwoWay}" />

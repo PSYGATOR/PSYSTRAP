@@ -90,8 +90,12 @@
         </controls:OptionControl>
 
         <controls:OptionControl Header="Frame rate cap"
-            Description="PSYstrap sets this right before Roblox opens. Roblox only reads it on startup.">
-            <ComboBox Width="160" Padding="10,5,10,5" ItemsSource="{Binding FramerateCaps, Mode=OneTime}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding FramerateCap, Mode=TwoWay}" />
+            Description="PSYstrap sets this right before Roblox opens. Roblox only reads it on startup. Pick Custom to type any number from 5 to 1000.">
+            <StackPanel Orientation="Horizontal">
+                <ui:TextBox Width="90" Margin="0,0,8,0" Padding="8,5,8,5" PlaceholderText="FPS" Visibility="{Binding CustomFramerateVisibility, Mode=OneWay}"
+                            Text="{Binding CustomFramerate, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" AutomationProperties.Name="Custom FPS" ToolTip="Type a number, then click away or press Tab" />
+                <ComboBox Width="160" Padding="10,5,10,5" ItemsSource="{Binding FramerateCaps, Mode=OneTime}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding FramerateCap, Mode=TwoWay}" />
+            </StackPanel>
         </controls:OptionControl>
         <TextBlock Margin="2,6,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding RobloxFramerateCapText, Mode=OneWay}" />
         <ui:Button Margin="0,8,0,0" Icon="ArrowClockwise24" Appearance="Success" HorizontalAlignment="Left"

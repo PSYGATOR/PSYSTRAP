@@ -26,6 +26,9 @@ namespace Bloxstrap.Models.Persistable
 
         // PSYstrap: written to Roblox's GlobalBasicSettings before each launch. 0 = leave Roblox's own setting alone.
         public int FramerateCap { get; set; } = 0;
+
+        // PSYstrap: the last number typed for a custom cap, so picking "Custom" again brings it back
+        public int CustomFramerateCap { get; set; } = 90;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public bool DeveloperMode { get; set; } = false;
         public bool CheckForUpdates { get; set; } = true;

@@ -8,8 +8,9 @@ namespace Bloxstrap
     public static class RobloxUserSettings
     {
         /// <summary>
-        /// Frame rate caps offered in the UI - the same values as Roblox's own "Maximum Frame Rate" setting,
-        /// since Roblox ignores anything else (it fell back to 60 when given 30). 0 = leave Roblox's setting alone.
+        /// Frame rate caps offered in the UI: Roblox's own "Maximum Frame Rate" values plus "Custom", because Roblox
+        /// takes any number here (tested 30, 45, 90 and 500 in game). 0 = leave Roblox's setting alone.
+        /// The DFIntTaskSchedulerTargetFps fast flag isn't an option: Roblox denies it ("Denied local configuration").
         /// </summary>
         public static IReadOnlyList<KeyValuePair<int, string>> FramerateCapChoices { get; } = new List<KeyValuePair<int, string>>
         {
@@ -18,8 +19,24 @@ namespace Bloxstrap
             new(60, "60 FPS"),
             new(120, "120 FPS"),
             new(144, "144 FPS"),
-            new(240, "240 FPS")
+            new(240, "240 FPS"),
+            new(CustomFramerate, "Custom")
         };
+
+        /// <summary>The "Custom" entry in the list; the number itself is typed in next to it.</summary>
+        public const int CustomFramerate = -2;
+
+        public const int MinCustomFramerate = 5;
+        public const int MaxCustomFramerate = 1000;
+
+        /// <summary>Which list entry a stored cap belongs to: itself if it's in the list, otherwise "Custom".</summary>
+        public static int ChoiceFor(int cap) => FramerateCapChoices.Any(choice => choice.Key == cap && cap != CustomFramerate) ? cap : CustomFramerate;
+
+        /// <summary>A typed-in frame rate, or null if it isn't a number. Kept within what makes sense.</summary>
+        public static int? ParseCustomFramerate(string? text) =>
+            int.TryParse(text?.Trim().Replace("fps", "", StringComparison.OrdinalIgnoreCase).Trim(), out int fps)
+                ? Math.Clamp(fps, MinCustomFramerate, MaxCustomFramerate)
+                : null;
 
         public static string? FindSettingsFile()
         {
@@ -93,7 +110,8 @@ namespace Bloxstrap
 
             int cap = overrideCap ?? App.Settings.Prop.FramerateCap;
 
-            if (cap == 0)
+            // "Custom" is only a list entry; the real number is stored, so this never gets written
+            if (cap == 0 || cap == CustomFramerate)
                 return;
 
             try
