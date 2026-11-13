@@ -41,29 +41,62 @@ namespace Bloxstrap.Integrations
 
             IntPtr window = _getWindow();
 
-            if (window == IntPtr.Zero || IsIconic(window))
+            if (window == IntPtr.Zero)
                 return;
 
             IntPtr previous = GetForegroundWindow();
             bool needsFocus = previous != window;
+            bool wasMinimized = IsIconic(window);
 
             // don't yank focus away from someone who's using the PC - try again later
-            if (needsFocus && SecondsSinceLastInput() < 60)
+            if ((needsFocus || wasMinimized) && SecondsSinceLastInput() < 60)
                 return;
+
+            // minimized (away mode, tray): pop it up for the nudge, then put it back
+            if (wasMinimized)
+            {
+                ShowWindow(window, SW_RESTORE);
+                Thread.Sleep(400);
+            }
 
             if (needsFocus && !Focus(window))
+            {
+                if (wasMinimized)
+                    ShowWindow(window, SW_SHOWMINNOACTIVE);
                 return;
+            }
 
             Thread.Sleep(150);
+            MarkNudge();
             Nudge();
             _lastActivity = DateTime.Now;
-            App.Logger.WriteLine(LOG_IDENT, "Nudged an idle Roblox window");
+            App.Logger.WriteLine(LOG_IDENT, "Nudged an idle Roblox window" + (wasMinimized ? " (was minimized)" : ""));
+
+            if (wasMinimized)
+            {
+                Thread.Sleep(100);
+                ShowWindow(window, SW_SHOWMINNOACTIVE);
+            }
 
             if (needsFocus && previous != IntPtr.Zero)
             {
                 Thread.Sleep(100);
                 Focus(previous);
             }
+        }
+
+        private static string NudgeFile => Path.Combine(Paths.Base, "LastNudge.txt");
+
+        private static void MarkNudge()
+        {
+            try { File.WriteAllText(NudgeFile, DateTime.Now.ToString("o")); } catch { }
+        }
+
+        /// <summary>True for a few seconds after any window's anti-AFK nudge (it shows up as input to Windows).</summary>
+        public static bool NudgedRecently()
+        {
+            try { return File.Exists(NudgeFile) && DateTime.Now - File.GetLastWriteTime(NudgeFile) < TimeSpan.FromSeconds(5); }
+            catch { return false; }
         }
 
         private static void Nudge()
@@ -128,6 +161,8 @@ namespace Bloxstrap.Integrations
         [DllImport("user32.dll")] private static extern bool SetForegroundWindow(IntPtr window);
         [DllImport("user32.dll")] private static extern bool BringWindowToTop(IntPtr window);
         [DllImport("user32.dll")] private static extern bool IsIconic(IntPtr window);
+        [DllImport("user32.dll")] private static extern bool ShowWindow(IntPtr window, int command);
+        private const int SW_RESTORE = 9, SW_SHOWMINNOACTIVE = 7;
         [DllImport("user32.dll")] private static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
         [DllImport("user32.dll")] private static extern bool AttachThreadInput(uint attach, uint attachTo, bool doAttach);
         [DllImport("kernel32.dll")] private static extern uint GetCurrentThreadId();

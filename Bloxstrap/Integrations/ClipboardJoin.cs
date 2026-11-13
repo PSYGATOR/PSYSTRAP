@@ -74,14 +74,25 @@ namespace Bloxstrap.Integrations
 
         public void Dispose()
         {
-            if (_window is not null)
+            // the window and the lock both belong to the UI thread that made them, and the watcher is closed from
+            // another thread; doing it from there threw and stopped the rest of the watcher from closing
+            void Close()
             {
-                RemoveClipboardFormatListener(_window.Handle);
-                _window.Dispose();
+                if (_window is not null)
+                {
+                    RemoveClipboardFormatListener(_window.Handle);
+                    _window.Dispose();
+                }
+
+                try { _lock.Dispose(); } catch (ApplicationException) { }
             }
 
-            // the lock has to be released on the thread that took it; if not, Windows frees it when the process ends
-            try { _lock.Dispose(); } catch (ApplicationException) { }
+            var dispatcher = _window?.Dispatcher ?? System.Windows.Application.Current?.Dispatcher;
+
+            if (dispatcher is null || dispatcher.CheckAccess() || dispatcher.HasShutdownStarted)
+                Close();
+            else
+                dispatcher.Invoke(Close, TimeSpan.FromSeconds(3));
         }
 
         [DllImport("user32.dll", SetLastError = true)]

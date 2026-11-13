@@ -25,8 +25,9 @@ Everything Bloxstrap does (mods, fast flags, Discord status, etc.), plus:
 - **Turn taking** - run smart macros on all your Roblox windows by switching between them really fast.
 - **Custom skybox** - a few presets, or use your own images.
 - **Potato mode** - lowest graphics in one click.
+- **Home page** - jump back into games you played recently, play favourites in one click, see what's open and what you played most this week.
 - **Everyday stuff** - rejoin when you get disconnected, anti-AFK, remap keys and side mouse buttons, a different FPS cap or potato mode per game, playtime per game, a popup when a friend starts playing, background windows muted.
-- **AFK tools** - favourites with desktop shortcuts, start with Windows, open and close games on a schedule, reopen Roblox if it crashes or freezes, minimize windows to the tray, and messages to your phone (Discord webhook) when something goes wrong.
+- **AFK tools** - a one-click AFK setup that opens all your alts, start with Windows, open and close games on a schedule, reopen Roblox if it crashes, freezes or gets stuck joining, wait out internet drops, restart windows that eat too much RAM, keep the PC awake, an AFK history, messages to your phone (Discord webhook, with screenshots and status reports) and a phone remote on your Wi-Fi to check on and rejoin windows.
 - **Server browser** - every public server of a game with player counts, join any of them as any saved account.
 - **Settings tools** - remove fast flags Roblox ignores, fast flag and mod profiles, import from Bloxstrap or Fishstrap, and backups.
 - **Better Discord status** - player count and region of your server, hide games you don't want to show, use your own Discord app, and with several windows it shows the one you're using.

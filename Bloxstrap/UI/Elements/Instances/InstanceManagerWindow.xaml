@@ -78,15 +78,24 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-                                        <CheckBox Grid.Column="0" VerticalAlignment="Center" IsChecked="{Binding IsSelected, Mode=TwoWay}" />
-                                        <StackPanel Grid.Column="1" Margin="4,0,0,0" VerticalAlignment="Center">
+                                        <CheckBox Grid.Column="0" MinWidth="0" Margin="0,0,10,0" VerticalAlignment="Center" IsChecked="{Binding IsSelected, Mode=TwoWay}" AutomationProperties.Name="{Binding Label}" />
+                                        <!-- profile picture -->
+                                        <Border Grid.Column="1" Width="40" Height="40" Margin="0,0,10,0" CornerRadius="20" BorderThickness="2" BorderBrush="#27B52B" Background="#0B1A0F">
+                                            <Ellipse>
+                                                <Ellipse.Fill>
+                                                    <ImageBrush ImageSource="{Binding Avatar}" Stretch="UniformToFill" />
+                                                </Ellipse.Fill>
+                                            </Ellipse>
+                                        </Border>
+                                        <StackPanel Grid.Column="2" Margin="0,0,0,0" VerticalAlignment="Center">
                                             <TextBlock FontSize="14" FontWeight="SemiBold" Text="{Binding Label}" />
                                             <TextBlock FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding Details}" />
                                         </StackPanel>
-                                        <ui:Button Grid.Column="2" Icon="Delete24" ToolTip="Remove saved sign-in" Command="{Binding RemoveCommand}" />
+                                        <ui:Button Grid.Column="3" Icon="Delete24" ToolTip="Remove saved sign-in" AutomationProperties.Name="Remove saved sign-in" Command="{Binding RemoveCommand}" />
                                     </Grid>
                                 </ui:Card>
                             </DataTemplate>
@@ -162,16 +171,39 @@
                             <ui:Card Margin="0,8,0,0">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                    <!-- the account's picture, with the game's icon on its corner -->
+                                    <Grid Grid.Column="0" Width="58" Height="58" Margin="0,0,12,0" VerticalAlignment="Top">
+                                        <Border Width="52" Height="52" HorizontalAlignment="Left" VerticalAlignment="Top" CornerRadius="26" BorderThickness="2" BorderBrush="#27B52B" Background="#0B1A0F">
+                                            <Grid>
+                                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" FontFamily="{DynamicResource PsyMarkerFont}" Foreground="#5FE04C" Text="{Binding Initial}" />
+                                                <Ellipse>
+                                                    <Ellipse.Fill>
+                                                        <ImageBrush ImageSource="{Binding Avatar}" Stretch="UniformToFill" />
+                                                    </Ellipse.Fill>
+                                                </Ellipse>
+                                            </Grid>
+                                        </Border>
+                                        <Border Width="26" Height="26" HorizontalAlignment="Right" VerticalAlignment="Bottom" CornerRadius="6" BorderThickness="2" BorderBrush="#E9B632" Background="#0B1A0F"
+                                                Visibility="{Binding GameIconVisibility}" ToolTip="{Binding GameLine}">
+                                            <Border CornerRadius="4">
+                                                <Border.Background>
+                                                    <ImageBrush ImageSource="{Binding GameIcon}" Stretch="UniformToFill" />
+                                                </Border.Background>
+                                            </Border>
+                                        </Border>
+                                    </Grid>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock FontSize="14" FontWeight="SemiBold" Text="{Binding Title}" />
                                             <Border Margin="8,0,0,0" Padding="6,1" CornerRadius="4" Background="#335FE04C" Visibility="{Binding FocusedBadgeVisibility}">
                                                 <TextBlock FontSize="11" Foreground="#5FE04C" Text="in use" />
                                             </Border>
                                         </StackPanel>
+                                        <TextBlock Margin="0,2,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" Text="{Binding GameLine}" />
                                         <TextBlock Margin="0,2,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding Details}" />
                                         <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
                                             <TextBlock VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="Smart macro" />
@@ -179,7 +211,7 @@
                                             <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" FontSize="12" Foreground="#5FE04C" Text="{Binding RotationStatus}" />
                                         </StackPanel>
                                     </StackPanel>
-                                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
                                         <ui:Button Margin="4,0,0,0" Icon="WindowArrowUp24" Content="Focus" Command="{Binding FocusCommand}" />
                                         <ui:Button Margin="4,0,0,0" Icon="Subtract24" ToolTip="Minimise" Command="{Binding MinimizeCommand}" />
                                         <ui:Button Margin="4,0,0,0" Icon="Broom24" ToolTip="Trim RAM now" Command="{Binding TrimCommand}" />

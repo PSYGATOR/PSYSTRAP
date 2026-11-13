@@ -134,6 +134,9 @@ namespace Bloxstrap
             if (stopAfterMinutes > 0)
                 AddStopTimer(favourite, DateTime.Now.AddMinutes(stopAfterMinutes));
 
+            if (scheduled)
+                Integrations.AfkLog.Add(new Integrations.AfkLog.Entry { At = DateTime.Now, Kind = Integrations.AfkLog.Kind.ScheduledOpen, UserId = favourite.AccountUserId, PlaceId = favourite.PlaceId, Game = favourite.Name });
+
             if (scheduled && App.Settings.Prop.Gameplay.Webhook.OnSchedule)
                 await Webhook.SendAsync(App.Settings.Prop.Gameplay.Webhook.Url, $"Opened {favourite.Name}",
                     $"Scheduled launch{Webhook.AccountSuffix(favourite.AccountUserId)}" + (stopAfterMinutes > 0 ? $", closing in {FormatMinutes(stopAfterMinutes)}." : "."));
@@ -141,20 +144,66 @@ namespace Bloxstrap
             return true;
         }
 
-        /// <summary>"-startup": open every favourite marked for it, a few seconds apart.</summary>
+        /// <summary>"-startup": open the AFK setup once Windows has settled.</summary>
         public static async Task OpenStartupFavouritesAsync()
+        {
+            // give Windows a moment to finish starting up (network etc.)
+            await Task.Delay(TimeSpan.FromSeconds(20));
+            await Integrations.InternetCheck.WaitUntilOnlineAsync(TimeSpan.FromMinutes(5));
+            await OpenAfkSetupAsync();
+        }
+
+        /// <summary>
+        /// "-afksetup": opens every favourite ticked "part of my AFK setup", a few seconds apart, then tiles the windows.
+        /// </summary>
+        public static async Task OpenAfkSetupAsync()
         {
             var favourites = Settings.Favourites.Where(f => f.OpenAtStartup).ToList();
 
-            // give Windows a moment to finish starting up (network etc.)
-            await Task.Delay(TimeSpan.FromSeconds(20));
+            if (favourites.Count == 0)
+            {
+                App.Logger.WriteLine(LOG_IDENT, "AFK setup is empty");
+                return;
+            }
+
+            App.Logger.WriteLine(LOG_IDENT, $"Opening the AFK setup ({favourites.Count} games)");
 
             for (int i = 0; i < favourites.Count; i++)
             {
                 if (i > 0)
-                    await Task.Delay(TimeSpan.FromSeconds(15));
+                    await Task.Delay(TimeSpan.FromSeconds(12));
 
                 await LaunchAsync(favourites[i]);
+            }
+
+            // wait for the last window to show up, then lay them all out
+            if (favourites.Count > 1)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(40));
+                Integrations.RobloxWindows.ArrangeAll();
+            }
+        }
+
+        /// <summary>A desktop shortcut that opens the whole AFK setup.</summary>
+        public static string? CreateAfkSetupShortcut()
+        {
+            try
+            {
+                string lnk = Path.Combine(Paths.Desktop, "PSYstrap AFK setup.lnk");
+                dynamic shell = Activator.CreateInstance(Type.GetTypeFromProgID("WScript.Shell")!)!;
+                dynamic shortcut = shell.CreateShortcut(lnk);
+                shortcut.TargetPath = Paths.Application;
+                shortcut.Arguments = "-afksetup";
+                shortcut.WorkingDirectory = Paths.Base;
+                shortcut.IconLocation = $"{Paths.Application},0";
+                shortcut.Description = "Open every game in your PSYstrap AFK setup";
+                shortcut.Save();
+                return lnk;
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException(LOG_IDENT, ex);
+                return null;
             }
         }
 
@@ -219,7 +268,7 @@ namespace Bloxstrap
         {
             try
             {
-                string? icon = await DownloadGameIconAsync(favourite.PlaceId);
+                string? icon = await RobloxImages.GameIconIcoAsync(favourite.PlaceId);
                 string name = String.Concat(favourite.Name.Split(Path.GetInvalidFileNameChars())).Trim().TrimEnd('.', ' ');
                 string lnk = Path.Combine(Paths.Desktop, $"{(name.Length > 0 ? name : "Roblox game")}.lnk");
 
@@ -242,51 +291,6 @@ namespace Bloxstrap
             }
         }
 
-        /// <summary>The game's icon as an .ico (a single 256px PNG inside an ICO container).</summary>
-        private static async Task<string?> DownloadGameIconAsync(long placeId)
-        {
-            try
-            {
-                string folder = Path.Combine(Paths.Base, "Icons");
-                string path = Path.Combine(folder, $"{placeId}.ico");
-
-                if (File.Exists(path))
-                    return path;
-
-                using var info = JsonDocument.Parse(await App.HttpClient.GetStringAsync(
-                    $"https://thumbnails.roblox.com/v1/places/gameicons?placeIds={placeId}&returnPolicy=PlaceHolder&size=256x256&format=Png&isCircular=false"));
-
-                string? url = info.RootElement.GetProperty("data")[0].GetProperty("imageUrl").GetString();
-
-                if (String.IsNullOrEmpty(url))
-                    return null;
-
-                byte[] png = await App.HttpClient.GetByteArrayAsync(url);
-                Directory.CreateDirectory(folder);
-
-                using var stream = File.Create(path);
-                using var writer = new BinaryWriter(stream);
-                writer.Write((ushort)0);            // reserved
-                writer.Write((ushort)1);            // icon
-                writer.Write((ushort)1);            // one image
-                writer.Write((byte)0);              // 256 wide
-                writer.Write((byte)0);              // 256 high
-                writer.Write((byte)0);              // no palette
-                writer.Write((byte)0);
-                writer.Write((ushort)1);            // planes
-                writer.Write((ushort)32);           // bits per pixel
-                writer.Write((uint)png.Length);
-                writer.Write((uint)22);             // image data right after the 6 + 16 byte header
-                writer.Write(png);
-
-                return path;
-            }
-            catch (Exception ex)
-            {
-                App.Logger.WriteLine(LOG_IDENT, $"No icon for {placeId}: {ex.Message}");
-                return null;
-            }
-        }
         #endregion
 
         #region Windows: start with Windows + scheduled tasks

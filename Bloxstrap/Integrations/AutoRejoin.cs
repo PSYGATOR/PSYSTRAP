@@ -30,7 +30,8 @@ namespace Bloxstrap.Integrations
 
         private static readonly Regex NoRejoinText = new(@"another device|different device|kick|bann?ed|unexpected client|exploit|you left", RegexOptions.IgnoreCase);
 
-        private static readonly Regex ServerGoneText = new(@"shut ?down|restart|server is full|no longer available", RegexOptions.IgnoreCase);
+        // the server is gone or full, or Roblox/the game was updated: rejoin, but into any server
+        private static readonly Regex ServerGoneText = new(@"shut ?down|restart|server is full|no longer available|updat|out of date|newer version", RegexOptions.IgnoreCase);
 
         private static string HistoryFile => Path.Combine(Paths.Base, "Rejoins.txt");
 
@@ -51,6 +52,7 @@ namespace Bloxstrap.Integrations
             activity.OnGameJoin += (_, _) => { _lastReason = null; _lastReasonText = null; };
             activity.OnGameLeave += (_, _) => _ = OnGameLeaveAsync();
             activity.OnAppClose += (_, _) => _userLeftAt = DateTime.Now;
+            activity.OnJoinFailed += (_, failed) => _ = OnJoinFailedAsync(failed);
         }
 
         private void Inspect(string line)
@@ -127,6 +129,7 @@ namespace Bloxstrap.Integrations
             if (_lastReason is int reason && (DateTime.Now - _lastReasonAt).TotalSeconds < 30 && NoRejoinReasons.Contains(reason))
             {
                 App.Logger.WriteLine(LOG_IDENT, $"Disconnect reason {reason} means kicked/left/banned, not rejoining");
+                AfkLog.Add(AfkLog.Kind.Disconnected, data, $"code {reason}");
                 return;
             }
 
@@ -135,11 +138,12 @@ namespace Bloxstrap.Integrations
             if (recentText && NoRejoinText.IsMatch(_lastReasonText!))
             {
                 App.Logger.WriteLine(LOG_IDENT, $"Not rejoining: {_lastReasonText}");
+                AfkLog.Add(AfkLog.Kind.Disconnected, data, _lastReasonText!);
                 NotifyDisconnect(data, rejoining: false);
                 return;
             }
 
-            // that server is gone, so any server of the same game
+            // that server is gone (shut down, restarted for a game or Roblox update...), so any server of the same game
             if (recentText && ServerGoneText.IsMatch(_lastReasonText!) && !isPrivate)
                 serverId = "";
 
@@ -149,11 +153,13 @@ namespace Bloxstrap.Integrations
                 return;
             }
 
-            if (!Utilities.GetProcessesSafe().Any(process => process.Id == _robloxPid))
+            if (!RobloxRunning())
             {
                 App.Logger.WriteLine(LOG_IDENT, "Roblox was closed, not rejoining");
                 return;
             }
+
+            AfkLog.Add(AfkLog.Kind.Disconnected, data, _lastReasonText ?? (_lastReason is int code ? $"code {code}" : ""));
 
             if (!App.Settings.Prop.Gameplay.AutoRejoin)
             {
@@ -161,33 +167,92 @@ namespace Bloxstrap.Integrations
                 return;
             }
 
+            // no internet: wait for it instead of burning rejoin attempts that can't work
+            if (App.Settings.Prop.Afk.WaitForInternet && !await InternetCheck.IsOnlineAsync())
+            {
+                var downSince = DateTime.Now;
+                App.Logger.WriteLine(LOG_IDENT, "The internet is down, waiting for it before rejoining");
+                AfkLog.Add(AfkLog.Kind.InternetDown, data);
+
+                if (!await InternetCheck.WaitUntilOnlineAsync(TimeSpan.FromHours(3)) || !RobloxRunning() || _activity.InGame)
+                    return;
+
+                var downFor = DateTime.Now - downSince;
+                App.Logger.WriteLine(LOG_IDENT, $"Internet is back after {downFor.TotalMinutes:0} min");
+                AfkLog.Add(AfkLog.Kind.InternetBack, data, $"down {downFor.TotalMinutes:0} min");
+
+                // give the router a moment to settle
+                await Task.Delay(TimeSpan.FromSeconds(10));
+            }
+
             if (!RecordAttempt())
             {
-                App.Logger.WriteLine(LOG_IDENT, "Already rejoined 3 times in 10 minutes, giving up");
-                NotifyDisconnect(data, rejoining: false, gaveUp: true);
-                return;
+                if (App.Settings.Prop.Afk.RetryLater)
+                {
+                    App.Logger.WriteLine(LOG_IDENT, "Already rejoined 3 times in 10 minutes, trying once more in 5 minutes");
+                    NotifyDisconnect(data, rejoining: false, note: " Already rejoined 3 times in 10 minutes, so it's trying once more in 5 minutes.");
+
+                    await Task.Delay(TimeSpan.FromMinutes(5));
+
+                    if (!RobloxRunning() || _activity.InGame)
+                        return;
+                }
+                else
+                {
+                    App.Logger.WriteLine(LOG_IDENT, "Already rejoined 3 times in 10 minutes, giving up");
+                    NotifyDisconnect(data, rejoining: false, note: " Already rejoined 3 times in 10 minutes, so it stopped trying.");
+                    return;
+                }
             }
 
             NotifyDisconnect(data, rejoining: true);
 
             string why = _lastReasonText ?? _lastReason?.ToString() ?? "unknown";
             App.Logger.WriteLine(LOG_IDENT, $"Lost the server ({why}), rejoining {placeId}/{(serverId.Length > 0 ? serverId : "any server")}");
+            AfkLog.Add(AfkLog.Kind.Rejoined, data, serverId.Length > 0 ? "same server" : "another server");
             Accounts.ClientRejoin.RejoinServer(_robloxPid, placeId, serverId, accessCode, isPrivate, userId);
         }
 
-        private void NotifyDisconnect(ActivityData data, bool rejoining, bool gaveUp = false)
+        /// <summary>
+        /// A rejoin into a specific server didn't work (full, ended...). If that join was one of PSYstrap's rejoins, go
+        /// to the emptiest server of the same game instead.
+        /// </summary>
+        private async Task OnJoinFailedAsync(ActivityData failed)
+        {
+            if (!App.Settings.Prop.Gameplay.AutoRejoin || !App.Settings.Prop.Afk.FallbackServer || failed.PlaceId == 0)
+                return;
+
+            var pending = Accounts.ClientRejoin.TakePendingRejoin(failed.PlaceId, failed.JobId);
+
+            if (pending is null)
+                return;
+
+            App.Logger.WriteLine(LOG_IDENT, $"Couldn't get back into server {failed.JobId}, looking for another one");
+
+            var server = await RobloxServers.FindSmallestAsync(failed.PlaceId, failed.JobId);
+
+            if (!RobloxRunning() || _activity.InGame)
+                return;
+
+            AfkLog.Add(AfkLog.Kind.Rejoined, failed, server is null ? "old server gone, any server" : "old server gone, emptiest server");
+            Accounts.ClientRejoin.RejoinServer(_robloxPid, failed.PlaceId, server?.Id ?? "", "", false, pending.UserId);
+        }
+
+        private bool RobloxRunning() => Utilities.GetProcessesSafe().Any(process => process.Id == _robloxPid);
+
+        private void NotifyDisconnect(ActivityData data, bool rejoining, string note = "")
         {
             var hook = App.Settings.Prop.Gameplay.Webhook;
             string why = _lastReasonText ?? (_lastReason is int code ? $"code {code}" : "no reason given");
             string game = data.UniverseDetails?.Data.Name ?? $"place {data.PlaceId}";
             string who = Webhook.AccountSuffix(data.UserId);
+            byte[]? picture = App.Settings.Prop.Afk.AlertScreenshots ? RobloxWindows.Capture(_robloxPid) : null;
 
             if (rejoining && hook.OnRejoin)
-                Webhook.Send($"Rejoining {game}", $"Got disconnected{who} ({why}). Rejoining the same server.", Webhook.Gold);
+                Webhook.Send($"Rejoining {game}", $"Got disconnected{who} ({why}). Rejoining.", Webhook.Gold, picture);
             else if (!rejoining && hook.OnDisconnect)
-                Webhook.Send($"Disconnected from {game}", $"Disconnected{who}: {why}." + (gaveUp ? " Already rejoined 3 times in 10 minutes, so it stopped trying." : ""), Webhook.Red);
+                Webhook.Send($"Disconnected from {game}", $"Disconnected{who}: {why}.{note}", Webhook.Red, picture);
         }
-
         /// <summary>Keeps a small history across watcher restarts (each rejoin starts a new watcher).</summary>
         internal static bool RecordAttempt()
         {

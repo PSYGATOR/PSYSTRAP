@@ -171,13 +171,87 @@ namespace Bloxstrap.Integrations
             if (*(ushort*)(header + 86) >= 8)
                 swapChain = *(ulong*)(*(IntPtr*)(header + 96));
 
-            _perSwapChain.AddOrUpdate(swapChain, 1, (_, count) => count + 1);
+            // EVENT_HEADER.TimeStamp @16, a raw QPC value since the session uses ClientContext 1
+            long timestamp = *(long*)(header + 16);
+
+            lock (_frames)
+            {
+                if (!_frames.TryGetValue(swapChain, out var queue))
+                    _frames[swapChain] = queue = new Queue<long>();
+
+                queue.Enqueue(timestamp);
+
+                // keep two seconds; enough for a one second window ending at the newest frame
+                long oldest = timestamp - 2 * Stopwatch.Frequency;
+
+                while (queue.Count > 0 && queue.Peek() < oldest)
+                    queue.Dequeue();
+            }
         }
 
-        private readonly System.Collections.Concurrent.ConcurrentDictionary<ulong, long> _perSwapChain = new();
+        // frame times per swapchain. ETW hands events over in batches (about once a second), so counting
+        // arrivals per half second swings between 0 and double. Counting by when each frame happened doesn't.
+        private readonly Dictionary<ulong, Queue<long>> _frames = new();
 
-        /// <summary>Present counts so far for each swapchain the process has presented to.</summary>
-        public Dictionary<ulong, long> GetPresentCountsBySwapChain() => new(_perSwapChain);
+        /// <summary>
+        /// Frames per second of the busiest swapchain (the game view; extra ones are UI layers), over the second
+        /// before its newest frame. 0 when nothing was presented for a while (minimized, frozen).
+        /// </summary>
+        public double GetFrameRate()
+        {
+            long now = Stopwatch.GetTimestamp();
+            long second = Stopwatch.Frequency;
+            double best = 0;
+
+            lock (_frames)
+            {
+                foreach (var swapChain in _frames.Keys.ToList())
+                {
+                    var queue = _frames[swapChain];
+
+                    if (queue.Count == 0)
+                    {
+                        _frames.Remove(swapChain);
+                        continue;
+                    }
+
+                    long newest = queue.Last();
+
+                    // events can lag up to about a second behind, so only call it stopped after 2.5
+                    if (now - newest > second * 5 / 2)
+                    {
+                        if (now - newest > second * 10)
+                            _frames.Remove(swapChain);
+
+                        continue;
+                    }
+
+                    long from = newest - second;
+                    int count = 0;
+
+                    foreach (long t in queue)
+                        if (t > from)
+                            count++;
+
+                    best = Math.Max(best, count);
+                }
+            }
+
+            return best;
+        }
+
+        /// <summary>Frame rate of every swapchain, for the log.</summary>
+        public string DescribeSwapChains()
+        {
+            lock (_frames)
+            {
+                return string.Join(", ", _frames.Select(pair =>
+                {
+                    long newest = pair.Value.Count > 0 ? pair.Value.Last() : 0;
+                    return $"{pair.Key:X}={pair.Value.Count(t => t > newest - Stopwatch.Frequency)}";
+                }));
+            }
+        }
 
         private static void StopSession(string name)
         {

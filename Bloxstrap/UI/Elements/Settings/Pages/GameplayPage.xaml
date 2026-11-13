@@ -83,6 +83,11 @@
             <ui:ToggleSwitch IsChecked="{Binding SessionRecap, Mode=TwoWay}" />
         </controls:OptionControl>
 
+        <controls:OptionControl Header="Game icon on the Roblox window"
+            Description="The taskbar, title bar and Alt+Tab show the icon of the game you're in instead of the Roblox logo. Handy with lots of windows open.">
+            <ui:ToggleSwitch IsChecked="{Binding GameIconOnWindow, Mode=TwoWay}" />
+        </controls:OptionControl>
+
         <controls:OptionControl Header="Join links you copy"
             Description="While Roblox is open, copying a Roblox game, private server or share link pops up a button to join it.">
             <ui:ToggleSwitch IsChecked="{Binding ClipboardJoin, Mode=TwoWay}" />

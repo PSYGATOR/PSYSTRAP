@@ -1,4 +1,4 @@
-﻿using Bloxstrap.Enums;
+using Bloxstrap.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,6 +58,9 @@ namespace Bloxstrap
 
         /// <summary>Started with Windows: open the favourites marked for it.</summary>
         public LaunchFlag StartupFlag               { get; } = new("startup");
+
+        /// <summary>Open the AFK setup (desktop shortcut).</summary>
+        public LaunchFlag AfkSetupFlag              { get; } = new("afksetup");
 
         /// <summary>Server browser for a place.</summary>
         public LaunchFlag ServersFlag               { get; } = new("servers");

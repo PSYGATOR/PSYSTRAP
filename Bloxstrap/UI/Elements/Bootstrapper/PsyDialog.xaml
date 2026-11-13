@@ -63,6 +63,19 @@
                 <TextBlock.RenderTransform><RotateTransform Angle="-2" /></TextBlock.RenderTransform>
             </TextBlock>
 
+            <!-- the game being opened, when the launch says which one -->
+            <StackPanel x:Name="GamePanel" Margin="0,12,0,0" HorizontalAlignment="Center" Orientation="Horizontal" Visibility="Collapsed" Opacity="0">
+                <controls:SketchBorder Width="46" Height="46" Padding="2" Roughness="1.2" CornerRadius="10" BorderThickness="2" BorderBrush="#27B52B" Background="#0B1A0F">
+                    <Border CornerRadius="7" ClipToBounds="True">
+                        <Border.Background>
+                            <ImageBrush x:Name="GameIconBrush" Stretch="UniformToFill" />
+                        </Border.Background>
+                    </Border>
+                </controls:SketchBorder>
+                <TextBlock x:Name="GameNameText" Margin="10,0,0,0" MaxWidth="380" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                           FontFamily="pack://application:,,,/Resources/Fonts/#Patrick Hand" FontSize="21" Foreground="#F6E7A6" Text="" />
+            </StackPanel>
+
             <TextBlock x:Name="MessageText" Margin="0,12,0,0" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"
                        FontFamily="pack://application:,,,/Resources/Fonts/#Patrick Hand" FontSize="20" Foreground="#EEF8EC" Text="{x:Static resources:Strings.Bootstrapper_Status_Connecting}" />
 

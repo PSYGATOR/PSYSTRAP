@@ -50,6 +50,15 @@ That's minimize to tray. Left click the PSYstrap icon in the tray by the clock t
 **I want the old loading window or the plain look back**
 The loading window is picked in Settings > Appearance (the PSYstrap one is where the logo gets drawn in). The hand-drawn look comes with the PSY theme, also in Appearance; the Dark and Light themes look like normal Bloxstrap.
 
+**The phone remote won't load on my phone**
+Your phone has to be on the same Wi-Fi as the PC, Roblox has to be open, and the phone remote has to be on (Settings > AFK & launching). If Windows asked about the firewall and you clicked Cancel, allow PSYstrap in Windows Security > Firewall > Allow an app through firewall (private networks).
+
+**All my Roblox windows got minimized**
+That's "Minimize Roblox when you're away". Move the mouse and they come back, or turn it off in Settings > AFK & launching.
+
+**A window closed and reopened by itself**
+Check AFK history at the bottom of Settings > AFK & launching. It says why: crashed, froze, stuck joining or went over the RAM limit.
+
 **My smart macro never does anything**
 Take a new screenshot in the editor and click Test. Also check the Roblox window is visible, focused, and the same size as when you made it.
 

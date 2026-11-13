@@ -59,6 +59,7 @@
             <ui:NavigationFluent x:Name="RootNavigation" Frame="{Binding ElementName=RootFrame}" SelectedPageIndex="0"
                                  FontFamily="{DynamicResource PsyHandFont}" FontSize="{DynamicResource PsyNavFontSize}">
                 <ui:NavigationFluent.Items>
+                    <ui:NavigationItem Content="Home" PageType="{x:Type pages:HomePage}" Icon="Home24" Tag="home" />
                     <ui:NavigationItem Content="{x:Static resources:Strings.Menu_Integrations_Title}" PageType="{x:Type pages:IntegrationsPage}" Icon="Add28" Tag="integrations" />
                     <ui:NavigationItem Content="{x:Static resources:Strings.Menu_Behaviour_Title}" PageType="{x:Type pages:BehaviourPage}" Icon="PlaySettings20" Tag="bootstrapper" />
                     <ui:NavigationItem Content="{x:Static resources:Strings.Menu_Mods_Title}" PageType="{x:Type pages:ModsPage}" Icon="WrenchScrewdriver20" Tag="mods" />

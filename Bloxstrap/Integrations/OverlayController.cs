@@ -30,7 +30,6 @@ namespace Bloxstrap.Integrations
 
         private OverlayMenuWindow? _menu;
         private IntPtr _robloxWindow;
-        private Dictionary<ulong, long> _lastCounts = new();
         private TimeSpan _lastSampleTime;
         private TimeSpan _nextMemorySample = TimeSpan.Zero;
         private DateTime _hintUntil = DateTime.MinValue;
@@ -357,30 +356,16 @@ namespace Bloxstrap.Integrations
 
             if (_frameRate.Running && now - _lastSampleTime >= TimeSpan.FromMilliseconds(500))
             {
-                var counts = _frameRate.GetPresentCountsBySwapChain();
-                double seconds = (now - _lastSampleTime).TotalSeconds;
+                double fps = _frameRate.GetFrameRate();
+                _hud.SetFramerate(fps);
 
-                if (_lastSampleTime != TimeSpan.Zero)
+                // a periodic line in the log makes frame rate / cap problems diagnosable after the fact
+                if (now >= _nextFramerateLog)
                 {
-                    // the busiest swapchain is the game view; extra ones (UI layers etc.) would inflate a plain total
-                    var rates = counts
-                        .Select(pair => (pair.Key, Rate: (pair.Value - (_lastCounts.TryGetValue(pair.Key, out long before) ? before : 0)) / seconds))
-                        .OrderByDescending(x => x.Rate)
-                        .ToList();
-
-                    double fps = rates.Count > 0 ? rates[0].Rate : 0;
-                    _hud.SetFramerate(fps);
-
-                    // a periodic line in the log makes frame rate / cap problems diagnosable after the fact
-                    if (now >= _nextFramerateLog)
-                    {
-                        string perSwapChain = string.Join(", ", rates.Select(x => $"{x.Key:X}={x.Rate:0}"));
-                        App.Logger.WriteLine(LOG_IDENT, $"FPS {fps:0} (Roblox cap {RobloxUserSettings.ReadFramerateCap()?.ToString() ?? "?"}; per swapchain: {perSwapChain})");
-                        _nextFramerateLog = now + TimeSpan.FromSeconds(15);
-                    }
+                    App.Logger.WriteLine(LOG_IDENT, $"FPS {fps:0} (Roblox cap {RobloxUserSettings.ReadFramerateCap()?.ToString() ?? "?"}; per swapchain: {_frameRate.DescribeSwapChains()})");
+                    _nextFramerateLog = now + TimeSpan.FromSeconds(15);
                 }
 
-                _lastCounts = counts;
                 _lastSampleTime = now;
             }
 

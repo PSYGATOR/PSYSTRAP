@@ -65,7 +65,7 @@
                                     <TextBlock Text="as" VerticalAlignment="Center" Margin="2,0,6,0" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                                     <ComboBox Width="200" ItemsSource="{Binding DataContext.Accounts, ElementName=LaunchingPageView, Mode=OneTime}"
                                               DisplayMemberPath="Label" SelectedValuePath="UserId" SelectedValue="{Binding AccountUserId, Mode=TwoWay}" />
-                                    <CheckBox Margin="12,0,0,0" Content="Open when Windows starts" IsChecked="{Binding OpenAtStartup, Mode=TwoWay}" />
+                                    <CheckBox Margin="12,0,0,0" Content="Part of my AFK setup" IsChecked="{Binding OpenAtStartup, Mode=TwoWay}" />
                                 </WrapPanel>
                             </StackPanel>
                             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
@@ -91,9 +91,57 @@
         </StackPanel>
         <TextBlock Style="{StaticResource Note}" Text="{Binding FavouriteStatus, Mode=OneWay}" />
 
-        <controls:OptionControl Header="Start with Windows" Description="Opens the favourites ticked &quot;Open when Windows starts&quot; about 20 seconds after you log in.">
+        <!-- afk setup -->
+        <TextBlock Text="AFK setup" Style="{StaticResource Section}" />
+        <TextBlock Style="{StaticResource Lead}"
+                   Text="Every favourite ticked &quot;Part of my AFK setup&quot; above, opened in one go: each as its own account, about 12 seconds apart, then the windows get tiled on your screen." />
+        <WrapPanel Margin="0,10,0,0">
+            <ui:Button Margin="0,0,8,6" Icon="Play24" Appearance="Success" Content="Open my AFK setup" Command="{Binding OpenAfkSetupCommand}" />
+            <ui:Button Margin="0,0,8,6" Icon="Desktop24" Content="Desktop shortcut for it" Command="{Binding AfkSetupShortcutCommand}" />
+        </WrapPanel>
+        <TextBlock Style="{StaticResource Note}" Text="{Binding SetupStatus, Mode=OneWay}" />
+
+        <controls:OptionControl Header="Start with Windows" Description="Opens your AFK setup after you log in, once the internet is up.">
             <ui:ToggleSwitch IsChecked="{Binding StartWithWindows, Mode=TwoWay}" />
         </controls:OptionControl>
+
+        <!-- keeping windows alive -->
+        <TextBlock Text="Keeping windows alive" Style="{StaticResource Section}" />
+        <TextBlock Style="{StaticResource Lead}" Text="On top of rejoining and the crash watchdog on the Gameplay page." />
+
+        <controls:OptionControl Header="Wait out internet drops" Description="If your Wi-Fi drops, wait for it to come back and then rejoin, instead of using up rejoin attempts that can't work.">
+            <ui:ToggleSwitch IsChecked="{Binding WaitForInternet, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="Try another server if the old one's gone" Description="If a rejoin can't get back into the same server (full, shut down), go to the emptiest server of that game.">
+            <ui:ToggleSwitch IsChecked="{Binding FallbackServer, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="Try again later instead of giving up" Description="After 3 rejoins in 10 minutes, try once more 5 minutes later.">
+            <ui:ToggleSwitch IsChecked="{Binding RetryLater, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="Unstick windows stuck joining" Description="A window sitting on the loading screen this long gets closed and rejoins the game.">
+            <ComboBox Width="160" Padding="10,5,10,5" ItemsSource="{Binding StuckChoices, Mode=OneTime}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding StuckJoinMinutes, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="Restart windows using too much RAM" Description="Roblox slowly eats memory over long sessions. A window over the limit restarts into the same server, one window at a time.">
+            <ComboBox Width="160" Padding="10,5,10,5" ItemsSource="{Binding RamChoices, Mode=OneTime}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding RamLimitMB, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <!-- away -->
+        <TextBlock Text="While you're away" Style="{StaticResource Section}" />
+
+        <controls:OptionControl Header="Keep the PC awake" Description="While Roblox is open, the PC doesn't go to sleep. The screen can still turn off.">
+            <ui:ToggleSwitch IsChecked="{Binding KeepAwake, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="Minimize Roblox when you're away" Description="When you haven't touched the PC for a while, every Roblox window gets minimized (they use less graphics card that way) and comes back when you do. Anti-AFK still works on them.">
+            <ComboBox Width="170" Padding="10,5,10,5" ItemsSource="{Binding AwayChoices, Mode=OneTime}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding AwayMinimizeMinutes, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <ui:Button Margin="0,10,0,0" Icon="WeatherMoon24" HorizontalAlignment="Left" Content="Turn the screen off now" Command="{Binding ScreenOffCommand}" />
+        <TextBlock Style="{StaticResource Note}" Text="Roblox keeps running. Move the mouse to turn it back on." />
 
         <!-- schedule -->
         <TextBlock Text="Schedule" Style="{StaticResource Section}" />
@@ -169,5 +217,57 @@
             <CheckBox Margin="0,0,18,6" Content="Friend started playing" IsChecked="{Binding OnFriendJoin, Mode=TwoWay}" />
         </WrapPanel>
         <TextBlock Style="{StaticResource Note}" Text="Smart macros can also send their own message with the &quot;Send phone alert&quot; action." />
+
+        <controls:OptionControl Header="Screenshots with alerts" Description="Attach a picture of the window to disconnect and rejoin messages, so you can see what happened.">
+            <ui:ToggleSwitch IsChecked="{Binding AlertScreenshots, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Header="Status report" Description="A short message every so often: how many windows, which games, and what happened since the last one.">
+            <ComboBox Width="170" Padding="10,5,10,5" ItemsSource="{Binding ReportChoices, Mode=OneTime}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding StatusReportMinutes, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <!-- phone remote -->
+        <TextBlock Text="Phone remote" Style="{StaticResource Section}" />
+        <TextBlock Style="{StaticResource Lead}"
+                   Text="Check on your windows from your phone while it's on the same Wi-Fi: what each one is doing, and rejoin, close or screenshot them. It only runs while Roblox is open. Windows may ask to let PSYstrap through the firewall the first time; allow it for private networks only." />
+
+        <controls:OptionControl Header="Phone remote" Description="Off by default. It's for your home network only, don't open the port on your router.">
+            <ui:ToggleSwitch IsChecked="{Binding RemoteEnabled, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <WrapPanel Margin="0,10,0,0">
+            <TextBlock Text="PIN" VerticalAlignment="Center" Margin="2,0,8,0" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+            <TextBlock Text="{Binding RemotePin, Mode=OneWay}" VerticalAlignment="Center" FontFamily="{DynamicResource PsyMarkerFont}" FontSize="20" Foreground="{DynamicResource PsyCardTitleBrush}" />
+            <ui:Button Margin="12,0,0,0" Icon="ArrowClockwise24" Content="New PIN" Command="{Binding NewPinCommand}" />
+            <TextBlock Text="Port" VerticalAlignment="Center" Margin="22,0,8,0" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+            <ui:TextBox Width="90" Text="{Binding RemotePort, Mode=TwoWay}" />
+        </WrapPanel>
+        <TextBlock Style="{StaticResource Note}" Text="{Binding RemoteAddresses, Mode=OneWay}" />
+
+        <!-- history -->
+        <DockPanel Margin="0,18,0,0">
+            <ui:Button DockPanel.Dock="Right" Icon="ArrowClockwise24" Appearance="Transparent" ToolTip="Refresh" AutomationProperties.Name="Refresh history" Command="{Binding RefreshHistoryCommand}" />
+            <TextBlock Text="AFK history" FontSize="22" FontFamily="{DynamicResource PsyMarkerFont}" VerticalAlignment="Center" />
+        </DockPanel>
+        <TextBlock Style="{StaticResource Lead}" Text="{Binding HistorySummary, Mode=OneWay}" />
+
+        <ItemsControl ItemsSource="{Binding History}" Margin="0,6,0,0">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="2,3,0,3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding When, Mode=OneTime}" Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="{Binding What, Mode=OneTime}" TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding Detail, Mode=OneTime}" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <TextBlock Style="{StaticResource Note}" Text="Nothing yet. Joins, disconnects, rejoins and crashes show up here." Visibility="{Binding HistoryEmptyVisibility, Mode=OneWay}" />
     </StackPanel>
 </ui:UiPage>

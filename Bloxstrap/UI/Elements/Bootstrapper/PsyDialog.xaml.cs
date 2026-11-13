@@ -67,6 +67,50 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
 
             Loaded += (_, _) => StartAnimation();
             Track.SizeChanged += (_, _) => UpdateProgressBar();
+
+            // known straight away, so the space is there from the start and the window doesn't jump when it loads
+            long placeId = RobloxImages.PlaceIdFromLaunchArgs(App.LaunchSettings.RobloxLaunchArgs);
+
+            if (placeId != 0)
+            {
+                GamePanel.Visibility = Visibility.Visible;
+                _ = ShowGameAsync(placeId);
+            }
+        }
+
+        /// <summary>The game's icon and name under the logo (and the icon on the taskbar), once they've downloaded.</summary>
+        private async Task ShowGameAsync(long placeId)
+        {
+            try
+            {
+                var iconTask = RobloxImages.GameIconAsync(placeId);
+                var nameTask = GameProfiles.GetGameNameAsync(placeId);
+
+                string? iconPath = await iconTask;
+                string? name = await nameTask;
+
+                var icon = RobloxImages.Load(iconPath, 128);
+
+                if (icon is null && name is null)
+                    return;
+
+                // the dialog may not have its dispatcher running yet when this started, so hop back explicitly
+                OnUi(() =>
+                {
+                    if (icon is not null)
+                    {
+                        GameIconBrush.ImageSource = icon;
+                        Icon = icon;
+                    }
+
+                    GameNameText.Text = name ?? "Roblox game";
+                    GamePanel.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(350)));
+                });
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException("PsyDialog::ShowGame", ex);
+            }
         }
 
         #region Animation

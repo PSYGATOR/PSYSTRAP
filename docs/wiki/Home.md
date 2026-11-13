@@ -16,6 +16,17 @@ Guides for everything PSYstrap adds on top of Bloxstrap. If you haven't installe
 - [Building](Building.md) - building it yourself
 - [Settings and backups](Settings-and-backups.md) - fast flag cleanup and profiles, importing from other straps, backups
 
+## The Home page
+
+The settings window opens on Home. From there you can:
+
+- **Play Roblox**, or open the Instances window or the server browser. If you have an [AFK setup](AFK-and-launching.md#afk-setup), there's a button to open it too.
+- **See today's numbers**: time played today and this week, how many windows are open, and how many disconnects and crashes there were today.
+- **Jump back in** to games you played recently. Click the icon or Play for a new server, use the arrow to rejoin the last server you were in (it shows if that was in the last 12 hours), use the globe for the server browser, or the star to add the game to your favourites.
+- **Play your favourites** in one click.
+- **See what's open right now**: each window's account picture, game and how long it's been open. The button brings that window to the front.
+- **See what you played most this week.**
+
 ## Hotkeys
 
 These work while Roblox is the focused window.

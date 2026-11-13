@@ -16,19 +16,19 @@ namespace Bloxstrap.Integrations
             !String.IsNullOrWhiteSpace(url)
             && Regex.IsMatch(url.Trim(), @"^https://(?:(?:canary|ptb)\.)?discord(?:app)?\.com/api/webhooks/\d+/[\w-]+/?$");
 
-        /// <summary>Sends one message in the background. Does nothing if no (valid) webhook is set.</summary>
-        public static void Send(string title, string text, int color = Green)
+        /// <summary>Sends one message in the background, optionally with a picture. Does nothing if no (valid) webhook is set.</summary>
+        public static void Send(string title, string text, int color = Green, byte[]? jpeg = null)
         {
             string url = App.Settings.Prop.Gameplay.Webhook.Url.Trim();
 
             if (!IsValidUrl(url))
                 return;
 
-            _ = SendAsync(url, title, text, color);
+            _ = SendAsync(url, title, text, color, jpeg);
         }
 
         /// <summary>Sends straight away and says whether Discord accepted it (for the Test button).</summary>
-        public static async Task<bool> SendAsync(string url, string title, string text, int color = Green)
+        public static async Task<bool> SendAsync(string url, string title, string text, int color = Green, byte[]? jpeg = null)
         {
             await Gate.WaitAsync();
 
@@ -50,19 +50,40 @@ namespace Bloxstrap.Integrations
                             description = Truncate(text, 2000),
                             color,
                             timestamp = DateTime.UtcNow.ToString("o"),
-                            footer = new { text = Environment.MachineName }
+                            footer = new { text = Environment.MachineName },
+                            image = jpeg is null ? null : new { url = "attachment://roblox.jpg" }
                         }
                     }
                 };
 
-                using var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
-                using var response = await Client.PostAsync(url, content);
-                _lastSent = DateTime.Now;
+                var json = JsonSerializer.Serialize(body, new JsonSerializerOptions { DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull });
+                HttpContent content;
 
-                if (!response.IsSuccessStatusCode)
-                    App.Logger.WriteLine("Webhook", $"Discord answered {(int)response.StatusCode}");
+                if (jpeg is null)
+                {
+                    content = new StringContent(json, Encoding.UTF8, "application/json");
+                }
+                else
+                {
+                    // the picture goes along as a file and the embed points at it
+                    var form = new MultipartFormDataContent();
+                    form.Add(new StringContent(json, Encoding.UTF8, "application/json"), "payload_json");
+                    var file = new ByteArrayContent(jpeg);
+                    file.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
+                    form.Add(file, "files[0]", "roblox.jpg");
+                    content = form;
+                }
 
-                return response.IsSuccessStatusCode;
+                using (content)
+                using (var response = await Client.PostAsync(url, content))
+                {
+                    _lastSent = DateTime.Now;
+
+                    if (!response.IsSuccessStatusCode)
+                        App.Logger.WriteLine("Webhook", $"Discord answered {(int)response.StatusCode}");
+
+                    return response.IsSuccessStatusCode;
+                }
             }
             catch (Exception ex)
             {

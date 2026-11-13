@@ -69,6 +69,9 @@ namespace Bloxstrap.Models.Persistable
         /// <summary>Popup with time played etc. when you leave a game.</summary>
         public bool SessionRecap { get; set; } = true;
 
+        /// <summary>The game's icon on the Roblox window and its taskbar button instead of the Roblox logo.</summary>
+        public bool GameIconOnWindow { get; set; } = true;
+
         /// <summary>Offer to join when you copy a Roblox game or private server link.</summary>
         public bool ClipboardJoin { get; set; } = false;
 
@@ -142,6 +145,50 @@ namespace Bloxstrap.Models.Persistable
         public int StopAfterMinutes { get; set; }
 
         public bool Enabled { get; set; } = true;
+    }
+
+    /// <summary>PSYstrap: keeping AFK windows alive and knowing what they're doing. Settings.json "Afk".</summary>
+    public class AfkSettings
+    {
+        /// <summary>When the internet is down, wait for it instead of using up rejoin attempts.</summary>
+        public bool WaitForInternet { get; set; } = true;
+
+        /// <summary>If the old server can't be joined, go to the emptiest server of the same game.</summary>
+        public bool FallbackServer { get; set; } = true;
+
+        /// <summary>After 3 rejoins in 10 minutes, try once more 5 minutes later instead of giving up.</summary>
+        public bool RetryLater { get; set; } = true;
+
+        /// <summary>Rejoin a window stuck joining a game for this many minutes. 0 = off.</summary>
+        public int StuckJoinMinutes { get; set; } = 3;
+
+        /// <summary>Restart (and rejoin) a window using more RAM than this, in MB. 0 = off.</summary>
+        public int RamLimitMB { get; set; } = 0;
+
+        /// <summary>Stop the PC going to sleep while Roblox is open.</summary>
+        public bool KeepAwake { get; set; } = false;
+
+        /// <summary>Minimize every Roblox window after this many minutes of not touching the PC, and bring them back after. 0 = off.</summary>
+        public int AwayMinimizeMinutes { get; set; } = 0;
+
+        /// <summary>Attach a screenshot of the window to disconnect/rejoin/freeze phone alerts.</summary>
+        public bool AlertScreenshots { get; set; } = true;
+
+        /// <summary>Send a status message to the webhook this often, in minutes. 0 = off.</summary>
+        public int StatusReportMinutes { get; set; } = 0;
+
+        public RemoteSettings Remote { get; set; } = new();
+    }
+
+    /// <summary>The phone remote: a small page on your home network, behind a PIN.</summary>
+    public class RemoteSettings
+    {
+        public bool Enabled { get; set; } = false;
+
+        public int Port { get; set; } = 8787;
+
+        /// <summary>Made up the first time the remote is turned on.</summary>
+        public string Pin { get; set; } = "";
     }
 
     /// <summary>PSYstrap launching options, stored in Settings.json under "Launching".</summary>

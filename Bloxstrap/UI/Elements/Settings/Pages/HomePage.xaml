@@ -1,0 +1,260 @@
+<ui:UiPage x:Class="Bloxstrap.UI.Elements.Settings.Pages.HomePage"
+      x:Name="HomePageView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:controls="clr-namespace:Bloxstrap.UI.Elements.Controls"
+      xmlns:vm="clr-namespace:Bloxstrap.UI.ViewModels.Settings"
+      mc:Ignorable="d"
+      d:DataContext="{d:DesignInstance vm:HomeViewModel}"
+      d:DesignHeight="1200" d:DesignWidth="800"
+      Title="HomePage"
+      Scrollable="True">
+    <!-- PSYstrap: the first page. Play, recently played games, favourites, what's open, what you play most -->
+    <ui:UiPage.Resources>
+        <Style x:Key="Section" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,22,0,0" />
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="FontFamily" Value="{DynamicResource PsyMarkerFont}" />
+            <Setter Property="Foreground" Value="{DynamicResource PsyCardTitleBrush}" />
+        </Style>
+        <Style x:Key="Note" TargetType="TextBlock">
+            <Setter Property="Margin" Value="2,6,0,0" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorTertiaryBrush}" />
+        </Style>
+        <Style x:Key="Card" TargetType="controls:SketchBorder">
+            <Setter Property="Background" Value="{DynamicResource CardBackgroundFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource PsyCardStrokeBrush}" />
+            <Setter Property="BorderThickness" Value="{DynamicResource PsyCardStrokeThickness}" />
+            <Setter Property="Roughness" Value="{DynamicResource PsySketchRoughness}" />
+            <Setter Property="CornerRadius" Value="10" />
+        </Style>
+        <Style x:Key="StatValue" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="26" />
+            <Setter Property="FontFamily" Value="{DynamicResource PsyMarkerFont}" />
+            <Setter Property="Foreground" Value="#5FE04C" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="StatLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+        </Style>
+    </ui:UiPage.Resources>
+
+    <StackPanel Margin="0,0,14,14">
+        <!-- hello + the main buttons -->
+        <controls:SketchBorder Style="{StaticResource Card}" Padding="20,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock FontSize="30" FontFamily="{DynamicResource PsyMarkerFont}" Foreground="{DynamicResource PsyPageTitleBrush}" Text="{Binding Greeting, Mode=OneTime}" />
+                    <TextBlock Margin="1,2,0,0" FontSize="15" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Subline, Mode=OneWay}" />
+                    <TextBlock Margin="1,6,0,0" FontSize="13" Foreground="#5FE04C" TextWrapping="Wrap" Text="{Binding Status, Mode=OneWay}" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <Button Style="{StaticResource PsyPrimaryButton}" Padding="34,10,34,9" FontSize="22" Content="Play Roblox" Command="{Binding PlayRobloxCommand}" HorizontalAlignment="Stretch" />
+                    <WrapPanel Margin="0,10,0,0" HorizontalAlignment="Right">
+                        <ui:Button Icon="Window24" Content="Instances" Command="{Binding InstancesCommand}" />
+                        <ui:Button Margin="6,0,0,0" Icon="Globe24" Content="Servers" Command="{Binding ServerBrowserCommand}" />
+                    </WrapPanel>
+                    <ui:Button Margin="0,6,0,0" HorizontalAlignment="Stretch" Icon="Rocket24" Content="Open my AFK setup" Command="{Binding AfkSetupCommand}" Visibility="{Binding AfkSetupVisibility, Mode=OneWay}" />
+                </StackPanel>
+            </Grid>
+        </controls:SketchBorder>
+
+        <!-- today's numbers -->
+        <UniformGrid Margin="0,10,0,0" Columns="4">
+            <controls:SketchBorder Style="{StaticResource Card}" Margin="0,0,6,0" Padding="8,10">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource StatValue}" Text="{Binding PlayedToday, Mode=OneWay}" />
+                    <TextBlock Style="{StaticResource StatLabel}" Text="played today" />
+                </StackPanel>
+            </controls:SketchBorder>
+            <controls:SketchBorder Style="{StaticResource Card}" Margin="3,0,3,0" Padding="8,10">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource StatValue}" Text="{Binding PlayedWeek, Mode=OneWay}" />
+                    <TextBlock Style="{StaticResource StatLabel}" Text="this week" />
+                </StackPanel>
+            </controls:SketchBorder>
+            <controls:SketchBorder Style="{StaticResource Card}" Margin="3,0,3,0" Padding="8,10">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource StatValue}" Text="{Binding WindowsOpen, Mode=OneWay}" />
+                    <TextBlock Style="{StaticResource StatLabel}" Text="windows open" />
+                </StackPanel>
+            </controls:SketchBorder>
+            <controls:SketchBorder Style="{StaticResource Card}" Margin="6,0,0,0" Padding="8,10">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource StatValue}" Text="{Binding Dropped, Mode=OneWay}" />
+                    <TextBlock Style="{StaticResource StatLabel}" Text="drops / crashes today" />
+                </StackPanel>
+            </controls:SketchBorder>
+        </UniformGrid>
+
+        <!-- recently played -->
+        <TextBlock Style="{StaticResource Section}" Text="Jump back in" />
+        <TextBlock Style="{StaticResource Note}" Visibility="{Binding RecentEmptyVisibility, Mode=OneWay}"
+                   Text="Games you play through PSYstrap show up here." />
+        <ItemsControl Margin="0,4,0,0" ItemsSource="{Binding RecentGames}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <controls:SketchBorder Style="{StaticResource Card}" Width="172" Margin="0,8,10,0" Padding="10">
+                        <StackPanel>
+                            <!-- the icon plays the game -->
+                            <Button Padding="0" Cursor="Hand" Background="Transparent" BorderThickness="0" Command="{Binding PlayCommand}"
+                                    ToolTip="Play" AutomationProperties.Name="{Binding Name}">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="Frame" Width="150" Height="150" CornerRadius="8" Background="#0B1A0F" BorderThickness="2" BorderBrush="Transparent">
+                                            <Border CornerRadius="6">
+                                                <Border.Background>
+                                                    <ImageBrush ImageSource="{Binding Icon}" Stretch="UniformToFill" />
+                                                </Border.Background>
+                                            </Border>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Frame" Property="BorderBrush" Value="#5FE04C" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                            <TextBlock Margin="0,8,0,0" Height="38" FontSize="14" FontWeight="SemiBold" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{Binding Name}" ToolTip="{Binding Name}" />
+                            <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding When}" />
+                            <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding Played}" />
+                            <ui:Button Margin="0,8,0,0" HorizontalAlignment="Stretch" Padding="6,4" Icon="Play24" Appearance="Success" Content="Play" Command="{Binding PlayCommand}" />
+                            <!-- collapsed buttons don't take a column, so the rest share the row -->
+                            <UniformGrid Margin="-2,4,-2,0" Rows="1">
+                                <ui:Button Margin="2,0" HorizontalAlignment="Stretch" Padding="4" Icon="ArrowEnter20" ToolTip="Rejoin your last server" AutomationProperties.Name="Rejoin last server"
+                                           Command="{Binding RejoinCommand}" Visibility="{Binding RejoinVisibility}" />
+                                <ui:Button Margin="2,0" HorizontalAlignment="Stretch" Padding="4" Icon="Globe24" ToolTip="Server browser" AutomationProperties.Name="Server browser" Command="{Binding ServersCommand}" />
+                                <ui:Button Margin="2,0" HorizontalAlignment="Stretch" Padding="4" Icon="{Binding FavouriteIcon}" ToolTip="{Binding FavouriteTip}" AutomationProperties.Name="{Binding FavouriteTip}" Command="{Binding FavouriteCommand}" />
+                            </UniformGrid>
+                        </StackPanel>
+                    </controls:SketchBorder>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- favourites -->
+        <TextBlock Style="{StaticResource Section}" Text="Favourites" />
+        <TextBlock Style="{StaticResource Note}" Visibility="{Binding FavouritesEmptyVisibility, Mode=OneWay}"
+                   Text="Press the star on a game above, or add some in AFK &amp; launching." />
+        <ItemsControl Margin="0,2,0,0" ItemsSource="{Binding Favourites}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <controls:SketchBorder Style="{StaticResource Card}" Width="256" Margin="0,8,10,0" Padding="8">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" Width="46" Height="46" CornerRadius="7" Background="#0B1A0F">
+                                <Border CornerRadius="7">
+                                    <Border.Background>
+                                        <ImageBrush ImageSource="{Binding Icon}" Stretch="UniformToFill" />
+                                    </Border.Background>
+                                </Border>
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="10,0,6,0" VerticalAlignment="Center">
+                                <TextBlock FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Text="{Binding Name}" ToolTip="{Binding Name}" />
+                                <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" TextTrimming="CharacterEllipsis" Text="{Binding Detail}" />
+                            </StackPanel>
+                            <ui:Button Grid.Column="2" VerticalAlignment="Center" Padding="8,5" Icon="Play24" Appearance="Success" ToolTip="Play" AutomationProperties.Name="Play favourite" Command="{Binding PlayCommand}" />
+                        </Grid>
+                    </controls:SketchBorder>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- open now + most played -->
+        <Grid Margin="0,4,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0">
+                <TextBlock Style="{StaticResource Section}" Text="Open right now" />
+                <TextBlock Style="{StaticResource Note}" Visibility="{Binding RunningEmptyVisibility, Mode=OneWay}" Text="No Roblox windows open." />
+                <ItemsControl ItemsSource="{Binding Running}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <controls:SketchBorder Style="{StaticResource Card}" Margin="0,8,0,0" Padding="10,8">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <!-- account picture with the game icon on its corner -->
+                                    <Grid Grid.Column="0" Width="48" Height="48">
+                                        <Border Width="42" Height="42" HorizontalAlignment="Left" VerticalAlignment="Top" CornerRadius="21" BorderThickness="2" BorderBrush="#27B52B" Background="#0B1A0F">
+                                            <Ellipse>
+                                                <Ellipse.Fill>
+                                                    <ImageBrush ImageSource="{Binding Avatar}" Stretch="UniformToFill" />
+                                                </Ellipse.Fill>
+                                            </Ellipse>
+                                        </Border>
+                                        <Border Width="22" Height="22" HorizontalAlignment="Right" VerticalAlignment="Bottom" CornerRadius="5" BorderThickness="2" BorderBrush="#E9B632" Background="#0B1A0F" Visibility="{Binding GameIconVisibility}">
+                                            <Border CornerRadius="3">
+                                                <Border.Background>
+                                                    <ImageBrush ImageSource="{Binding GameIcon}" Stretch="UniformToFill" />
+                                                </Border.Background>
+                                            </Border>
+                                        </Border>
+                                    </Grid>
+                                    <StackPanel Grid.Column="1" Margin="10,0,6,0" VerticalAlignment="Center">
+                                        <TextBlock FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Text="{Binding Who}" />
+                                        <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" Text="{Binding What}" />
+                                        <TextBlock FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding Uptime}" />
+                                    </StackPanel>
+                                    <ui:Button Grid.Column="2" VerticalAlignment="Center" Padding="8,5" Icon="WindowArrowUp24" ToolTip="Show this window" AutomationProperties.Name="Show window" Command="{Binding FocusCommand}" />
+                                </Grid>
+                            </controls:SketchBorder>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+
+            <StackPanel Grid.Column="2">
+                <TextBlock Style="{StaticResource Section}" Text="Most played this week" />
+                <TextBlock Style="{StaticResource Note}" Visibility="{Binding MostPlayedEmptyVisibility, Mode=OneWay}" Text="Nothing yet this week." />
+                <ItemsControl Margin="0,6,0,0" ItemsSource="{Binding MostPlayed}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,6,0,0">
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Right" Margin="8,0,0,0" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding Time}" />
+                                    <TextBlock FontSize="13" TextTrimming="CharacterEllipsis" Text="{Binding Name}" ToolTip="{Binding Name}" />
+                                </DockPanel>
+                                <Border Margin="0,4,0,0" Height="9" Width="{Binding BarWidth}" HorizontalAlignment="Left" CornerRadius="3,5,4,6"
+                                        Background="{x:Static controls:SketchBorder.HatchBrush}" BorderThickness="1.5" BorderBrush="#27B52B" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Grid>
+    </StackPanel>
+</ui:UiPage>

@@ -69,6 +69,8 @@ namespace Bloxstrap.UI.ViewModels.Settings
 
         public bool SessionRecap { get => Gameplay.SessionRecap; set => Gameplay.SessionRecap = value; }
 
+        public bool GameIconOnWindow { get => Gameplay.GameIconOnWindow; set => Gameplay.GameIconOnWindow = value; }
+
         public bool ClipboardJoin { get => Gameplay.ClipboardJoin; set => Gameplay.ClipboardJoin = value; }
 
         public bool OrganiseScreenshots { get => Gameplay.OrganiseScreenshots; set => Gameplay.OrganiseScreenshots = value; }

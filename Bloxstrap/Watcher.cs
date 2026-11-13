@@ -33,6 +33,12 @@ namespace Bloxstrap
 
         private readonly ClipboardJoin? _clipboard;
 
+        private readonly AfkCoordinator? _afk;
+
+        private readonly PhoneRemote? _remote;
+
+        private readonly GameWindowIcon? _windowIcon;
+
         public Watcher()
         {
             const string LOG_IDENT = "Watcher";
@@ -123,12 +129,19 @@ namespace Bloxstrap
 
                 // PSYstrap: remember servers, and a little recap when you leave a game
                 RecentServers.Track(activity);
+                activity.OnGameJoin += (_, _) => AfkLog.Add(AfkLog.Kind.Joined, activity.Data);
+                activity.OnGameLeave += (_, _) => AfkLog.Add(AfkLog.Kind.Left, activity.History.FirstOrDefault());
                 activity.OnGameLeave += (_, _) => _ = ShowSessionRecapAsync(activity);
+
+                // PSYstrap: the game's icon on the Roblox window
+                _windowIcon = new GameWindowIcon(activity, robloxPid);
             }
 
             // PSYstrap: crash handler, tray, watchdog, scheduled close
             Care = new ClientCare(_watcherData.ProcessId, () => ActivityWatcher, Notify);
             _booster = new GameBooster(_watcherData.ProcessId);
+            _afk = new AfkCoordinator();
+            _remote = new PhoneRemote();
             _screenshots = new ScreenshotOrganiser();
 
             // PSYstrap in-game overlay. Created on the UI thread (the watcher is constructed there).
@@ -198,6 +211,25 @@ namespace Bloxstrap
         private static string FormatSpan(TimeSpan time) =>
             time.TotalHours >= 1 ? $"{(int)time.TotalHours}h {time.Minutes}m" : $"{Math.Max(1, time.Minutes)}m";
 
+        /// <summary>One part of cleaning up; slow or failing parts get logged and the rest still runs.</summary>
+        private static void Step(string what, Action action)
+        {
+            var timer = Stopwatch.StartNew();
+            App.Logger.WriteLine("Watcher::Dispose", $"Closing {what}");
+
+            try
+            {
+                action();
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException($"Watcher::Dispose ({what})", ex);
+            }
+
+            if (timer.ElapsedMilliseconds > 2000)
+                App.Logger.WriteLine("Watcher::Dispose", $"Closing {what} took {timer.ElapsedMilliseconds} ms");
+        }
+
         public void KillRobloxProcess() => CloseProcess(_watcherData!.ProcessId, true);
 
         public void CloseProcess(int pid, bool force = false)
@@ -255,19 +287,32 @@ namespace Bloxstrap
         {
             App.Logger.WriteLine("Watcher::Dispose", "Disposing Watcher");
 
-            Overlay?.Dispose();
-            Playtime?.Dispose();
-            _friendAlerts?.Dispose();
-            Care?.Dispose();
-            _booster?.Dispose();
-            _screenshots?.Dispose();
-            _clipboard?.Dispose();
+            // PSYstrap: a watcher once got stuck here and kept its tray icon after Roblox closed. If cleaning up takes
+            // too long, quit anyway (the log says which part it was stuck on), so it can't hang around forever.
+            var stuckAfter = new System.Threading.Timer(_ =>
+            {
+                App.Logger.WriteLine("Watcher::Dispose", "Cleaning up took too long, quitting anyway");
+                Environment.Exit(0);
+            }, null, TimeSpan.FromSeconds(15), Timeout.InfiniteTimeSpan);
+
+            Step("overlay", () => Overlay?.Dispose());
+            Step("playtime", () => Playtime?.Dispose());
+            Step("friend alerts", () => _friendAlerts?.Dispose());
+            Step("client care", () => Care?.Dispose());
+            Step("booster", () => _booster?.Dispose());
+            Step("screenshots", () => _screenshots?.Dispose());
+            Step("clipboard", () => _clipboard?.Dispose());
+            Step("afk", () => _afk?.Dispose());
+            Step("remote", () => _remote?.Dispose());
+            Step("window icon", () => _windowIcon?.Dispose());
 
             if (_watcherData is not null)
                 Accounts.LiveSessions.Clear(_watcherData.ProcessId);
 
-            _notifyIcon?.Dispose();
-            RichPresence?.Dispose();
+            Step("tray icon", () => _notifyIcon?.Dispose());
+            Step("rich presence", () => RichPresence?.Dispose());
+
+            stuckAfter.Dispose();
 
             GC.SuppressFinalize(this);
         }

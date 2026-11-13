@@ -17,9 +17,99 @@ namespace Bloxstrap.UI.ViewModels.Instances
 
         public int Slot { get; }
 
-        public string Title => $"Instance {Slot}";
+        public string Title => AccountName is null ? $"Instance {Slot}" : $"Instance {Slot}  ·  {AccountName}";
 
         public string Details { get; private set; } = "";
+
+        /// <summary>Who's playing on this client and what, from its watcher (only known while it's in a game).</summary>
+        public string? AccountName { get; private set; }
+
+        public string GameLine { get; private set; } = "Not in a game";
+
+        /// <summary>Profile picture of the account on this client.</summary>
+        public System.Windows.Media.ImageSource? Avatar { get; private set; }
+
+        /// <summary>Icon of the game this client is in.</summary>
+        public System.Windows.Media.ImageSource? GameIcon { get; private set; }
+
+        public Visibility GameIconVisibility => GameIcon is null ? Visibility.Collapsed : Visibility.Visible;
+
+        public string Initial => Slot.ToString();
+
+        private long _userId = -1;
+        private long _placeId = -1;
+
+        /// <summary>Updates the picture and game when this client's account or game changed.</summary>
+        internal void SetSession(Accounts.LiveSessions.Session? session, IReadOnlyDictionary<long, string> names)
+        {
+            long userId = session?.UserId ?? 0;
+            long placeId = session?.PlaceId ?? 0;
+
+            if (userId != _userId)
+            {
+                _userId = userId;
+                AccountName = userId == 0 ? null : names.TryGetValue(userId, out string? name) ? name : null;
+                OnPropertyChanged(nameof(AccountName));
+                OnPropertyChanged(nameof(Title));
+
+                // keep the last picture while it's between games, so it doesn't flicker on teleports
+                if (userId != 0)
+                    _ = LoadAvatarAsync(userId);
+            }
+
+            if (placeId != _placeId)
+            {
+                _placeId = placeId;
+
+                if (placeId == 0)
+                {
+                    GameIcon = null;
+                    GameLine = "Not in a game";
+                    OnPropertyChanged(nameof(GameIcon));
+                    OnPropertyChanged(nameof(GameIconVisibility));
+                    OnPropertyChanged(nameof(GameLine));
+                }
+                else
+                {
+                    _ = LoadGameAsync(placeId);
+                }
+            }
+        }
+
+        private async Task LoadAvatarAsync(long userId)
+        {
+            // not a saved account (whoever is signed in to Roblox): its public profile has the name
+            if (AccountName is null && await RobloxImages.UsernameAsync(userId) is string username && userId == _userId)
+            {
+                AccountName = username;
+                OnPropertyChanged(nameof(AccountName));
+                OnPropertyChanged(nameof(Title));
+            }
+
+            var avatar = RobloxImages.Load(await RobloxImages.AvatarAsync(userId), 96);
+
+            if (avatar is null || userId != _userId)
+                return;
+
+            Avatar = avatar;
+            OnPropertyChanged(nameof(Avatar));
+        }
+
+        private async Task LoadGameAsync(long placeId)
+        {
+            var iconTask = RobloxImages.GameIconAsync(placeId);
+            string? name = await GameProfiles.GetGameNameAsync(placeId);
+            var icon = RobloxImages.Load(await iconTask, 64);
+
+            if (placeId != _placeId)
+                return;
+
+            GameIcon = icon;
+            GameLine = name ?? $"Place {placeId}";
+            OnPropertyChanged(nameof(GameIcon));
+            OnPropertyChanged(nameof(GameIconVisibility));
+            OnPropertyChanged(nameof(GameLine));
+        }
 
         public bool IsFocused { get; private set; }
 
@@ -221,7 +311,7 @@ namespace Bloxstrap.UI.ViewModels.Instances
         #region Commands
         public ICommand LaunchCommand => new RelayCommand(LaunchInstance);
 
-        public ICommand ArrangeCommand => new RelayCommand(ArrangeWindows);
+        public ICommand ArrangeCommand => new RelayCommand(Integrations.RobloxWindows.ArrangeAll);
 
         private void LaunchInstance()
         {
@@ -348,8 +438,13 @@ namespace Bloxstrap.UI.ViewModels.Instances
 
             long totalMemory = 0;
 
+            var sessions = Accounts.LiveSessions.List().ToDictionary(session => session.ProcessId);
+            var names = Accounts.AccountStore.Load().GroupBy(account => account.UserId).ToDictionary(group => group.Key, group => group.First().Username);
+
             foreach (var row in Instances)
             {
+                row.SetSession(sessions.GetValueOrDefault(row.ProcessId), names);
+
                 var client = clients.First(process => process.Id == row.ProcessId);
                 long memory = 0;
                 string cpu = "--";

@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 
 using Windows.Win32;
 using Windows.Win32.Foundation;
@@ -83,6 +83,11 @@ namespace Bloxstrap
             {
                 App.Logger.WriteLine(LOG_IDENT, "Started with Windows");
                 Task.Run(Launching.OpenStartupFavouritesAsync).ContinueWith(_ => App.Terminate());
+            }
+            else if (App.LaunchSettings.AfkSetupFlag.Active)
+            {
+                App.Logger.WriteLine(LOG_IDENT, "Opening the AFK setup");
+                Task.Run(Launching.OpenAfkSetupAsync).ContinueWith(_ => App.Terminate());
             }
             else if (App.LaunchSettings.ServersFlag.Active)
             {

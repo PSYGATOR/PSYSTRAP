@@ -39,6 +39,8 @@ On by default. If Roblox crashes, or stops responding for a whole minute while y
 
 **Recap when you leave a game** (on by default) - a little popup saying how long you played, and how long today in total.
 
+**Game icon on the Roblox window** (on by default) - the title bar, taskbar and Alt+Tab show the icon of the game that window is in instead of the Roblox logo, so you can tell your windows apart. It goes back to the Roblox logo when you leave the game. The PSYstrap loading window also shows the game's icon and name when you open a game, and the Instances window shows each account's profile picture with the game it's in.
+
 **Join links you copy** (off by default) - while Roblox is open, copying a Roblox game link, private server link or share link pops up "Play this game?". Click it to go.
 
 **Sort screenshots by game** (off by default) - new screenshots in Pictures\Roblox get moved into a folder named after the game you took them in.

@@ -20,11 +20,26 @@ namespace Bloxstrap.UI.ViewModels.Instances
 
         public ICommand RemoveCommand { get; }
 
+        /// <summary>The account's Roblox profile picture (headshot), once it's downloaded.</summary>
+        public System.Windows.Media.ImageSource? Avatar { get; private set; }
+
         public AccountRowViewModel(SavedAccount account, Action<AccountRowViewModel> remove)
         {
             Account = account;
             Details = $"User ID {account.UserId}  ·  saved {account.Added:d}";
             RemoveCommand = new RelayCommand(() => remove(this));
+            _ = LoadAvatarAsync();
+        }
+
+        private async Task LoadAvatarAsync()
+        {
+            var avatar = RobloxImages.Load(await RobloxImages.AvatarAsync(Account.UserId), 96);
+
+            if (avatar is null)
+                return;
+
+            Avatar = avatar;
+            OnPropertyChanged(nameof(Avatar));
         }
     }
 

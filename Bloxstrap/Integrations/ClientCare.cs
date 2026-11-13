@@ -42,8 +42,23 @@ namespace Bloxstrap.Integrations
             // a handle kept open from the start is the only way to read the exit code once Roblox is gone
             _exitHandle = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION | SYNCHRONIZE, false, robloxPid);
 
+            // stuck-join detection follows the activity watcher
+            if (getActivity() is ActivityWatcher activity)
+            {
+                activity.OnLogEntry += (_, line) =>
+                {
+                    if (line.Contains("! Joining game", StringComparison.Ordinal))
+                        _joiningSince ??= DateTime.Now;
+                };
+                activity.OnGameJoin += (_, _) => _joiningSince = null;
+                activity.OnGameLeave += (_, _) => _joiningSince = null;
+                activity.OnJoinFailed += (_, _) => _joiningSince = null;
+            }
+
             _timer = new System.Threading.Timer(_ => SafeTick(), null, 1000, 2000);
         }
+
+        private DateTime? _joiningSince;
 
         private void SafeTick()
         {
@@ -77,7 +92,70 @@ namespace Bloxstrap.Integrations
 
             if (_tick % 15 == 0)
                 CheckStopTimers();
+
+            if (_tick % 5 == 0)
+                CheckStuckJoin();
+
+            if (_tick % 30 == 0)
+                CheckRam();
         }
+
+        #region Stuck joins and RAM
+        /// <summary>A join that never finishes (stuck on the loading screen): rejoin the game, any server.</summary>
+        private void CheckStuckJoin()
+        {
+            int limit = App.Settings.Prop.Afk.StuckJoinMinutes;
+
+            if (limit <= 0 || _joiningSince is not DateTime since || DateTime.Now - since < TimeSpan.FromMinutes(limit))
+                return;
+
+            _joiningSince = null;
+            var activity = _getActivity();
+
+            if (activity is null || activity.InGame || activity.Data.PlaceId == 0)
+                return;
+
+            var game = activity.Data;
+            App.Logger.WriteLine(LOG_IDENT, $"Stuck joining place {game.PlaceId} for {limit} minutes, trying again");
+            Recover(game, "got stuck joining", AfkLog.Kind.Stuck, anyServer: true);
+        }
+
+        private static string RamRestartFile => Path.Combine(Paths.Base, "LastRamRestart.txt");
+
+        /// <summary>
+        /// Roblox slowly eats memory over long sessions. Past the limit, restart this window into the same server.
+        /// Only one window restarts every 2 minutes, so they don't all go at once.
+        /// </summary>
+        private void CheckRam()
+        {
+            int limitMB = App.Settings.Prop.Afk.RamLimitMB;
+            var activity = _getActivity();
+
+            if (limitMB <= 0 || _process is null || activity is not { InGame: true })
+                return;
+
+            _process.Refresh();
+            long usedMB = _process.WorkingSet64 / (1024 * 1024);
+
+            if (usedMB < limitMB)
+                return;
+
+            try
+            {
+                if (File.Exists(RamRestartFile) && DateTime.Now - File.GetLastWriteTime(RamRestartFile) < TimeSpan.FromMinutes(2))
+                    return; // another window just restarted; this one waits its turn
+
+                File.WriteAllText(RamRestartFile, _pid.ToString());
+            }
+            catch (IOException)
+            {
+                return;
+            }
+
+            App.Logger.WriteLine(LOG_IDENT, $"Using {usedMB} MB (limit {limitMB}), restarting into the same server");
+            Recover(activity.Data, $"was using {usedMB / 1024.0:0.0} GB of RAM", AfkLog.Kind.RamRestart);
+        }
+        #endregion
 
         #region Crash handler
         private static void CloseCrashHandlers()
@@ -190,7 +268,7 @@ namespace Bloxstrap.Integrations
             if (game is null)
                 return; // not in a game; nothing to put you back into
 
-            Recover(game, "froze");
+            Recover(game, "froze", AfkLog.Kind.Froze);
         }
 
         /// <summary>Called by the watcher once Roblox has closed. Reopens it if it crashed.</summary>
@@ -218,32 +296,38 @@ namespace Bloxstrap.Integrations
             if (game is null)
                 return;
 
-            Recover(game, "crashed");
+            Recover(game, "crashed", AfkLog.Kind.Crashed);
         }
 
-        private void Recover(ActivityData game, string what)
+        private void Recover(ActivityData game, string what, AfkLog.Kind kind, bool anyServer = false)
         {
             string name = game.UniverseDetails?.Data.Name ?? $"place {game.PlaceId}";
             string who = Webhook.AccountSuffix(game.UserId);
+            bool tell = kind is AfkLog.Kind.Crashed or AfkLog.Kind.Froze ? App.Settings.Prop.Gameplay.Webhook.OnCrash : App.Settings.Prop.Gameplay.Webhook.OnRejoin;
+
+            AfkLog.Add(kind, game, what);
 
             if (!AutoRejoin.RecordAttempt())
             {
                 App.Logger.WriteLine(LOG_IDENT, "Already reopened 3 times in 10 minutes, leaving it");
 
-                if (App.Settings.Prop.Gameplay.Webhook.OnCrash)
-                    Webhook.Send($"Roblox {what}", $"Roblox {what}{who} in {name}. It already reopened 3 times in 10 minutes, so it's staying closed.", Webhook.Red);
+                if (tell)
+                    Webhook.Send($"Roblox {what}", $"Roblox {what}{who} in {name}. It already reopened 3 times in 10 minutes, so it's staying as it is.", Webhook.Red);
 
                 return;
             }
 
-            if (App.Settings.Prop.Gameplay.Webhook.OnCrash)
-                Webhook.Send($"Roblox {what}", $"Roblox {what}{who} in {name}. Opening it again.", Webhook.Gold);
+            // a frozen window can't draw a screenshot (asking it to would hang too), and a crashed one is gone
+            byte[]? picture = App.Settings.Prop.Afk.AlertScreenshots && kind is AfkLog.Kind.Stuck or AfkLog.Kind.RamRestart ? RobloxWindows.Capture(_pid) : null;
+
+            if (tell)
+                Webhook.Send($"Roblox {what}", $"Roblox {what}{who} in {name}. Opening it again.", Webhook.Gold, picture);
 
             ClosingOnPurpose = true;
             bool isPrivate = game.ServerType == ServerType.Private;
-            Task.Run(() => Accounts.ClientRejoin.RejoinServer(_pid, game.PlaceId, game.JobId, game.AccessCode, isPrivate, game.UserId));
+            string serverId = anyServer ? "" : game.JobId;
+            Task.Run(() => Accounts.ClientRejoin.RejoinServer(_pid, game.PlaceId, serverId, game.AccessCode, isPrivate, game.UserId));
         }
-
         private ActivityData? CurrentOrLastGame()
         {
             var activity = _getActivity();
@@ -280,6 +364,7 @@ namespace Bloxstrap.Integrations
                     continue;
 
                 Launching.DeleteStopTimer(timer.Id);
+                AfkLog.Add(AfkLog.Kind.ScheduledClose, game, timer.Name);
                 App.Logger.WriteLine(LOG_IDENT, $"Scheduled time is up for '{timer.Name}', closing Roblox");
 
                 if (App.Settings.Prop.Gameplay.Webhook.OnSchedule)

@@ -847,17 +847,25 @@ namespace Bloxstrap
                 // PSYstrap releases also carry the license file, so pick the exe rather than whichever asset is first
                 var asset = releaseInfo.Assets!.FirstOrDefault(x => x.Name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)) ?? releaseInfo.Assets![0];
 
-                string downloadLocation = Path.Combine(Paths.TempUpdates, asset.Name);
+                // PSYstrap: every release's exe is called PSYstrap.exe, so name the download after the version. With
+                // the plain name, a copy left over from an older update was "already downloaded" and got run again.
+                string downloadLocation = Path.Combine(Paths.TempUpdates, $"{Path.GetFileNameWithoutExtension(asset.Name)}-{releaseInfo.TagName}{Path.GetExtension(asset.Name)}");
 
                 Directory.CreateDirectory(Paths.TempUpdates);
 
+                foreach (string old in Directory.GetFiles(Paths.TempUpdates, "*.exe").Where(file => !file.Equals(downloadLocation, StringComparison.OrdinalIgnoreCase)))
+                {
+                    try { File.Delete(old); } catch { } // still running, maybe; it goes next time
+                }
+
                 App.Logger.WriteLine(LOG_IDENT, $"Downloading {releaseInfo.TagName}...");
-                
-                if (!File.Exists(downloadLocation))
+
+                if (!File.Exists(downloadLocation) || new FileInfo(downloadLocation).Length != asset.Size)
                 {
                     var response = await App.HttpClient.GetAsync(asset.BrowserDownloadUrl);
+                    response.EnsureSuccessStatusCode();
 
-                    await using var fileStream = new FileStream(downloadLocation, FileMode.OpenOrCreate, FileAccess.Write);
+                    await using var fileStream = new FileStream(downloadLocation, FileMode.Create, FileAccess.Write);
                     await response.Content.CopyToAsync(fileStream);
                 }
 #endif

@@ -22,6 +22,8 @@ namespace Bloxstrap.Models.Persistable
 
         public LaunchingSettings Launching { get; set; } = new();
 
+        public AfkSettings Afk { get; set; } = new();
+
         // PSYstrap: written to Roblox's GlobalBasicSettings before each launch. 0 = leave Roblox's own setting alone.
         public int FramerateCap { get; set; } = 0;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]

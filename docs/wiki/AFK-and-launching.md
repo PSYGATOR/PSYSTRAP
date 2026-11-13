@@ -10,16 +10,34 @@ Each favourite has:
 
 - **a name** you can change
 - **as** - which saved account it opens as. "Whoever is signed in" uses the account Roblox is logged in to.
-- **Open when Windows starts** - see below
+- **Part of my AFK setup** - see below
 - **Play** - opens it now
 - **Desktop shortcut** - puts a shortcut on your desktop with the game's icon. Double click it to go straight into the game, no menus.
 - **Server browser** - opens the [server browser](#server-browser) for that game
 
 If you delete a favourite, its desktop shortcut stops working (it tells you when you click it).
 
-## Start with Windows
+## AFK setup
 
-Turn it on and tick "Open when Windows starts" on the favourites you want. About 20 seconds after you log in, PSYstrap opens them one after the other. Good for an AFK setup that should come back by itself after your PC restarts.
+Tick "Part of my AFK setup" on the favourites you leave running. "Open my AFK setup" opens all of them, each as its own saved account, about 12 seconds apart, then tiles the windows over your screen. "Desktop shortcut for it" makes a shortcut that does the same thing.
+
+**Start with Windows** opens the AFK setup about 20 seconds after you log in, once the internet is up. Good for a setup that should come back by itself after your PC restarts.
+
+## Keeping windows alive
+
+These sit on top of rejoining and the crash watchdog on the [Gameplay](Gameplay.md) page.
+
+- **Wait out internet drops** (on) - if your Wi-Fi drops, PSYstrap waits for it to come back and then rejoins, instead of using up its 3 rejoins on attempts that can't work.
+- **Try another server if the old one's gone** (on) - if a rejoin can't get back into the same server (full, shut down), it goes to the emptiest server of the same game. Roblox and game updates that kick everyone also count as "server gone", so those rejoin into any server.
+- **Try again later instead of giving up** (on) - after 3 rejoins in 10 minutes it tries once more 5 minutes later.
+- **Unstick windows stuck joining** (3 minutes) - a window sitting on the loading screen that long gets closed and rejoins the game.
+- **Restart windows using too much RAM** (off) - Roblox slowly eats memory over long sessions. A window over the limit you pick restarts into the same server. Only one window restarts every 2 minutes, so they don't all go at once.
+
+## While you're away
+
+- **Keep the PC awake** (off) - while Roblox is open the PC doesn't go to sleep. The screen can still turn off.
+- **Minimize Roblox when you're away** (off) - after the time you pick without touching the PC, every Roblox window gets minimized (they barely use the graphics card that way), and they come back when you move the mouse or press a key. Anti-AFK still works on minimized windows: it pops the window up for its nudge and puts it back.
+- **Turn the screen off now** - turns the monitor off straight away. Roblox keeps running; moving the mouse turns it back on.
 
 ## Schedule
 
@@ -60,4 +78,21 @@ Messages say which saved account it was, so you can tell your alts apart.
 
 Smart macros also have a **Send phone alert** action. Put your own message in it, like "boss is up", and it gets sent when that rule fires. See [Smart macros](Smart-macros.md).
 
+**Screenshots with alerts** (on) - disconnect and rejoin messages come with a picture of the window, so you can see what was on screen.
+
+**Status report** (off) - a short message every 30 minutes to 8 hours: how many windows, which account is in which game, and how many disconnects, rejoins and crashes there were since the last one.
+
 Anyone with the webhook link can post in that channel, so don't share it.
+
+## Phone remote
+
+Off by default. Turn it on and PSYstrap shows a PIN and an address like `http://192.168.1.20:8787`. Open that on your phone while it's on the same Wi-Fi and type the PIN. You get every Roblox window with its account, game, how long it's been in, and RAM, plus buttons to rejoin, close or screenshot each one, open your AFK setup, and turn the screen off. It refreshes every 15 seconds.
+
+- It only runs while Roblox is open.
+- The first time, Windows may ask whether PSYstrap can get through the firewall. Allow it on private networks only.
+- It's plain HTTP for your own network. Don't forward the port on your router to reach it from outside.
+- Five wrong PINs lock that phone out for 5 minutes. "New PIN" makes a new one (phones that are signed in stay signed in until they sign out or 12 hours pass).
+
+## AFK history
+
+At the bottom of the page: everything your windows did (joined, left, disconnected with the reason, rejoined, crashed, froze, got stuck, restarted for RAM, internet down and back, scheduled opens and closes), newest first, plus today's totals and how long each account was in a game today.

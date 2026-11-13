@@ -33,6 +33,9 @@ namespace Bloxstrap.Integrations
         public event EventHandler? OnGameLeave;
         public event EventHandler? OnLogOpen;
         public event EventHandler? OnAppClose;
+
+        /// <summary>PSYstrap: a join was cancelled or failed (server full, gone...). Carries what it was trying to join.</summary>
+        public event EventHandler<ActivityData>? OnJoinFailed;
         public event EventHandler<Message>? OnRPCMessage;
 
         private DateTime LastRPCRequest;
@@ -161,7 +164,11 @@ namespace Bloxstrap.Integrations
                 if (Data.PlaceId != 0 && !InGame)
                 {
                     App.Logger.WriteLine(LOG_IDENT, "User appears to be leaving from a cancelled/errored join");
+                    var failed = Data;
                     Data = new();
+
+                    // PSYstrap: auto rejoin uses this to try another server when the old one can't be joined
+                    OnJoinFailed?.Invoke(this, failed);
                 }
 
                 return;

@@ -44,6 +44,10 @@ namespace Bloxstrap.Accounts
 
             App.Logger.WriteLine(LOG_IDENT, $"Rejoining client {processId} (place {placeId})");
 
+            // remember which server we're aiming for, so a failed join can fall back to another one
+            if (placeId != 0 && !isPrivate && !String.IsNullOrEmpty(serverId))
+                SavePendingRejoin(new PendingRejoin { PlaceId = placeId, ServerId = serverId, UserId = userId, At = DateTime.Now });
+
             try
             {
                 using var process = Process.GetProcessById(processId);
@@ -61,6 +65,63 @@ namespace Bloxstrap.Accounts
             }
 
             Process.Start(Paths.Process, link is null ? "-player" : $"-player \"{link}\"");
+        }
+
+        public class PendingRejoin
+        {
+            public long PlaceId { get; set; }
+            public string ServerId { get; set; } = "";
+            public long UserId { get; set; }
+            public DateTime At { get; set; }
+        }
+
+        private static string PendingFolder => Path.Combine(Paths.Base, "PendingRejoins");
+
+        private static void SavePendingRejoin(PendingRejoin pending)
+        {
+            try
+            {
+                Directory.CreateDirectory(PendingFolder);
+                File.WriteAllText(Path.Combine(PendingFolder, $"{pending.PlaceId}-{pending.ServerId}.json"), JsonSerializer.Serialize(pending));
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException(LOG_IDENT, ex);
+            }
+        }
+
+        /// <summary>
+        /// The rejoin PSYstrap started into this exact server in the last 5 minutes, if any, removed so it's only used
+        /// once. Older ones are cleaned up on the way.
+        /// </summary>
+        public static PendingRejoin? TakePendingRejoin(long placeId, string serverId)
+        {
+            try
+            {
+                if (!Directory.Exists(PendingFolder))
+                    return null;
+
+                foreach (string file in Directory.GetFiles(PendingFolder, "*.json"))
+                {
+                    if (DateTime.Now - File.GetLastWriteTime(file) > TimeSpan.FromMinutes(10))
+                        File.Delete(file);
+                }
+
+                string path = Path.Combine(PendingFolder, $"{placeId}-{serverId}.json");
+
+                if (!File.Exists(path))
+                    return null;
+
+                var pending = JsonSerializer.Deserialize<PendingRejoin>(File.ReadAllText(path));
+                File.Delete(path);
+
+                return pending is not null && DateTime.Now - pending.At < TimeSpan.FromMinutes(5) ? pending : null;
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException(LOG_IDENT, ex);
+                return null;
+            }
         }
     }
 }
