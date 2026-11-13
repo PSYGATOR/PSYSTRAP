@@ -40,9 +40,11 @@
             <!-- the logo, 500x500 artwork scaled down -->
             <Viewbox Width="210" Height="210" HorizontalAlignment="Center">
                 <Grid x:Name="Layer" Width="500" Height="500" ClipToBounds="False">
-                    <Image x:Name="BodyMasked" Source="pack://application:,,,/Resources/BootstrapperStyles/PSY/LogoBody.png" Width="500" Height="500" RenderOptions.BitmapScalingMode="HighQuality" />
-                    <Image x:Name="BodySolid" Source="pack://application:,,,/Resources/BootstrapperStyles/PSY/LogoBody.png" Width="500" Height="500" Opacity="0" RenderOptions.BitmapScalingMode="HighQuality" />
-                    <Image x:Name="Crown" Source="pack://application:,,,/Resources/BootstrapperStyles/PSY/LogoCrown.png" Width="500" Height="500" Opacity="0" RenderOptions.BitmapScalingMode="HighQuality">
+                    <!-- the hand-drawn logo (fork/art/make_logo.py makes these from fork/art/logo-sketch.jpg) -->
+                    <Image x:Name="BodyMasked" Source="pack://application:,,,/Resources/BootstrapperStyles/PSY/SketchBody.png" Width="500" Height="500" RenderOptions.BitmapScalingMode="HighQuality" />
+                    <Image x:Name="BodySolid" Source="pack://application:,,,/Resources/BootstrapperStyles/PSY/SketchBody.png" Width="500" Height="500" Opacity="0" RenderOptions.BitmapScalingMode="HighQuality" />
+                    <!-- the crown lands where it sits on the logo; it rocks around its base -->
+                    <Image x:Name="Crown" Source="pack://application:,,,/Resources/BootstrapperStyles/PSY/SketchCrown.png" Width="500" Height="500" Opacity="0" RenderOptions.BitmapScalingMode="HighQuality">
                         <Image.RenderTransform>
                             <TransformGroup>
                                 <RotateTransform x:Name="CrownTilt" CenterX="216" CenterY="157" />

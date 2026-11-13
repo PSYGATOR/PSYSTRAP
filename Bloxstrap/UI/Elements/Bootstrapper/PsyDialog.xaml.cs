@@ -21,6 +21,7 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
         private static readonly TimeSpan Loop = TimeSpan.FromSeconds(5.5);
 
         // the sweeps, in the artwork's 500x500 space: back and forth from top to bottom, like colouring it in
+        // the logo fills about x 26-474, y 54-468 of that space
         private const string SweepPath = "M 12 112 L 488 82 L 18 178 L 488 158 L 18 248 L 488 232 L 24 322 L 484 306 L 36 396 L 474 382 L 96 470 L 420 476";
         private const double SweepThickness = 96;
 
