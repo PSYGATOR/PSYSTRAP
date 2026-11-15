@@ -21,6 +21,7 @@ namespace Bloxstrap.Integrations
         private readonly Process _roblox;
         private readonly DateTime _robloxStarted;
         private readonly FrameRateMonitor _frameRate;
+        private readonly LiveFpsLimiter _liveLimit;
         private readonly InputHooks _hooks;
         private readonly KeyRemapper _remapper;
         private readonly OverlayWindow _hud;
@@ -73,6 +74,9 @@ namespace Bloxstrap.Integrations
 
             if (!_frameRate.Start())
                 App.Logger.WriteLine(LOG_IDENT, $"FPS counter unavailable: {_frameRate.Error}");
+
+            // live FPS limit (RivaTuner or the experimental CPU limit); the experimental one steers by the FPS counter
+            _liveLimit = new LiveFpsLimiter(robloxProcessId, () => _frameRate.Running ? _frameRate.GetFrameRate() : null);
 
             _remapper = new KeyRemapper(IsRobloxFocusedThreadSafe);
             _hooks = new InputHooks { ShouldCountClicks = IsRobloxFocused, Intercept = _remapper.Intercept };
@@ -368,6 +372,8 @@ namespace Bloxstrap.Integrations
 
                 _lastSampleTime = now;
             }
+
+            _options.LiveLimitStatus = _liveLimit.Status;
 
             if (settings.ShowClicksPerSecond)
             {
@@ -815,6 +821,9 @@ namespace Bloxstrap.Integrations
             {
                 App.Logger.WriteException(LOG_IDENT, ex);
             }
+
+            // takes the experimental CPU limit off before the FPS counter it steers by goes away
+            try { _liveLimit.Dispose(); } catch (Exception ex) { App.Logger.WriteException(LOG_IDENT, ex); }
 
             // stops the ETW session; must happen even if the UI cleanup failed
             _frameRate.Dispose();

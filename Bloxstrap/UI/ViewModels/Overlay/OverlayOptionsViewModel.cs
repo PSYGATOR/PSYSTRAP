@@ -179,7 +179,74 @@ namespace Bloxstrap.UI.ViewModels.Overlay
         /// <summary>Raised when the user asks to restart Roblox so the frame rate cap takes effect.</summary>
         public event EventHandler? ApplyNowRequested;
 
-        public System.Windows.Input.ICommand ApplyNowCommand => new CommunityToolkit.Mvvm.Input.RelayCommand(() => ApplyNowRequested?.Invoke(this, EventArgs.Empty));
+        #region Live FPS limit
+        private static LiveFpsLimitSettings LiveLimitSettings => App.Settings.Prop.LiveFpsLimit;
+
+        public IReadOnlyList<KeyValuePair<LiveFpsLimitMode, string>> LiveLimitModes { get; } = new List<KeyValuePair<LiveFpsLimitMode, string>>
+        {
+            new(LiveFpsLimitMode.Off, "Off"),
+            new(LiveFpsLimitMode.Experimental, "Experimental")
+        };
+
+        public LiveFpsLimitMode LiveLimitMode
+        {
+            // anything that isn't experimental (like RivaTuner from a test build) shows as off
+            get => LiveLimitSettings.Mode == LiveFpsLimitMode.Experimental ? LiveFpsLimitMode.Experimental : LiveFpsLimitMode.Off;
+            set
+            {
+                if (value == LiveLimitMode)
+                    return;
+
+                LiveLimitSettings.Mode = value;
+                Commit(nameof(LiveLimitMode));
+
+                foreach (string name in new[] { nameof(LiveLimitBoxVisibility), nameof(ExperimentalNoteVisibility) })
+                    OnPropertyChanged(name);
+            }
+        }
+
+        public string LiveLimit
+        {
+            get => LiveLimitSettings.Limit.ToString(CultureInfo.InvariantCulture);
+            set
+            {
+                if (RobloxUserSettings.ParseCustomFramerate(value) is int fps)
+                {
+                    LiveLimitSettings.Limit = fps;
+                    Commit(nameof(LiveLimit));
+                }
+
+                OnPropertyChanged(nameof(LiveLimit));
+            }
+        }
+
+        public System.Windows.Visibility LiveLimitBoxVisibility => Shown(LiveLimitMode == LiveFpsLimitMode.Experimental);
+
+        public System.Windows.Visibility ExperimentalNoteVisibility => Shown(LiveLimitMode == LiveFpsLimitMode.Experimental);
+
+        private string _liveLimitStatus = "";
+
+        /// <summary>What the limiter is doing right now (in-game menu only).</summary>
+        public string LiveLimitStatus
+        {
+            get => _liveLimitStatus;
+            set
+            {
+                if (value == _liveLimitStatus)
+                    return;
+
+                _liveLimitStatus = value;
+                OnPropertyChanged(nameof(LiveLimitStatus));
+                OnPropertyChanged(nameof(LiveLimitStatusVisibility));
+            }
+        }
+
+        public System.Windows.Visibility LiveLimitStatusVisibility => Shown(_liveLimitStatus != "");
+
+        private static System.Windows.Visibility Shown(bool visible) => visible ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+        #endregion
+
+        public System.Windows.Input.ICommand ApplyNowCommand =>new CommunityToolkit.Mvvm.Input.RelayCommand(() => ApplyNowRequested?.Invoke(this, EventArgs.Empty));
 
         /// <summary>Raised when the user asks to move to the emptiest public server of the current game.</summary>
         public event EventHandler? SmallestServerRequested;
@@ -404,6 +471,7 @@ namespace Bloxstrap.UI.ViewModels.Overlay
             var overlay = App.Settings.Prop.Overlay;
             int framerateCap = App.Settings.Prop.FramerateCap;
             int customCap = App.Settings.Prop.CustomFramerateCap;
+            var liveLimit = App.Settings.Prop.LiveFpsLimit;
             bool potato = App.Settings.Prop.PotatoMode;
             bool potatoCap = App.Settings.Prop.PotatoCapFramerate;
 
@@ -411,6 +479,7 @@ namespace Bloxstrap.UI.ViewModels.Overlay
             App.Settings.Prop.Overlay = overlay;
             App.Settings.Prop.FramerateCap = framerateCap;
             App.Settings.Prop.CustomFramerateCap = customCap;
+            App.Settings.Prop.LiveFpsLimit = liveLimit;
             App.Settings.Prop.PotatoMode = potato;
             App.Settings.Prop.PotatoCapFramerate = potatoCap;
             App.Settings.Save();

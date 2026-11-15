@@ -112,6 +112,24 @@ namespace Bloxstrap.Models.Persistable
         public bool OnSchedule { get; set; } = true;
     }
 
+    public enum LiveFpsLimitMode
+    {
+        Off = 0,
+
+        // 1 was RivaTuner in a test build; it couldn't limit Roblox, so it was removed and reads as off
+
+        /// <summary>PSYstrap holds Roblox near the limit by capping how much CPU it gets.</summary>
+        Experimental = 2
+    }
+
+    /// <summary>An FPS limit that changes while Roblox is running.</summary>
+    public class LiveFpsLimitSettings
+    {
+        public LiveFpsLimitMode Mode { get; set; } = LiveFpsLimitMode.Off;
+
+        public int Limit { get; set; } = 60;
+    }
+
     /// <summary>A pinned game or private server, optionally opened as one of the saved accounts.</summary>
     public class FavouriteGame
     {

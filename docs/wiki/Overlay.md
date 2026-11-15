@@ -26,6 +26,12 @@ Press Insert while you're in Roblox. Press it again (or click back into Roblox) 
 
 **FPS cap** - PSYstrap writes this into Roblox's settings file right before Roblox starts. Pick one of the same options Roblox has (default 60, 60, 120, 144, 240), or pick **Custom** and type any number from 5 to 1000, like 75 or 165 to match your monitor. Roblox only reads it on startup, so if you change it while playing, hit "Restart Roblox to apply". That closes Roblox and puts you back in the same server.
 
+**Live FPS limit** (experimental) - changes the frame rate while Roblox is running, no restart. Pick Experimental and type a number. Nothing to install and nothing touches Roblox: PSYstrap holds Roblox near your number by limiting how much CPU it gets, checking with the FPS counter every few seconds. It averages out close to your number but swings around from second to second, so it's best for AFK windows, not for playing. Needs the FPS counter to work (admin or the Performance Log Users group).
+
+There's no RivaTuner option: RivaTuner's limiter didn't work on Roblox in testing (Roblox's anti-cheat keeps it out), so it was left out.
+
+It can only bring the frame rate down: if the FPS cap above is 60, a live limit of 90 does nothing. Set the cap high (or Custom) if you want room. The in-game menu shows what the limit is doing right now.
+
 **Potato mode** - turns everything down: lowest textures, no grass, no anti-aliasing, lowest detail, graphics level 1. Good for slow PCs, bad wifi (less to download when you join a game) and running lots of windows. It only uses flags that Roblox still allows, and it kicks in next time Roblox opens.
 
 By default potato mode also caps Roblox at 60 FPS, so your alt windows aren't drawing hundreds of frames nobody's watching. You can turn that part off with "Cap at 60 FPS in potato mode". While it's on it overrides your normal FPS cap.

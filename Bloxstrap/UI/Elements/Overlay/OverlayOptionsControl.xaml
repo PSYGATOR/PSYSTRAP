@@ -101,5 +101,22 @@
         <ui:Button Margin="0,8,0,0" Icon="ArrowClockwise24" Appearance="Success" HorizontalAlignment="Left"
                    Content="Restart Roblox to apply (rejoins this server)"
                    Command="{Binding ApplyNowCommand}" Visibility="{Binding ApplyNowVisibility, Mode=OneTime}" />
+
+        <!-- live FPS limit: changes while Roblox runs, no restart -->
+        <controls:OptionControl Header="Live FPS limit"
+            Description="Experimental. Changes Roblox's frame rate while it's running, no restart. It can only go lower than the frame rate cap above, so set that high if you want room.">
+            <StackPanel Orientation="Horizontal">
+                <ui:TextBox Width="80" Margin="0,0,8,0" Padding="8,5,8,5" PlaceholderText="FPS" Visibility="{Binding LiveLimitBoxVisibility, Mode=OneWay}"
+                            Text="{Binding LiveLimit, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" AutomationProperties.Name="Live FPS limit" ToolTip="Type a number, then click away or press Tab" />
+                <ComboBox Width="160" Padding="10,5,10,5" ItemsSource="{Binding LiveLimitModes, Mode=OneTime}" DisplayMemberPath="Value" SelectedValuePath="Key"
+                          SelectedValue="{Binding LiveLimitMode, Mode=TwoWay}" AutomationProperties.Name="Live FPS limit mode" />
+            </StackPanel>
+        </controls:OptionControl>
+
+
+        <TextBlock Margin="2,8,0,0" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Visibility="{Binding ExperimentalNoteVisibility, Mode=OneWay}"
+                   Text="Nothing to install and nothing touches Roblox. PSYstrap holds it near your number by limiting how much CPU it gets, using the FPS counter to check. Frames aren't as even as a real limiter, so it's best for AFK windows. Needs the FPS counter to work." />
+
+        <TextBlock Margin="2,6,0,0" FontSize="12" FontWeight="SemiBold" TextWrapping="Wrap" Foreground="#5FE04C" Visibility="{Binding LiveLimitStatusVisibility, Mode=OneWay}" Text="{Binding LiveLimitStatus, Mode=OneWay}" />
     </StackPanel>
 </UserControl>

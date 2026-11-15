@@ -29,6 +29,9 @@ namespace Bloxstrap.Models.Persistable
 
         // PSYstrap: the last number typed for a custom cap, so picking "Custom" again brings it back
         public int CustomFramerateCap { get; set; } = 90;
+
+        // PSYstrap: an FPS limit that changes while Roblox is running (see LiveFpsLimiter)
+        public LiveFpsLimitSettings LiveFpsLimit { get; set; } = new();
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public bool DeveloperMode { get; set; } = false;
         public bool CheckForUpdates { get; set; } = true;
